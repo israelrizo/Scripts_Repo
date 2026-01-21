@@ -50,7 +50,7 @@
         <boolProp name="AuthManager.controlledByThreadGroup">false</boolProp>
       </AuthManager>
       <hashTree/>
-      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager">
         <collectionProp name="CookieManager.cookies"/>
         <boolProp name="CookieManager.clearEachIteration">true</boolProp>
         <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
@@ -2953,11 +2953,11 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         <stringProp name="ThreadGroup.num_threads">1800</stringProp>
         <stringProp name="Threads initial delay">0</stringProp>
         <stringProp name="Start users count">90</stringProp>
-        <stringProp name="Start users count burst">0</stringProp>
+        <stringProp name="Start users count burst">1000</stringProp>
         <stringProp name="Start users period">300</stringProp>
         <stringProp name="Stop users count">5</stringProp>
         <stringProp name="Stop users period">1</stringProp>
-        <stringProp name="flighttime">1200</stringProp>
+        <stringProp name="flighttime">5000</stringProp>
         <stringProp name="rampUp">90</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
           <intProp name="LoopController.loops">-1</intProp>
@@ -2965,7 +2965,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         </elementProp>
       </kg.apc.jmeter.threads.SteppingThreadGroup>
       <hashTree>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
           <boolProp name="ResultCollector.error_logging">true</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -6019,7 +6019,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_AbrirPaginaDeInicio" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_AbrirPaginaDeInicio">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -6571,7 +6571,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T02_IniciarSesion_ValidarUsuario" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T02_IniciarSesion_ValidarUsuario">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -6797,7 +6797,59 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration"></stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
+            <stringProp name="RandomTimer.range">100</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T03_IniciarSesion_ValidarUsuarioCURL">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://mobileplatform-qa.base.mx/middleware/api/security/v1/auth/login/${P_Username}">
+            <stringProp name="HTTPSampler.domain">mobileplatform-qa.base.mx</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">middleware/api/security/v1/auth/login/${P_Username}</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="device-info" elementType="Header">
+                  <stringProp name="Header.name">device-info</stringProp>
+                  <stringProp name="Header.value">web</stringProp>
+                </elementProp>
+                <elementProp name="ip" elementType="Header">
+                  <stringProp name="Header.name">ip</stringProp>
+                  <stringProp name="Header.value">127.0.0.1</stringProp>
+                </elementProp>
+                <elementProp name="latitude-longitude" elementType="Header">
+                  <stringProp name="Header.name">latitude-longitude</stringProp>
+                  <stringProp name="Header.value">25.724721, -100.2639921</stringProp>
+                </elementProp>
+                <elementProp name="Cookie" elementType="Header">
+                  <stringProp name="Header.name">Cookie</stringProp>
+                  <stringProp name="Header.value">incap_ses_188_3174792=99djffevWRF0yn9MGOmbAnszaWkAAAAAUbKT6CeUtUg7ByABPcwcoQ==; incap_ses_188_3202505=Nw52K7lTw2+1IIZmGOmbAlU1cGkAAAAAv9M7ZcJ4DlOeRnlQx+MjYg==; visid_incap_3174792=UaaGIkq2TIm+FBtbHONDZ+zaYWkAAAAAQUIPAAAAAACXOpHbtHvPRzfZYeIPY5Rw; visid_incap_3202505=/JsDlZfuQUWw4nJoz3OJ4QOYimgAAAAAQUIPAAAAAAAho1u0geYTkGQVteYspsM3; visid_incap_3230294=AemC09WyQ/e/WukGJ3OPiq+ZVWgAAAAAQUIPAAAAAACtpBu7KR87xGZEvx1RpTT3; visid_incap_3259219=AacVUqrIQjmDAs44rMJ6qtbZ3mgAAAAAQUIPAAAAAADnG38YD84Bs5TRr6FdDx3p</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -6888,7 +6940,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T04_IniciarSesion_AutenticarConToken" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T04_IniciarSesion_AutenticarConToken">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -7512,7 +7564,7 @@ fWriter.close();</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T06_ConsultarMovimientos_SeleccionarCuenta">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T06_ConsultarMovimientos_SeleccionarCuenta" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -8600,13 +8652,14 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="false">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
-        <longProp name="ThreadGroup.duration">1800</longProp>
+        <intProp name="ThreadGroup.num_threads">1800</intProp>
+        <intProp name="ThreadGroup.ramp_time">180</intProp>
+        <longProp name="ThreadGroup.duration">7200</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -11628,7 +11681,11 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_AbrirPaginaDeInicio">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_ValidarUsuario">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree/>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_AbrirPaginaDeInicio" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -12168,7 +12225,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -12180,7 +12237,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T02_IniciarSesion_ValidarUsuario">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T02_IniciarSesion_ValidarUsuario" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -12406,7 +12463,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -12497,7 +12554,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T04_IniciarSesion_AutenticarConToken">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T04_IniciarSesion_AutenticarConToken" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -13401,7 +13458,7 @@ synchronized (csvFile) {
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -13413,7 +13470,7 @@ synchronized (csvFile) {
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T05_ConsultarMovimientos_AbrirPaginaMovimientos">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T05_ConsultarMovimientos_AbrirPaginaMovimientos" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -13532,7 +13589,7 @@ synchronized (csvFile) {
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -13544,7 +13601,7 @@ synchronized (csvFile) {
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T06_ConsultarMovimientos_SeleccionarCuenta">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T06_ConsultarMovimientos_SeleccionarCuenta" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -13806,7 +13863,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -13818,7 +13875,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T07_ConsultarEstadosDeCuenta">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Consultas_T07_ConsultarEstadosDeCuenta" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -13939,7 +13996,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -14106,7 +14163,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -14118,7 +14175,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_CerrarSesion_T09_CerrarSesion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_CerrarSesion_T09_CerrarSesion" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -14529,7 +14586,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="true">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -14574,7 +14631,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errors.xml</stringProp>
+          <stringProp name="filename">errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="false">
