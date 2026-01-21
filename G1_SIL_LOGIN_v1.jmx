@@ -2950,20 +2950,20 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
         <stringProp name="ThreadGroup.num_threads">1800</stringProp>
         <stringProp name="Threads initial delay">0</stringProp>
-        <stringProp name="Start users count">90</stringProp>
-        <stringProp name="Start users count burst">1000</stringProp>
+        <stringProp name="Start users count">180</stringProp>
+        <stringProp name="Start users count burst">360</stringProp>
         <stringProp name="Start users period">300</stringProp>
         <stringProp name="Stop users count">5</stringProp>
         <stringProp name="Stop users period">1</stringProp>
         <stringProp name="flighttime">5000</stringProp>
-        <stringProp name="rampUp">90</stringProp>
+        <stringProp name="rampUp">45</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
           <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </kg.apc.jmeter.threads.SteppingThreadGroup>
       <hashTree>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
