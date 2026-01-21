@@ -6946,6 +6946,10 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
                   <stringProp name="Header.name">transaction-id</stringProp>
                   <stringProp name="Header.value">119DB2C9-DB0C-4DA7-A6AC-0BEB032F1DC2</stringProp>
                 </elementProp>
+                <elementProp name="ip" elementType="Header">
+                  <stringProp name="Header.name">ip</stringProp>
+                  <stringProp name="Header.value">127.0.0.1</stringProp>
+                </elementProp>
               </collectionProp>
             </HeaderManager>
             <hashTree/>
@@ -7000,6 +7004,10 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
                 <elementProp name="Authorization" elementType="Header">
                   <stringProp name="Header.name">Authorization</stringProp>
                   <stringProp name="Header.value">Bearer ${C_JWT_KEY}</stringProp>
+                </elementProp>
+                <elementProp name="ip" elementType="Header">
+                  <stringProp name="Header.name">ip</stringProp>
+                  <stringProp name="Header.value">127.0.0.1</stringProp>
                 </elementProp>
               </collectionProp>
             </HeaderManager>
