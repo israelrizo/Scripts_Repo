@@ -2889,13 +2889,13 @@ try {
             </elementProp>
             <elementProp name="P_Date" elementType="Argument">
               <stringProp name="Argument.name">P_Date</stringProp>
-              <stringProp name="Argument.value">20260127</stringProp>
+              <stringProp name="Argument.value">20260128</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_Dispersion_Enero2026.csv</stringProp>
@@ -2907,7 +2907,7 @@ try {
           <stringProp name="variableNames">P_Username,P_nombreCompleto,P_Password,P_Token,P_NombreCliente,P_idCliente,P_idUnidadNegocio,P_TipoPersona,P_numeroCelular,P_correo,P_idEstatus,P_RFC</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID" enabled="true">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -4596,7 +4596,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HeaderManager>
           <hashTree/>
           <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
-            <stringProp name="CounterConfig.start">1</stringProp>
+            <stringProp name="CounterConfig.start">2001</stringProp>
             <stringProp name="CounterConfig.end">1000000</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">P_CountFile</stringProp>
@@ -4704,7 +4704,7 @@ import java.io.ByteArrayOutputStream
 import java.util.Random
 
 // 1. Setup file path
-String filePath = &quot;data/sample300.txt&quot;
+String filePath = &quot;data/sample10.txt&quot;
 
 try {
     File file = new File(filePath)
@@ -4717,9 +4717,9 @@ try {
     // 2. Read the original file content as bytes
     byte[] originalBytes = FileUtils.readFileToByteArray(file)
 
-    // 3. Generate random multiplier (1 to 10)
+    // 3. Generate random multiplier (1 to 100) plus 65 initial increase
     Random random = new Random()
-    int multiplier = random.nextInt(10) + 1
+    int multiplier = random.nextInt(100) + 35
 
     // 4. Duplicate the content
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
@@ -5470,8 +5470,8 @@ try {
           <intProp name="Assertion.test_type">20</intProp>
         </ResponseAssertion>
         <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <boolProp name="ResultCollector.error_logging">true</boolProp>
           <objProp>
             <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
@@ -5504,7 +5504,7 @@ try {
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errors.xml</stringProp>
+          <stringProp name="filename">errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="false">
