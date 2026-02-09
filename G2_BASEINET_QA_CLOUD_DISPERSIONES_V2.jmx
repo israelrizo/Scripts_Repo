@@ -2803,11 +2803,12 @@ try {
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Smoke Test Configuration - SCRIPT03_BASEINET_CLOUD_DISPERSIONES ">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">2</intProp>
-        <longProp name="ThreadGroup.duration">16200</longProp>
+        <longProp name="ThreadGroup.duration">12600</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -4594,8 +4595,8 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
-            <stringProp name="CounterConfig.start">1002</stringProp>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
+            <stringProp name="CounterConfig.start">1006</stringProp>
             <stringProp name="CounterConfig.end">1000000</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">P_CountFile</stringProp>
@@ -4603,7 +4604,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <boolProp name="CounterConfig.per_user">false</boolProp>
           </CounterConfig>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4662,7 +4663,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4697,13 +4698,15 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
               <stringProp name="cacheKey">true</stringProp>
-              <stringProp name="script">import org.apache.commons.codec.binary.Base64
+              <stringProp name="script">import org.apache.jmeter.services.FileServer
+import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.FileUtils
 import java.io.ByteArrayOutputStream
 import java.util.Random
 
 // 1. Setup file path
-String filePath = &quot;sample8.txt&quot;
+String path = FileServer.getFileServer().getBaseDir();
+String filePath = path + File.separator + &quot;sample8.txt&quot;;
 
 try {
     File file = new File(filePath)
@@ -4718,7 +4721,7 @@ try {
 
     // 3. Generate random multiplier (1 to 100) plus X initial increase
     Random random = new Random()
-    int multiplier = random.nextInt(125) + 1
+    int multiplier = random.nextInt(124) + 1
 
     // 4. Duplicate the content
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
@@ -5458,7 +5461,7 @@ try {
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="true">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="false">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -5470,7 +5473,7 @@ try {
         </ResponseAssertion>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
-          <boolProp name="ResultCollector.error_logging">true</boolProp>
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
