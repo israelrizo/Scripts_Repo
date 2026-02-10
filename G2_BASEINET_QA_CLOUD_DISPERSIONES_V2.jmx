@@ -2813,7 +2813,7 @@ try {
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
           <collectionProp name="Arguments.arguments">
             <elementProp name="BASE_URL_1" elementType="Argument">
               <stringProp name="Argument.name">BASE_URL_1</stringProp>
@@ -2859,7 +2859,7 @@ try {
             </elementProp>
             <elementProp name="P_tt" elementType="Argument">
               <stringProp name="Argument.name">P_tt</stringProp>
-              <stringProp name="Argument.value">3000</stringProp>
+              <stringProp name="Argument.value">1500</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="P_CtaDestinatario" elementType="Argument">
@@ -2889,7 +2889,7 @@ try {
             </elementProp>
             <elementProp name="P_Date" elementType="Argument">
               <stringProp name="Argument.name">P_Date</stringProp>
-              <stringProp name="Argument.value">20260209</stringProp>
+              <stringProp name="Argument.value">20260210</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
@@ -4562,62 +4562,66 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_CLOUD_DISPERSIONES_T05_CargarDispersion" enabled="true">
-          <boolProp name="TransactionController.includeTimers">false</boolProp>
-        </TransactionController>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller - Stress configuration 10 times per iteration" enabled="true">
+          <stringProp name="LoopController.loops">5</stringProp>
+        </LoopController>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="content-type" elementType="Header">
-                <stringProp name="Header.name">content-type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
-              <elementProp name="Accept" elementType="Header">
-                <stringProp name="Header.name">Accept</stringProp>
-                <stringProp name="Header.value">*/*</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Site" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
-                <stringProp name="Header.value">same-origin</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Mode" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Mode</stringProp>
-                <stringProp name="Header.value">cors</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Dest" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Dest</stringProp>
-                <stringProp name="Header.value">empty</stringProp>
-              </elementProp>
-              <elementProp name="Authorization" elementType="Header">
-                <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${C_JWT_KEY}</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
-            <stringProp name="CounterConfig.start">1006</stringProp>
-            <stringProp name="CounterConfig.end">1000000</stringProp>
-            <stringProp name="CounterConfig.incr">1</stringProp>
-            <stringProp name="CounterConfig.name">P_CountFile</stringProp>
-            <stringProp name="CounterConfig.format"></stringProp>
-            <boolProp name="CounterConfig.per_user">false</boolProp>
-          </CounterConfig>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S480</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_CLOUD_DISPERSIONES_T05_CargarDispersion">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="content-type" elementType="Header">
+                  <stringProp name="Header.name">content-type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="Accept" elementType="Header">
+                  <stringProp name="Header.name">Accept</stringProp>
+                  <stringProp name="Header.value">*/*</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Site" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
+                  <stringProp name="Header.value">same-origin</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Mode" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Mode</stringProp>
+                  <stringProp name="Header.value">cors</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Dest" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Dest</stringProp>
+                  <stringProp name="Header.value">empty</stringProp>
+                </elementProp>
+                <elementProp name="Authorization" elementType="Header">
+                  <stringProp name="Header.name">Authorization</stringProp>
+                  <stringProp name="Header.value">Bearer ${C_JWT_KEY}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
+              <stringProp name="CounterConfig.start">1303</stringProp>
+              <stringProp name="CounterConfig.end">1000000</stringProp>
+              <stringProp name="CounterConfig.incr">1</stringProp>
+              <stringProp name="CounterConfig.name">P_CountFile</stringProp>
+              <stringProp name="CounterConfig.format"></stringProp>
+              <boolProp name="CounterConfig.per_user">false</boolProp>
+            </CounterConfig>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S480</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
   &quot;selectedRows&quot;: {&#xd;
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;43&quot;: &quot;3&quot;&#xd;
@@ -4632,73 +4636,73 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
   &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
 }</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;   ]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;   ]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S480" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S480</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
             <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S480" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S480</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S480_CONF</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
-            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Encoded">
-              <stringProp name="scriptLanguage">groovy</stringProp>
-              <stringProp name="parameters"></stringProp>
-              <stringProp name="filename"></stringProp>
-              <stringProp name="cacheKey">true</stringProp>
-              <stringProp name="script">import org.apache.jmeter.services.FileServer
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S480_CONF</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Encoded">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import org.apache.jmeter.services.FileServer
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.io.FileUtils
 import java.io.ByteArrayOutputStream
@@ -4721,7 +4725,7 @@ try {
 
     // 3. Generate random multiplier (1 to 100) plus X initial increase
     Random random = new Random()
-    int multiplier = random.nextInt(124) + 1
+    int multiplier = random.nextInt(65) + 10
 
     // 4. Duplicate the content
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
@@ -4744,121 +4748,121 @@ try {
 } catch (Exception e) {
     log.error(&quot;Error in JSR223 PreProcessor: &quot; + e.getMessage())
 }</stringProp>
-            </JSR223PreProcessor>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CARGAR" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S480_CARGAR</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;504&quot;:&quot;${P_Token}&quot;,&quot;705&quot;:&quot;${P_Password}&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;,&quot;797&quot;:&quot;Confirmación&quot;,&quot;798&quot;:&quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&quot;801&quot;:&quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&quot;807&quot;:&quot;hideElement&quot;,&quot;808&quot;:&quot;hideElement&quot;,&quot;811&quot;:&quot;&#x95;&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;,&quot;P03S480_CONF&quot;]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor C_FolioID" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_FolioID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.116.matris[0][1]</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S483" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/view/174/V03/contents1/S483</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CARGAR" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S480_CARGAR</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;504&quot;:&quot;${P_Token}&quot;,&quot;705&quot;:&quot;${P_Password}&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;,&quot;797&quot;:&quot;Confirmación&quot;,&quot;798&quot;:&quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&quot;801&quot;:&quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&quot;807&quot;:&quot;hideElement&quot;,&quot;808&quot;:&quot;hideElement&quot;,&quot;811&quot;:&quot;&#x95;&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration"></stringProp>
+          </TestAction>
           <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;,&quot;P03S480_CONF&quot;]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor C_FolioID" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">C_FolioID</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.116.matris[0][1]</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
-            </JSONPostProcessor>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+              <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
+              <stringProp name="RandomTimer.range">100</stringProp>
+            </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S483" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/view/174/V03/contents1/S483</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree/>
-        </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
-          <intProp name="ActionProcessor.action">1</intProp>
-          <intProp name="ActionProcessor.target">0</intProp>
-          <stringProp name="ActionProcessor.duration"></stringProp>
-        </TestAction>
-        <hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
-            <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
-          </UniformRandomTimer>
-          <hashTree/>
-        </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_CLOUD_DISPERSIONES_T06_AutorizarDispersion" enabled="true">
-          <boolProp name="TransactionController.includeTimers">false</boolProp>
-        </TransactionController>
-        <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="content-type" elementType="Header">
-                <stringProp name="Header.name">content-type</stringProp>
-                <stringProp name="Header.value">application/json</stringProp>
-              </elementProp>
-              <elementProp name="Accept" elementType="Header">
-                <stringProp name="Header.name">Accept</stringProp>
-                <stringProp name="Header.value">*/*</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Site" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
-                <stringProp name="Header.value">same-origin</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Mode" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Mode</stringProp>
-                <stringProp name="Header.value">cors</stringProp>
-              </elementProp>
-              <elementProp name="Sec-Fetch-Dest" elementType="Header">
-                <stringProp name="Header.name">Sec-Fetch-Dest</stringProp>
-                <stringProp name="Header.value">empty</stringProp>
-              </elementProp>
-              <elementProp name="Authorization" elementType="Header">
-                <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${C_JWT_KEY}</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S312</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_CLOUD_DISPERSIONES_T06_AutorizarDispersion" enabled="true">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="content-type" elementType="Header">
+                  <stringProp name="Header.name">content-type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="Accept" elementType="Header">
+                  <stringProp name="Header.name">Accept</stringProp>
+                  <stringProp name="Header.value">*/*</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Site" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Site</stringProp>
+                  <stringProp name="Header.value">same-origin</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Mode" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Mode</stringProp>
+                  <stringProp name="Header.value">cors</stringProp>
+                </elementProp>
+                <elementProp name="Sec-Fetch-Dest" elementType="Header">
+                  <stringProp name="Header.name">Sec-Fetch-Dest</stringProp>
+                  <stringProp name="Header.value">empty</stringProp>
+                </elementProp>
+                <elementProp name="Authorization" elementType="Header">
+                  <stringProp name="Header.name">Authorization</stringProp>
+                  <stringProp name="Header.value">Bearer ${C_JWT_KEY}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S312</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
   &quot;selectedRows&quot;: {&#xd;
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;80&quot;: &quot;0&quot;&#xd;
@@ -4873,51 +4877,51 @@ try {
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
   &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
 }</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;   ]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;   ]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S312" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S312</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
             <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S312" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S312</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_VALIDAR_CONFIRMAR" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S312_VALIDAR_CONFIRMAR</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_VALIDAR_CONFIRMAR" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S312_VALIDAR_CONFIRMAR</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
   &quot;selectedRows&quot;: {&#xd;
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;80&quot;: 0&#xd;
@@ -4944,37 +4948,37 @@ try {
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
   &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
 }</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;   ]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_AUTORIZAR" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/process/P03S312_AUTORIZAR</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;   ]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_AUTORIZAR" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/process/P03S312_AUTORIZAR</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
   &quot;selectedRows&quot;: {&#xd;
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;80&quot;: 0&#xd;
@@ -5006,45 +5010,46 @@ try {
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
   &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
 }</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;,     &quot;P03S312_VALIDAR_CONFIRMAR&quot;   ]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="P_Navegations" elementType="Argument">
+                    <stringProp name="Argument.name">P_Navegations</stringProp>
+                    <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;,     &quot;P03S480_CONF&quot;,     &quot;G000000_V03_contents1_S483&quot;,     &quot;G000000_V03_contents1_S312&quot;,     &quot;P03S312_SELECT&quot;,     &quot;P03S312_ROW_SELECT&quot;,     &quot;G000000_V03_contents1_S314&quot;,     &quot;P03S312_VALIDAR_CONFIRMAR&quot;   ]</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S313" enabled="true">
+              <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
+              <stringProp name="HTTPSampler.port">0</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S313</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S313" enabled="true">
-            <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
-            <stringProp name="HTTPSampler.port">0</stringProp>
-            <stringProp name="HTTPSampler.protocol">https</stringProp>
-            <stringProp name="HTTPSampler.path">api/view/${P_URLVersion}/V03/contents1/S313</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-          </HTTPSamplerProxy>
-          <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
         </TestAction>
         <hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
             <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
             <stringProp name="RandomTimer.range">100</stringProp>
           </UniformRandomTimer>
@@ -5461,7 +5466,7 @@ try {
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="false">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -5472,8 +5477,8 @@ try {
           <intProp name="Assertion.test_type">20</intProp>
         </ResponseAssertion>
         <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+          <boolProp name="ResultCollector.error_logging">true</boolProp>
           <objProp>
             <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
@@ -5546,7 +5551,7 @@ try {
           <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
