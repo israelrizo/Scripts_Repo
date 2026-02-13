@@ -51,7 +51,7 @@
         <stringProp name="Start users period">240</stringProp>
         <stringProp name="Stop users count">5</stringProp>
         <stringProp name="Stop users period">1</stringProp>
-        <stringProp name="flighttime">1200</stringProp>
+        <stringProp name="flighttime">16000</stringProp>
         <stringProp name="rampUp">40</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
           <intProp name="LoopController.loops">-1</intProp>
@@ -5845,7 +5845,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments">
             <elementProp name="BASE_URL_1" elementType="Argument">
               <stringProp name="Argument.name">BASE_URL_1</stringProp>
@@ -5927,7 +5927,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_Dispersion_Enero2026.csv</stringProp>
@@ -8578,7 +8578,7 @@ try {
           <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
@@ -8644,7 +8644,7 @@ try {
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
           <collectionProp name="Arguments.arguments">
             <elementProp name="BASE_URL_1" elementType="Argument">
               <stringProp name="Argument.name">BASE_URL_1</stringProp>
@@ -8756,7 +8756,7 @@ try {
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_1800.csv</stringProp>
@@ -8768,7 +8768,7 @@ try {
           <stringProp name="variableNames">P_Username,P_nombreCompleto,P_Password,P_Token,P_NombreCliente,P_idCliente,P_idUnidadNegocio,P_TipoPersona,P_numeroCelular,P_correo,P_idEstatus,P_RFC</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -10380,11 +10380,11 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_VerificaCuentaNoRegistradaAnteriormente">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_VerificaCuentaNoRegistradaAnteriormente" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="content-type" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -10588,7 +10588,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <stringProp name="scriptLanguage">groovy</stringProp>
             </JSR223PreProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_DestID_Search">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_DestID_Search" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_DestID_Search</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[0][7]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -10596,7 +10596,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -10648,7 +10648,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </collectionProp>
             </Arguments>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_Destinatario_IDCheck">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_Destinatario_IDCheck" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_Destinatario_IDCheck</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[*][1]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
@@ -10662,21 +10662,21 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_DestRow_IDCheck">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_DestRow_IDCheck" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_DestRow_IDCheck</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[*][0]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_CtaDestinatarioCheck">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_CtaDestinatarioCheck" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_CtaDestinatarioCheck</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[*][7]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
@@ -10715,7 +10715,7 @@ for (int i = 1; i &lt;= count; i++) {
             </JSR223PostProcessor>
             <hashTree/>
           </hashTree>
-          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller - C_CtaDestIDEliminar Exists please proceed with the cleanup">
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller - C_CtaDestIDEliminar Exists please proceed with the cleanup" enabled="true">
             <stringProp name="IfController.condition">${__isVarDefined(C_CtaDestIDEliminar)}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
             <boolProp name="IfController.useExpression">true</boolProp>
@@ -10727,7 +10727,7 @@ for (int i = 1; i &lt;= count; i++) {
               <boolProp name="displaySystemProperties">false</boolProp>
             </DebugSampler>
             <hashTree/>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_ELIMINAR">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_ELIMINAR" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -11546,7 +11546,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T06_AutorizarAlta">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T06_AutorizarAlta" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -11782,11 +11782,11 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T07_ClickAdministracion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T07_ClickAdministracion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="content-type" elementType="Header">
                 <stringProp name="Header.name">content-type</stringProp>
@@ -11859,7 +11859,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -11911,7 +11911,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </collectionProp>
             </Arguments>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_Destinatario_ID">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_Destinatario_ID" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_DestinatarioID</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[${C_RowID}][1]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -11932,7 +11932,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_CtaDestinatario">
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - C_CtaDestinatario" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_CtaDestinatario</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.42.data[${C_RowID}][7]</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -11940,7 +11940,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S470">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S470" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -12050,7 +12050,7 @@ for (int i = 1; i &lt;= count; i++) {
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="content-type" elementType="Header">
                 <stringProp name="Header.name">content-type</stringProp>
@@ -12265,7 +12265,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_TIPO_DESTINATARIO">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_TIPO_DESTINATARIO" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -12710,7 +12710,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S252_VALIDAR_CAMPOS">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S252_VALIDAR_CAMPOS" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -12802,7 +12802,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S252">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S252" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -13204,7 +13204,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_EliminarAlta">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_EliminarAlta" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -13281,7 +13281,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -13369,7 +13369,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S470">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S470" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -13418,7 +13418,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S470_ELIMINA_CONF">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S470_ELIMINA_CONF" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -13823,7 +13823,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_CerrarSesion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT04_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_CerrarSesion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -14278,7 +14278,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="true">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -14363,7 +14363,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
