@@ -6,6 +6,8 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
@@ -43,9 +45,9 @@
       <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="Main Test Configuration - SCRIPT05_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CONSULTA">
         <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
         <stringProp name="ThreadGroup.num_threads">4</stringProp>
-        <stringProp name="Threads initial delay">1</stringProp>
-        <stringProp name="Start users count">2</stringProp>
-        <stringProp name="Start users count burst">0</stringProp>
+        <stringProp name="Threads initial delay">0</stringProp>
+        <stringProp name="Start users count">0</stringProp>
+        <stringProp name="Start users count burst">4</stringProp>
         <stringProp name="Start users period">300</stringProp>
         <stringProp name="Stop users count">4</stringProp>
         <stringProp name="Stop users period">1</stringProp>
@@ -169,7 +171,7 @@
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_Dispersion_Enero2026.csv</stringProp>
@@ -3759,7 +3761,7 @@ for (int i = 1; i &lt;= count; i++) {
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT05_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_ValidarPaginacion" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT05_BASEINET_QA_CLOUD_DESTINDIVIDUAL_CRUD_T09_ValidarPaginacion">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3840,7 +3842,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="LoopController.loops">${__intSum(${C_TotalPaginacion},-1,)}</stringProp>
           </LoopController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_NEXT_PAG" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_NEXT_PAG">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -3881,13 +3883,13 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree>
-              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
                 <intProp name="groupSize">4</intProp>
-                <longProp name="timeoutInMs">20000</longProp>
+                <longProp name="timeoutInMs">2000</longProp>
               </SyncTimer>
               <hashTree/>
             </hashTree>
-            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
               <intProp name="ActionProcessor.action">1</intProp>
               <intProp name="ActionProcessor.target">0</intProp>
               <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3945,13 +3947,13 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree>
-              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
                 <intProp name="groupSize">4</intProp>
-                <longProp name="timeoutInMs">20000</longProp>
+                <longProp name="timeoutInMs">2000</longProp>
               </SyncTimer>
               <hashTree/>
             </hashTree>
-            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
               <intProp name="ActionProcessor.action">1</intProp>
               <intProp name="ActionProcessor.target">0</intProp>
               <stringProp name="ActionProcessor.duration"></stringProp>
@@ -5136,7 +5138,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
