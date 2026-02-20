@@ -47,7 +47,7 @@
         <stringProp name="ThreadGroup.num_threads">4</stringProp>
         <stringProp name="Threads initial delay">1</stringProp>
         <stringProp name="Start users count">2</stringProp>
-        <stringProp name="Start users count burst">2</stringProp>
+        <stringProp name="Start users count burst">4</stringProp>
         <stringProp name="Start users period">300</stringProp>
         <stringProp name="Stop users count">5</stringProp>
         <stringProp name="Stop users period">1</stringProp>
@@ -171,7 +171,7 @@
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_Dispersion_Enero2026.csv</stringProp>
@@ -3838,11 +3838,11 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller - Next Pag" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller - Next Pag">
             <stringProp name="LoopController.loops">${__intSum(${C_TotalPaginacion},-1,)}</stringProp>
           </LoopController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_NEXT_PAG" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_NEXT_PAG">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -3882,7 +3882,13 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
                 </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
-            <hashTree/>
+            <hashTree>
+              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+                <intProp name="groupSize">4</intProp>
+                <longProp name="timeoutInMs">20000</longProp>
+              </SyncTimer>
+              <hashTree/>
+            </hashTree>
             <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
               <intProp name="ActionProcessor.action">1</intProp>
               <intProp name="ActionProcessor.target">0</intProp>
@@ -3896,11 +3902,11 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <hashTree/>
             </hashTree>
           </hashTree>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller - Prev Pag" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller - Prev Pag">
             <stringProp name="LoopController.loops">${__intSum(${C_TotalPaginacion},-1,)}</stringProp>
           </LoopController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_PREV_PAG" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S250_PREV_PAG">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -3940,7 +3946,13 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
                 </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
-            <hashTree/>
+            <hashTree>
+              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+                <intProp name="groupSize">4</intProp>
+                <longProp name="timeoutInMs">20000</longProp>
+              </SyncTimer>
+              <hashTree/>
+            </hashTree>
             <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
               <intProp name="ActionProcessor.action">1</intProp>
               <intProp name="ActionProcessor.target">0</intProp>
