@@ -4072,7 +4072,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="false">
@@ -4109,7 +4109,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
@@ -4180,7 +4180,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
-          <stringProp name="filename">/Users/israellopezrizo/Downloads/usuarios_backend_baseinet_TransferTest.csv</stringProp>
+          <stringProp name="filename">data/usuarios_backend_baseinet_TransferTest.csv</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
           <boolProp name="quotedData">false</boolProp>
           <boolProp name="recycle">true</boolProp>
@@ -4359,7 +4359,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>

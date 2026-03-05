@@ -470,7 +470,7 @@ try {
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
-          <stringProp name="filename">G:/My Drive/Pruebas de Carga/BASEinet/Cloud/CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+          <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
           <boolProp name="ignoreFirstLine">true</boolProp>
           <boolProp name="quotedData">false</boolProp>
           <boolProp name="recycle">true</boolProp>
@@ -3270,7 +3270,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Validar_Usuario_BACKEND" enabled="false">
@@ -3303,7 +3303,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+            <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -8918,7 +8918,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
@@ -8973,7 +8973,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Validar_Usuario_BACKEND" enabled="false">
@@ -9006,7 +9006,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+            <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -14621,7 +14621,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
@@ -14676,7 +14676,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Validar_Usuario_BACKEND" enabled="false">
@@ -14709,7 +14709,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+            <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -20324,7 +20324,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
@@ -20379,7 +20379,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_Validar_Usuario_BACKEND" enabled="false">
@@ -20412,7 +20412,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+            <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -26027,7 +26027,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
@@ -26074,7 +26074,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">CSV/usuarios_backend_baseinet_agosto25.csv</stringProp>
+            <stringProp name="filename">data/usuarios_backend_baseinet_agosto25.csv</stringProp>
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -32011,7 +32011,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">errors.xml</stringProp>
+          <stringProp name="filename">results/errors.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="false">
@@ -32048,7 +32048,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">G:\My Drive\Pruebas de Carga\BASEinet\Cloud\Results\Maintest\11132025\errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
         <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
