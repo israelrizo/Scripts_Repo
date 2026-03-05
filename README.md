@@ -11,24 +11,26 @@ Scripts_Repo/
 ├── README.md
 └── tests/
     ├── scripts/
-    │   ├── G1_Login_EdoCuenta/              # Scripts de Login y Estado de Cuenta
-    │   │   ├── G1_BASEINET_CLOUD_LOGIN_MOV_EDO-CUENTA_v7.jmx
-    │   │   ├── G1_BASEINET_CLOUD_LOGIN_STG_v7.jmx
-    │   │   ├── G1_BASEINET_CLOUD_LOGIN_UTG_v7.jmx
-    │   │   └── G1_SIL_LOGIN_v1.jmx
-    │   ├── G2_Dispersiones_CRUD/            # Scripts de Dispersiones y Operaciones CRUD
-    │   │   ├── G2_BASEINET_BASEINET_SCRIPT04_QA_CLOUD_DESTINDIVIDUAL_CRUD.jmx
-    │   │   ├── G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx
-    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_TC_V4.jmx
-    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V1.jmx
-    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V2.jmx
-    │   │   └── G2_BASEINET_QA_CLOUD_DISPERSIONES_V3.jmx
-    │   └── G2_Paquete_1_Optimizaciones/     # Scripts de Optimizaciones MCD
-    │       ├── G2_BASEINET_BASEINET_SCRIPT05_SCRIPT06_SCRIPT03_DRP_CLOUD_OPTIMIZACIONES_AND_DISPERSION.jmx
-    │       ├── G2_SCRIPT05_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DESTINATARIOS.jmx
-    │       ├── G2_SCRIPT06_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_CdGetTraspasosComprobantes.jmx
-    │       └── G2_SCRIPT15_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DISPERSION.jmx
-    └── data/                                # Datos de usuarios y configuración para los scripts
+    │   └── Baseinet/
+    │       ├── Login_EdoCuenta/                  # Scripts de Login y Estado de Cuenta
+    │       │   ├── G1_BASEINET_CLOUD_LOGIN_MOV_EDO-CUENTA_v7.jmx
+    │       │   ├── G1_BASEINET_CLOUD_LOGIN_STG_v7.jmx
+    │       │   ├── G1_BASEINET_CLOUD_LOGIN_UTG_v7.jmx
+    │       │   └── G1_SIL_LOGIN_v1.jmx
+    │       ├── Dispersiones_CRUD/                # Scripts de Dispersiones y Operaciones CRUD
+    │       │   ├── G2_BASEINET_BASEINET_SCRIPT04_QA_CLOUD_DESTINDIVIDUAL_CRUD.jmx
+    │       │   ├── G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx
+    │       │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_TC_V4.jmx
+    │       │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V1.jmx
+    │       │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V2.jmx
+    │       │   └── G2_BASEINET_QA_CLOUD_DISPERSIONES_V3.jmx
+    │       └── Optimizaciones/
+    │           └── Paquete_1/                    # Scripts de Optimizaciones MCD
+    │               ├── G2_BASEINET_BASEINET_SCRIPT05_SCRIPT06_SCRIPT03_DRP_CLOUD_OPTIMIZACIONES_AND_DISPERSION.jmx
+    │               ├── G2_SCRIPT05_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DESTINATARIOS.jmx
+    │               ├── G2_SCRIPT06_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_CdGetTraspasosComprobantes.jmx
+    │               └── G2_SCRIPT15_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DISPERSION.jmx
+    └── data/                                     # Datos de usuarios y configuración para los scripts
         ├── usuarios_backend_baseinet_1800.csv
         ├── usuarios_backend_baseinet_agosto25.csv
         ├── usuarios_backend_baseinet_Dispersion.csv
