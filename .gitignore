@@ -1,1 +1,11 @@
+# System files
 .DS_Store
+
+# JMeter result artifacts
+results/
+*.jtl
+*.log
+
+# Sensitive user data — never commit real credentials
+# (use tests/data/*.sample.csv as templates instead)
+tests/data/usuarios_backend_baseinet_*.csv
