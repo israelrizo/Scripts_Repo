@@ -11,23 +11,24 @@ Scripts_Repo/
 ├── README.md
 └── tests/
     ├── scripts/
-    │   ├── G1_Login_EdoCuenta/       # Scripts de Login y Estado de Cuenta
+    │   ├── G1_Login_EdoCuenta/              # Scripts de Login y Estado de Cuenta
     │   │   ├── G1_BASEINET_CLOUD_LOGIN_MOV_EDO-CUENTA_v7.jmx
     │   │   ├── G1_BASEINET_CLOUD_LOGIN_STG_v7.jmx
     │   │   ├── G1_BASEINET_CLOUD_LOGIN_UTG_v7.jmx
     │   │   └── G1_SIL_LOGIN_v1.jmx
-    │   └── G2_Dispersiones_CRUD/     # Scripts de Dispersiones y Operaciones CRUD
-    │       ├── G2_BASEINET_BASEINET_SCRIPT04_QA_CLOUD_DESTINDIVIDUAL_CRUD.jmx
+    │   ├── G2_Dispersiones_CRUD/            # Scripts de Dispersiones y Operaciones CRUD
+    │   │   ├── G2_BASEINET_BASEINET_SCRIPT04_QA_CLOUD_DESTINDIVIDUAL_CRUD.jmx
+    │   │   ├── G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx
+    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_TC_V4.jmx
+    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V1.jmx
+    │   │   ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V2.jmx
+    │   │   └── G2_BASEINET_QA_CLOUD_DISPERSIONES_V3.jmx
+    │   └── G2_Paquete_1_Optimizaciones/     # Scripts de Optimizaciones MCD
     │       ├── G2_BASEINET_BASEINET_SCRIPT05_SCRIPT06_SCRIPT03_DRP_CLOUD_OPTIMIZACIONES_AND_DISPERSION.jmx
-    │       ├── G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx
-    │       ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_TC_V4.jmx
-    │       ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V1.jmx
-    │       ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V2.jmx
-    │       ├── G2_BASEINET_QA_CLOUD_DISPERSIONES_V3.jmx
     │       ├── G2_SCRIPT05_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DESTINATARIOS.jmx
     │       ├── G2_SCRIPT06_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_CdGetTraspasosComprobantes.jmx
     │       └── G2_SCRIPT15_BASEINET_QA_CLOUD_OPTIMIZACIONES_MCD_DISPERSION.jmx
-    └── data/                         # Datos de usuarios y configuración para los scripts
+    └── data/                                # Datos de usuarios y configuración para los scripts
         ├── usuarios_backend_baseinet_1800.csv
         ├── usuarios_backend_baseinet_agosto25.csv
         ├── usuarios_backend_baseinet_Dispersion.csv
@@ -51,14 +52,20 @@ Scripts que prueban el flujo de autenticación de usuarios y la consulta de esta
 | `G1_SIL_LOGIN_v1.jmx` | SIL | Login para el módulo SIL |
 
 ### G2 — Dispersiones y Operaciones CRUD
-Scripts que prueban los flujos de dispersión de pagos, creación/consulta de destinatarios individuales y optimizaciones de carga.
+Scripts que prueban los flujos de dispersión de pagos y creación/consulta de destinatarios individuales.
 
 | Script | Descripción |
 |---|---|
 | `G2_..._DESTINDIVIDUAL_CRUD.jmx` | CRUD de destinatarios individuales |
-| `G2_..._OPTIMIZACIONES_AND_DISPERSION.jmx` | Flujo combinado de optimizaciones y dispersión (Scripts 03, 05, 06) |
 | `G2_..._DISPERSIONES_TC_V*.jmx` | Pruebas de dispersión con tarjeta (TC) |
 | `G2_..._DISPERSIONES_V*.jmx` | Pruebas generales de dispersión (versiones 1, 2, 3) |
+
+### G2 — Paquete 1: Optimizaciones MCD
+Scripts de optimización de carga agrupados como **Paquete 1**, que cubren flujos MCD de destinatarios, comprobantes y dispersión masiva.
+
+| Script | Descripción |
+|---|---|
+| `G2_..._OPTIMIZACIONES_AND_DISPERSION.jmx` | Flujo combinado Scripts 03+05+06 — optimizaciones + dispersión (DRP) |
 | `G2_SCRIPT05_..._DESTINATARIOS.jmx` | Optimización MCD — listado de destinatarios |
 | `G2_SCRIPT06_..._CdGetTraspasosComprobantes.jmx` | Optimización MCD — comprobantes de traspasos |
 | `G2_SCRIPT15_..._DISPERSION.jmx` | Optimización MCD — dispersión masiva |
