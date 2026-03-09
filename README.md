@@ -48,7 +48,9 @@ Flujos de operación de negocio y administración de cuentas destino.
 - `G2_..._DISPERSIONES_TC_V1-V4.jmx`
 
 ### ⚡ Optimizaciones MCD (BASEInet-Optimizaciones)
-Scripts optimizados para alta concurrencia en microservicios específicos.Divididos por submódulos:
+Scripts optimizados para alta concurrencia en microservicios específicos. Divididos por submódulos.
+> 📄 **Ver [Matriz de Casos de Prueba - Optimizaciones](tests/scripts/Baseinet/BASEInet-Optimizaciones/MATRIZ_PRUEBAS_OPTIMIZACIONES.md)**
+
 - **Cuentas Digitales**: Consulta de destinatarios autorizados, traspasos, carga de lotes (`CdLoadArchivoLoteBase64`).
 - **Modulo Consultas**: Movimientos MCD, estados de cuenta MT940 y PDF.
 - **Modulo Autorizaciones**: Autorización de traspasos SPEI.
