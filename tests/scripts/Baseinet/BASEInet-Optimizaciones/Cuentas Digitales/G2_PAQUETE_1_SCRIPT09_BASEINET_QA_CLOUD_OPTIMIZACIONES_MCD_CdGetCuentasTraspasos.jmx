@@ -6,6 +6,8 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header manager">
@@ -40,7 +42,7 @@
         <boolProp name="CacheManager.controlledByThread">false</boolProp>
       </CacheManager>
       <hashTree/>
-      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="Main Test Configuration - SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos" enabled="false">
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="Main Test Configuration - SCRIPT09_BASEINET_DRP_CLOUD_MCD_CdGetCuentasTraspasos">
         <stringProp name="ThreadGroup.on_sample_error">startnextloop</stringProp>
         <stringProp name="ThreadGroup.num_threads">1600</stringProp>
         <stringProp name="Threads initial delay">1</stringProp>
@@ -61,7 +63,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="BASE_URL_1" elementType="Argument">
               <stringProp name="Argument.name">BASE_URL_1</stringProp>
-              <stringProp name="Argument.value">qa.baseinet.com</stringProp>
+              <stringProp name="Argument.value">web-drp.baseinet.com</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
               <stringProp name="Argument.desc">web-cloud-alb.baseinet.com 443 </stringProp>
             </elementProp>
@@ -169,7 +171,7 @@
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_1800.csv</stringProp>
@@ -221,7 +223,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T01_AbrirPaginaDeInicio">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T01_AbrirPaginaDeInicio" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -817,7 +819,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T02_ValidarUsuario">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T02_ValidarUsuario" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1087,7 +1089,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -1099,7 +1101,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T03_IniciarSesion_Autenticar">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T03_IniciarSesion_Autenticar" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1624,7 +1626,7 @@ fWriter.close();</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -1636,7 +1638,7 @@ fWriter.close();</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T04_ClickTransferenciasBancoBASE">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T04_ClickTransferenciasBancoBASE" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1669,7 +1671,7 @@ fWriter.close();</stringProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2">
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
@@ -1713,7 +1715,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S210">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S210" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1793,7 +1795,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -1805,7 +1807,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T05_CapturaTransferenciaBancoBASE">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T05_CapturaTransferenciaBancoBASE" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1882,7 +1884,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1945,7 +1947,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S229">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S229" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1959,7 +1961,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210_VALIDAR_CAMPOS">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210_VALIDAR_CAMPOS" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2021,7 +2023,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S211">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S211" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2036,7 +2038,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -2048,7 +2050,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T06_CerrarSesion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetTraspasosComprobantes_T06_CerrarSesion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -2503,7 +2505,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="true">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -2628,7 +2630,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </elementProp>
               <elementProp name="testTitle" elementType="Argument">
                 <stringProp name="Argument.name">testTitle</stringProp>
-                <stringProp name="Argument.value">OPTIMIZACION_COMPROBANTES_TEST</stringProp>
+                <stringProp name="Argument.value">OPTIMIZACION_CdGetCuentasTraspasos</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="eventTags" elementType="Argument">
@@ -2642,7 +2644,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
         </BackendListener>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="false">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -2765,7 +2767,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </collectionProp>
         </Arguments>
         <hashTree/>
-        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete">
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set - Usuarios Baseinet QA - Complete" enabled="true">
           <stringProp name="delimiter">,</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="filename">data/usuarios_backend_baseinet_1800.csv</stringProp>
@@ -2777,7 +2779,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           <stringProp name="variableNames">P_Username,P_nombreCompleto,P_Password,P_Token,P_NombreCliente,P_idCliente,P_idUnidadNegocio,P_TipoPersona,P_numeroCelular,P_correo,P_idEstatus,P_RFC</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -2817,7 +2819,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T01_AbrirPaginaDeInicio">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T01_AbrirPaginaDeInicio" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -2865,7 +2867,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-cloud.baseinet.com/api/parameter">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-cloud.baseinet.com/api/parameter" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
             <stringProp name="HTTPSampler.path">api/parameter</stringProp>
@@ -3401,7 +3403,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3413,7 +3415,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T02_ValidarUsuario">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T02_ValidarUsuario" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3683,7 +3685,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3695,7 +3697,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T03_IniciarSesion_Autenticar">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T03_IniciarSesion_Autenticar" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -4232,7 +4234,7 @@ fWriter.close();</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T04_ClickTransferenciasBancoBASE">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T04_ClickTransferenciasBancoBASE" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -4265,7 +4267,7 @@ fWriter.close();</stringProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2">
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2" enabled="true">
             <stringProp name="cacheKey">true</stringProp>
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
@@ -4401,7 +4403,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T05_CapturaTransferenciaBancoBASE">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T05_CapturaTransferenciaBancoBASE" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -4478,7 +4480,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223PreProcessor>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4541,7 +4543,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S229">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S229" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4555,7 +4557,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210_VALIDAR_CAMPOS">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/process/P03S210_VALIDAR_CAMPOS" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4617,7 +4619,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S211">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://web-drp.baseinet.com/api/view/175/V03/contents1/S211" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -4632,7 +4634,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -4644,7 +4646,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T06_CerrarSesion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T06_CerrarSesion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -5099,7 +5101,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible">
+        <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Validar respuesta de error - 200 Servicio no disponible" enabled="true">
           <collectionProp name="Asserion.test_strings">
             <stringProp name="115620642">&quot;processNext&quot;:&quot;EpopupErrores(OPEN)|EpopupContentError(REFRESH)&quot;</stringProp>
             <stringProp name="2053216627">&quot;processNext&quot;:&quot;&quot;,&quot;registers&quot;:{&quot;11&quot;:&quot;Mensaje de Error Recibido de WS BancoBase.&quot;</stringProp>
@@ -5184,7 +5186,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           <stringProp name="filename">results/errorsSDW.xml</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
