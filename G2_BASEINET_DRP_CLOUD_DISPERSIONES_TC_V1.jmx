@@ -1538,7 +1538,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller 9 Files &lt;= 300 lines" enabled="true">
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller 9 Files &lt;= 300 lines" enabled="false">
           <stringProp name="LoopController.loops">9</stringProp>
         </LoopController>
         <hashTree>
@@ -1907,7 +1907,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </collectionProp>
             </HeaderManager>
             <hashTree/>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
               <stringProp name="CounterConfig.start">1000</stringProp>
               <stringProp name="CounterConfig.end">3000</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
@@ -3036,7 +3036,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
             <stringProp name="CounterConfig.start">3001</stringProp>
             <stringProp name="CounterConfig.end">5000</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
@@ -3226,7 +3226,7 @@ try {
 
     // 3. Generate random multiplier (1 to 100) plus X initial increase
     Random random = new Random()
-    int multiplier = 95 //Adjusted to max 300 rows per file
+    int multiplier = 90 //Adjusted to max 900 rows per file
 
     // 4. Duplicate the content
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
@@ -3490,7 +3490,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_VALIDAR_CONFIRMAR">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S312_VALIDAR_CONFIRMAR" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
