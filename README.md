@@ -43,9 +43,11 @@ Scripts para pruebas de carga en el proceso de login en distintos ambientes.
 
 ### 💳 Dispersiones y Destinatarios (BASEInet-DispersionesCRUD)
 Flujos de operación de negocio y administración de cuentas destino.
-- `G2_..._DESTINDIVIDUAL_CRUD.jmx`
-- `G2_..._DISPERSIONES_V1-V3.jmx`
-- `G2_..._DISPERSIONES_TC_V1-V4.jmx`
+- `G2_BASEINET_BASEINET_SCRIPT04_QA_CLOUD_DESTINDIVIDUAL_CRUD.jmx`
+- `G2_BASEINET_QA_CLOUD_DISPERSIONES_V1.jmx` (v1 a v3)
+- `G2_BASEINET_QA_CLOUD_DISPERSIONES_TC_V4.jmx`
+- `G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx`
+- **Carpeta 110326 (Nuevo)**: `G2_BASEINET_DRP_CLOUD_DISPERSIONES_TC_V1.jmx` (DRP Cloud)
 
 ### ⚡ Optimizaciones MCD (BASEInet-Optimizaciones)
 Scripts optimizados para alta concurrencia en microservicios específicos. Divididos por submódulos.
@@ -95,3 +97,10 @@ Al agregar un nuevo script o modificar uno existente:
 1. Crea una rama descriptiva (`feature/nuevo-script`).
 2. Sigue la convención de nombres: `G<Grupo>_<Paquete>_<Script>_<Ambiente>_<Descripcion>.jmx`.
 3. Abre un Pull Request utilizando el template predefinido para documentar el flujo y la configuración de carga.
+
+---
+
+## 👥 Autores
+
+- **Israel Lopez**
+- **Carlos Cervantes**
