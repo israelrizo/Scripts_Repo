@@ -68,11 +68,13 @@ Scripts optimizados para alta concurrencia en microservicios específicos. Divid
 
 ---
 
-## 🚀 Cómo Ejecutar los Scripts
+---
+
+## 🚀 Cómo Ejecutar los Scripts (Local)
 
 Para asegurar que los scripts encuentren los datos correctamente, **siempre ejecuta JMeter desde la raíz del repositorio**.
 
-### Modo No-GUI (Recomendado para pruebas reales)
+### Modo No-GUI (Recomendado)
 ```bash
 jmeter -n \
   -t tests/scripts/Baseinet/BASEInet-Login/G1_BASEINET_CLOUD_LOGIN_STG_v7.jmx \
@@ -82,12 +84,37 @@ jmeter -n \
 
 ---
 
+## ☁️ Pruebas en Generador de Carga (Master/Esclavo)
+
+Para ejecuciones en ambientes de carga distribuidos, sigue estos pasos:
+
+1. **Ingresar como superusuario**:
+   ```bash
+   sudo su
+   ```
+2. **Posicionarse en la carpeta configurada**:
+   ```bash
+   cd /mnt/jmeter/JMeter_Scripts/Volume
+   ```
+3. **Obtener el script del repositorio**:
+   ```bash
+   wget -O G2_VERSION_ACTUAL.jmx https://raw.githubusercontent.com/israelrizo/Scripts_Repo/refs/heads/main/path/to/script.jmx
+   ```
+4. **Correr el Script**:
+   > 💡 **Nota**: Sustituye `DDMMYY` con la fecha actual. Se recomienda usar la carpeta `results/`.
+   ```bash
+   jmeter -n -t G2_VERSION_ACTUAL.jmx -l results/result_DDMMYY.jtl -e -o results/Result_DDMMYY
+   ```
+
+---
+
 ## 📊 Datos y Resultados
 
-- **Datos de entrada**: Siempre en la carpeta `data/`. Los scripts ya están configurados con rutas relativas (`data/usuarios_...csv`).
-- **Resultados**: Se recomienda guardar los archivos `.jtl` y reportes HTML en una carpeta `results/` no rastreada por Git.
+- **Datos de entrada**: Ubicados en `data/`. Los scripts usan rutas relativas.
+- **Resultados**: El repositorio cuenta con una carpeta `results/` que **ahora es rastreada por Git** para mantener un histórico de las ejecuciones.
+- **Limpieza**: Se recomienda limpiar la carpeta `results/` antes de cada ejecución nueva si se desea evitar la acumulación excesiva de versiones, aunque ahora el histórico quedará guardado.
 
-> ⚠️ **IMPORTANTE**: No incluyas credenciales reales en las cargas a Git. El archivo `.gitignore` ya está configurado para proteger archivos de datos sensibles.
+> ⚠️ **IMPORTANTE**: No incluyas credenciales reales en las cargas a Git.
 
 ---
 

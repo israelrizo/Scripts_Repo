@@ -2,9 +2,7 @@
 .DS_Store
 
 # JMeter result artifacts
-results/
-*.jtl
-*.log
+# results/ (Removed exclusion to allow tracking)
 
 # Sensitive user data — never commit real credentials
 # (use data/*.sample.csv as templates instead)

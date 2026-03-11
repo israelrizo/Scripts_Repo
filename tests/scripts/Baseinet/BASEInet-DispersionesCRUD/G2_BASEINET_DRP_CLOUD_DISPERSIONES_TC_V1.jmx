@@ -42,7 +42,7 @@
         <boolProp name="CacheManager.controlledByThread">false</boolProp>
       </CacheManager>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Main Test Configuration - SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Main Test Configuration - SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">2</intProp>
         <longProp name="ThreadGroup.duration">28800</longProp>
@@ -154,7 +154,7 @@
           <stringProp name="variableNames">P_Username,P_nombreCompleto,P_Password,P_Token,P_NombreCliente,P_idCliente,P_idUnidadNegocio,P_TipoPersona,P_numeroCelular,P_correo,P_idEstatus,P_RFC</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -194,7 +194,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - DATETIME FORMAT">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - DATETIME FORMAT" enabled="true">
           <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
@@ -211,7 +211,7 @@ def cstDate = ZonedDateTime.now(zone).format(DateTimeFormatter.ofPattern(&quot;y
 vars.put(&quot;P_Date&quot;, cstDate)</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T01_AbrirPaginaDeInicio">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T01_AbrirPaginaDeInicio" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1526,7 +1526,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -1538,11 +1538,11 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller 9 Files &lt;= 300 lines">
           <stringProp name="LoopController.loops">9</stringProp>
         </LoopController>
         <hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T04_ClickDispersiones">
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T04_ClickDispersiones" enabled="true">
             <boolProp name="TransactionController.includeTimers">false</boolProp>
           </TransactionController>
           <hashTree>
@@ -1862,7 +1862,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
             <intProp name="ActionProcessor.action">1</intProp>
             <intProp name="ActionProcessor.target">0</intProp>
             <stringProp name="ActionProcessor.duration"></stringProp>
@@ -1874,7 +1874,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T05_CargarDispersion">
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T05_CargarDispersion" enabled="true">
             <boolProp name="TransactionController.includeTimers">false</boolProp>
           </TransactionController>
           <hashTree>
@@ -1908,13 +1908,57 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </HeaderManager>
             <hashTree/>
             <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
-              <stringProp name="CounterConfig.start">5000</stringProp>
-              <stringProp name="CounterConfig.end">7000</stringProp>
+              <stringProp name="CounterConfig.start">99</stringProp>
+              <stringProp name="CounterConfig.end">1000</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
               <stringProp name="CounterConfig.name">P_CountFile</stringProp>
               <stringProp name="CounterConfig.format"></stringProp>
               <boolProp name="CounterConfig.per_user">false</boolProp>
             </CounterConfig>
+            <hashTree/>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import java.security.MessageDigest;
+import java.util.Base64;
+import groovy.json.JsonSlurper;
+import groovy.json.JsonOutput;
+import groovy.json.JsonBuilder;
+
+//String samplerName = sampler.getName();
+//log.info(&quot;Current Sampler Name: &quot; + samplerName);
+
+// Retrieve P_Navegations from JMeter User Defined Variables or use default value
+if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) {
+    apiUrl = sampler.getUrl().toString();
+    def samplerRaw = sampler.getArguments().getArgument(0).getValue();
+    def json = new JsonSlurper().parseText(samplerRaw); 
+    String navigationData = json.navegations;
+    //def requestBody = 
+    log.warn(navigationData);
+	// Combine values like in signBodyRequest()
+	String rawData = apiUrl + navigationData;
+	
+	// Compute SHA-256 hash
+	MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);
+	byte[] hash = digest.digest(rawData.getBytes(&quot;UTF-8&quot;));
+	
+	// Encode in Base64 (API might expect this)
+	String requestId = Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+	
+	// Store in JMeter variable
+	vars.put(&quot;P_Request_IDV2&quot;, requestId);
+	
+	// Log output for debugging
+	//log.info(&quot;Generated request_id: &quot; + requestId);
+	//log.info(&quot;Used navigation data: &quot; + navigationData);
+} else {
+    log.warn(&quot;Sampler &apos;&quot; + sampler.getName() + &quot;&apos; does not support getUrl()&quot;);
+}
+</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PreProcessor>
             <hashTree/>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
@@ -1934,7 +1978,18 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;43&quot;: &quot;3&quot;&#xd;
   },&#xd;
-  &quot;navegations&quot;: ${P_Navegations},&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;,&#xd;
+    &quot;G000000_V03_contents1_S160&quot;,&#xd;
+    &quot;P_AVISOS_SWIPE&quot;&#xd;
+  ],&#xd;
   &quot;registers&quot;: {},&#xd;
   &quot;targetVarArray&quot;: {},&#xd;
   &quot;registerToDelete&quot;: [&#xd;
@@ -1942,25 +1997,14 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
     &quot;800&quot;&#xd;
   ],&#xd;
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
-  &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
 }</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
-            <hashTree>
-              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="P_Navegations" elementType="Argument">
-                    <stringProp name="Argument.name">P_Navegations</stringProp>
-                    <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;   ]</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </Arguments>
-              <hashTree/>
-            </hashTree>
+            <hashTree/>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S480" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
@@ -1975,7 +2019,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree/>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CONF" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -1988,24 +2032,43 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;selectedRows&quot;: {&#xd;
+    &quot;12&quot;: &quot;19&quot;,&#xd;
+    &quot;43&quot;: &quot;3&quot;,&#xd;
+    &quot;80&quot;: &quot;6&quot;&#xd;
+  },&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;&#xd;
+  ],&#xd;
+  &quot;registers&quot;: {&#xd;
+    &quot;76&quot;: &quot;Performance Test${P_CountFile}&quot;,&#xd;
+    &quot;77&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;78&quot;: &quot;${P_Date}${P_CountFile}DP.txt&quot;,&#xd;
+    &quot;714&quot;: &quot;${P_Encoded}&quot;&#xd;
+  },&#xd;
+  &quot;targetVarArray&quot;: {},&#xd;
+  &quot;registerToDelete&quot;: [&#xd;
+    &quot;160&quot;,&#xd;
+    &quot;800&quot;&#xd;
+  ],&#xd;
+  &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree>
-              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="P_Navegations" elementType="Argument">
-                    <stringProp name="Argument.name">P_Navegations</stringProp>
-                    <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;]</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </Arguments>
-              <hashTree/>
-              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Encoded">
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Encoded" enabled="true">
                 <stringProp name="scriptLanguage">groovy</stringProp>
                 <stringProp name="parameters"></stringProp>
                 <stringProp name="filename"></stringProp>
@@ -2061,7 +2124,7 @@ try {
               </JSR223PreProcessor>
               <hashTree/>
             </hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CARGAR">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480_CARGAR" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2074,34 +2137,57 @@ try {
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;504&quot;:&quot;${P_Token}&quot;,&quot;705&quot;:&quot;${P_Password}&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;,&quot;797&quot;:&quot;Confirmación&quot;,&quot;798&quot;:&quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&quot;801&quot;:&quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&quot;807&quot;:&quot;hideElement&quot;,&quot;808&quot;:&quot;hideElement&quot;,&quot;811&quot;:&quot;&#x95;&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;selectedRows&quot;: {&#xd;
+    &quot;12&quot;: &quot;19&quot;,&#xd;
+    &quot;43&quot;: &quot;3&quot;,&#xd;
+    &quot;80&quot;: &quot;6&quot;&#xd;
+  },&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;,&#xd;
+    &quot;P03S480_CONF&quot;&#xd;
+  ],&#xd;
+  &quot;registers&quot;: {&#xd;
+    &quot;76&quot;: &quot;Performance Test${P_CountFile}&quot;,&#xd;
+    &quot;77&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;78&quot;: &quot;${P_Date}${P_CountFile}DP.txt&quot;,&#xd;
+    &quot;504&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;705&quot;: &quot;${P_Password}&quot;,&#xd;
+    &quot;714&quot;: &quot;${P_Encoded}&quot;,&#xd;
+    &quot;797&quot;: &quot;Confirmación&quot;,&#xd;
+    &quot;798&quot;: &quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&#xd;
+    &quot;801&quot;: &quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&#xd;
+    &quot;807&quot;: &quot;hideElement&quot;,&#xd;
+    &quot;808&quot;: &quot;hideElement&quot;,&#xd;
+    &quot;811&quot;: &quot;&#x95;&quot;&#xd;
+  },&#xd;
+  &quot;targetVarArray&quot;: {},&#xd;
+  &quot;registerToDelete&quot;: [&#xd;
+    &quot;160&quot;,&#xd;
+    &quot;800&quot;&#xd;
+  ],&#xd;
+  &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
               </elementProp>
             </HTTPSamplerProxy>
             <hashTree>
-              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="P_Navegations" elementType="Argument">
-                    <stringProp name="Argument.name">P_Navegations</stringProp>
-                    <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;,&quot;P03S480_CONF&quot;]</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </Arguments>
-              <hashTree/>
               <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor C_FolioID" enabled="true">
                 <stringProp name="JSONPostProcessor.referenceNames">C_FolioID</stringProp>
                 <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.116.matris[0][1]</stringProp>
                 <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
                 <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
               </JSONPostProcessor>
-              <hashTree/>
-              <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="false">
-                <intProp name="groupSize">4</intProp>
-                <stringProp name="timeoutInMs">${P_RendezvousPoint_Time}</stringProp>
-              </SyncTimer>
               <hashTree/>
               <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
                 <stringProp name="scriptLanguage">groovy</stringProp>
@@ -2113,7 +2199,7 @@ String RowsAdded = vars.get(&quot;P_RowsFile_&quot; + username.toString())
 String actual = vars.get(&quot;updatedNumber&quot;)
 // 1. Configuration
 def propertyName = &quot;globalCounter&quot;
-def limit = 34014
+def limit = 12000
 
 // 2. Initialize the property if it doesn&apos;t exist yet (first run)
 if (props.get(propertyName) == null) {
@@ -2156,7 +2242,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
               </JSR223PostProcessor>
               <hashTree/>
             </hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S483">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S483" enabled="true">
               <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
               <stringProp name="HTTPSampler.port">0</stringProp>
               <stringProp name="HTTPSampler.protocol">https</stringProp>
@@ -2171,7 +2257,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
             <intProp name="ActionProcessor.action">1</intProp>
             <intProp name="ActionProcessor.target">0</intProp>
             <stringProp name="ActionProcessor.duration"></stringProp>
@@ -2183,7 +2269,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
             </UniformRandomTimer>
             <hashTree/>
           </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T06_AutorizarDispersion">
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T06_AutorizarDispersion" enabled="true">
             <boolProp name="TransactionController.includeTimers">false</boolProp>
           </TransactionController>
           <hashTree>
@@ -2561,7 +2647,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             </HTTPSamplerProxy>
             <hashTree/>
           </hashTree>
-          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
             <intProp name="ActionProcessor.action">1</intProp>
             <intProp name="ActionProcessor.target">0</intProp>
             <stringProp name="ActionProcessor.duration"></stringProp>
@@ -2585,7 +2671,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </ThroughputController>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T04_ClickDispersiones">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T04_ClickDispersiones" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -2905,7 +2991,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -2917,7 +3003,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T05_CargarDispersion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T05_CargarDispersion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -2951,13 +3037,57 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HeaderManager>
           <hashTree/>
           <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
-            <stringProp name="CounterConfig.start">7001</stringProp>
-            <stringProp name="CounterConfig.end">9000</stringProp>
+            <stringProp name="CounterConfig.start">9000</stringProp>
+            <stringProp name="CounterConfig.end">9300</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">P_CountFile</stringProp>
             <stringProp name="CounterConfig.format"></stringProp>
             <boolProp name="CounterConfig.per_user">false</boolProp>
           </CounterConfig>
+          <hashTree/>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_IDV2" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import java.security.MessageDigest;
+import java.util.Base64;
+import groovy.json.JsonSlurper;
+import groovy.json.JsonOutput;
+import groovy.json.JsonBuilder;
+
+//String samplerName = sampler.getName();
+//log.info(&quot;Current Sampler Name: &quot; + samplerName);
+
+// Retrieve P_Navegations from JMeter User Defined Variables or use default value
+if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) {
+    apiUrl = sampler.getUrl().toString();
+    def samplerRaw = sampler.getArguments().getArgument(0).getValue();
+    def json = new JsonSlurper().parseText(samplerRaw); 
+    String navigationData = json.navegations;
+    //def requestBody = 
+    log.warn(navigationData);
+	// Combine values like in signBodyRequest()
+	String rawData = apiUrl + navigationData;
+	
+	// Compute SHA-256 hash
+	MessageDigest digest = MessageDigest.getInstance(&quot;SHA-256&quot;);
+	byte[] hash = digest.digest(rawData.getBytes(&quot;UTF-8&quot;));
+	
+	// Encode in Base64 (API might expect this)
+	String requestId = Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+	
+	// Store in JMeter variable
+	vars.put(&quot;P_Request_IDV2&quot;, requestId);
+	
+	// Log output for debugging
+	//log.info(&quot;Generated request_id: &quot; + requestId);
+	//log.info(&quot;Used navigation data: &quot; + navigationData);
+} else {
+    log.warn(&quot;Sampler &apos;&quot; + sampler.getName() + &quot;&apos; does not support getUrl()&quot;);
+}
+</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/process/P03S480" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
@@ -2977,7 +3107,18 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
     &quot;12&quot;: &quot;19&quot;,&#xd;
     &quot;43&quot;: &quot;3&quot;&#xd;
   },&#xd;
-  &quot;navegations&quot;: ${P_Navegations},&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;,&#xd;
+    &quot;G000000_V03_contents1_S160&quot;,&#xd;
+    &quot;P_AVISOS_SWIPE&quot;&#xd;
+  ],&#xd;
   &quot;registers&quot;: {},&#xd;
   &quot;targetVarArray&quot;: {},&#xd;
   &quot;registerToDelete&quot;: [&#xd;
@@ -2985,25 +3126,14 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
     &quot;800&quot;&#xd;
   ],&#xd;
   &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
-  &quot;request_id&quot;: &quot;${P_Request_ID}&quot;&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
           </HTTPSamplerProxy>
-          <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[     &quot;G000000_V03_contents2_S000&quot;,     &quot;G000000_V03_footer_S000&quot;,     &quot;G000000_V03_header_S000&quot;,     &quot;G000000_V03_contents1_S511&quot;,     &quot;G000000_V03_contents1_S000&quot;,     &quot;P_VALIDA_GEOLOCATION&quot;,     &quot;G000000_V03_contents1_S485&quot;,     &quot;G000000_V03_contents1_S480&quot;,     &quot;G000000_V03_contents1_S160&quot;,     &quot;P_AVISOS_SWIPE&quot;   ]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
-          </hashTree>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="https://qa.baseinet.com/api/view/${P_URLVersion}/V03/contents1/S480" enabled="true">
             <stringProp name="HTTPSampler.domain">${BASE_URL_1}</stringProp>
             <stringProp name="HTTPSampler.port">0</stringProp>
@@ -3031,23 +3161,42 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;selectedRows&quot;: {&#xd;
+    &quot;12&quot;: &quot;19&quot;,&#xd;
+    &quot;43&quot;: &quot;3&quot;,&#xd;
+    &quot;80&quot;: &quot;6&quot;&#xd;
+  },&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;&#xd;
+  ],&#xd;
+  &quot;registers&quot;: {&#xd;
+    &quot;76&quot;: &quot;Performance Test${P_CountFile}&quot;,&#xd;
+    &quot;77&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;78&quot;: &quot;${P_Date}${P_CountFile}DP.txt&quot;,&#xd;
+    &quot;714&quot;: &quot;${P_Encoded}&quot;&#xd;
+  },&#xd;
+  &quot;targetVarArray&quot;: {},&#xd;
+  &quot;registerToDelete&quot;: [&#xd;
+    &quot;160&quot;,&#xd;
+    &quot;800&quot;&#xd;
+  ],&#xd;
+  &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
+}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
             <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Encoded" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
@@ -3077,7 +3226,7 @@ try {
 
     // 3. Generate random multiplier (1 to 100) plus X initial increase
     Random random = new Random()
-    int multiplier = random.nextInt(30) + 1 //Adjusted to max 300 rows per file
+    int multiplier = random.nextInt(10) + 80 //Adjusted to max 900 rows per file
 
     // 4. Duplicate the content
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
@@ -3117,23 +3266,51 @@ try {
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;selectedRows&quot;:{&quot;12&quot;:&quot;19&quot;,&quot;43&quot;:&quot;3&quot;,&quot;80&quot;:&quot;6&quot;},&quot;navegations&quot;:${P_Navegations},&quot;registers&quot;:{&quot;76&quot;:&quot;Performance Test${P_CountFile}&quot;,&quot;77&quot;:&quot;${P_Token}&quot;,&quot;78&quot;:&quot;${P_Date}${P_CountFile}DP.txt&quot;,&quot;504&quot;:&quot;${P_Token}&quot;,&quot;705&quot;:&quot;${P_Password}&quot;,&quot;714&quot;:&quot;${P_Encoded}&quot;,&quot;797&quot;:&quot;Confirmación&quot;,&quot;798&quot;:&quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&quot;801&quot;:&quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&quot;807&quot;:&quot;hideElement&quot;,&quot;808&quot;:&quot;hideElement&quot;,&quot;811&quot;:&quot;&#x95;&quot;},&quot;targetVarArray&quot;:{},&quot;registerToDelete&quot;:[&quot;160&quot;,&quot;800&quot;],&quot;currentTheme&quot;:&quot;THEME_WEB_BANCO_BASE&quot;,&quot;request_id&quot;:&quot;${P_Request_ID}&quot;}</stringProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;selectedRows&quot;: {&#xd;
+    &quot;12&quot;: &quot;19&quot;,&#xd;
+    &quot;43&quot;: &quot;3&quot;,&#xd;
+    &quot;80&quot;: &quot;6&quot;&#xd;
+  },&#xd;
+  &quot;navegations&quot;: [&#xd;
+    &quot;G000000_V03_contents2_S000&quot;,&#xd;
+    &quot;G000000_V03_footer_S000&quot;,&#xd;
+    &quot;G000000_V03_header_S000&quot;,&#xd;
+    &quot;G000000_V03_contents1_S511&quot;,&#xd;
+    &quot;G000000_V03_contents1_S000&quot;,&#xd;
+    &quot;P_VALIDA_GEOLOCATION&quot;,&#xd;
+    &quot;G000000_V03_contents1_S485&quot;,&#xd;
+    &quot;G000000_V03_contents1_S480&quot;,&#xd;
+    &quot;P03S480_CONF&quot;&#xd;
+  ],&#xd;
+  &quot;registers&quot;: {&#xd;
+    &quot;76&quot;: &quot;Performance Test${P_CountFile}&quot;,&#xd;
+    &quot;77&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;78&quot;: &quot;${P_Date}${P_CountFile}DP.txt&quot;,&#xd;
+    &quot;504&quot;: &quot;${P_Token}&quot;,&#xd;
+    &quot;705&quot;: &quot;${P_Password}&quot;,&#xd;
+    &quot;714&quot;: &quot;${P_Encoded}&quot;,&#xd;
+    &quot;797&quot;: &quot;Confirmación&quot;,&#xd;
+    &quot;798&quot;: &quot;EpopupClaveToken(CLOSE)|P03S480_CARGAR&quot;,&#xd;
+    &quot;801&quot;: &quot;EpopupClaveToken(OPEN)|EpopupTokenClave(REFRESH)|EtiClaveOperacion(FOCUS)&quot;,&#xd;
+    &quot;807&quot;: &quot;hideElement&quot;,&#xd;
+    &quot;808&quot;: &quot;hideElement&quot;,&#xd;
+    &quot;811&quot;: &quot;&#x95;&quot;&#xd;
+  },&#xd;
+  &quot;targetVarArray&quot;: {},&#xd;
+  &quot;registerToDelete&quot;: [&#xd;
+    &quot;160&quot;,&#xd;
+    &quot;800&quot;&#xd;
+  ],&#xd;
+  &quot;currentTheme&quot;: &quot;THEME_WEB_BANCO_BASE&quot;,&#xd;
+  &quot;request_id&quot;: &quot;${P_Request_IDV2}&quot;&#xd;
+}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="P_Navegations" elementType="Argument">
-                  <stringProp name="Argument.name">P_Navegations</stringProp>
-                  <stringProp name="Argument.value">[&quot;G000000_V03_contents2_S000&quot;,&quot;G000000_V03_footer_S000&quot;,&quot;G000000_V03_header_S000&quot;,&quot;G000000_V03_contents1_S511&quot;,&quot;G000000_V03_contents1_S000&quot;,&quot;P_VALIDA_GEOLOCATION&quot;,&quot;G000000_V03_contents1_S485&quot;,&quot;G000000_V03_contents1_S480&quot;,&quot;P03S480_CONF&quot;]</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </Arguments>
-            <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor C_FolioID" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">C_FolioID</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.arrays.116.matris[0][1]</stringProp>
@@ -3141,12 +3318,7 @@ try {
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="false">
-              <intProp name="groupSize">4</intProp>
-              <stringProp name="timeoutInMs">${P_RendezvousPoint_Time}</stringProp>
-            </SyncTimer>
-            <hashTree/>
-            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
               <stringProp name="scriptLanguage">groovy</stringProp>
               <stringProp name="parameters"></stringProp>
               <stringProp name="filename"></stringProp>
@@ -3156,7 +3328,7 @@ String RowsAdded = vars.get(&quot;P_RowsFile_&quot; + username.toString())
 String actual = vars.get(&quot;updatedNumber&quot;)
 // 1. Configuration
 def propertyName = &quot;globalCounter&quot;
-def limit = 34014
+def limit = 12000
 
 // 2. Initialize the property if it doesn&apos;t exist yet (first run)
 if (props.get(propertyName) == null) {
@@ -3214,7 +3386,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3226,7 +3398,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T06_AutorizarDispersion" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T06_AutorizarDispersion">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3457,7 +3629,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3469,7 +3641,7 @@ if (responseCode == &quot;200&quot; &amp;&amp; !responseBody.contains(error1) &a
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T07_ClickDetalleDispersion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T07_ClickDetalleDispersion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3604,7 +3776,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </HTTPSamplerProxy>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -3616,7 +3788,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T08_CerrarSesion">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_BASEINET_DRP_CLOUD_DISPERSIONES_T08_CerrarSesion" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -4015,7 +4187,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration"></stringProp>
@@ -4109,10 +4281,10 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">results/errorsSDW.xml</stringProp>
+          <stringProp name="filename">results/</stringProp>
         </ResultCollector>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="influxdbMetricsSender" elementType="Argument">
@@ -4359,7 +4531,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename">results/errors.xml</stringProp>
+          <stringProp name="filename">results/</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
