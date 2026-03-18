@@ -3711,7 +3711,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
           <stringProp name="variableNames">P_Username,P_nombreCompleto,P_Password,P_Token,P_NombreCliente,P_idCliente,P_idUnidadNegocio,P_TipoPersona,P_numeroCelular,P_correo,P_idEstatus,P_RFC</stringProp>
         </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID" enabled="true">
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor - P_Request_ID">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -6057,7 +6057,7 @@ if (sampler instanceof org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase) 
               </elementProp>
               <elementProp name="application" elementType="Argument">
                 <stringProp name="Argument.name">application</stringProp>
-                <stringProp name="Argument.value">BASEinet_QA</stringProp>
+                <stringProp name="Argument.value">BASEinet_DRP</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="measurement" elementType="Argument">
