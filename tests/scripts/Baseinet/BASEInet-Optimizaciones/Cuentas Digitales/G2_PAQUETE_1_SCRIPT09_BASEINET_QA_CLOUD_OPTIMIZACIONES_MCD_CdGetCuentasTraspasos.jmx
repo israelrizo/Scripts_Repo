@@ -223,7 +223,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T01_AbrirPaginaDeInicio">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T01_AbrirPaginaDeInicio" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -1638,7 +1638,7 @@ fWriter.close();</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T04_ClickTransferenciasBancoBASE">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT09_BASEINET_QA_CLOUD_MCD_CdGetCuentasTraspasos_T04_ClickTransferenciasBancoBASE" enabled="true">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>

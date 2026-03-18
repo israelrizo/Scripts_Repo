@@ -21,6 +21,7 @@ Scripts_Repo/
             ├── BASEInet-EstadoDeCuenta/     # Consultas de movimientos y EDO-Cuenta
             ├── BASEInet-DispersionesCRUD/   # Flujos de dispersión y CRUD de destinatarios
             └── BASEInet-Optimizaciones/     # Módulos optimizados (MCD)
+                ├── G2_PAQUETE_1_BASEINET_DRP_METODOS_GENERAL.jmx  # Suite multi-flujo
                 ├── Cuentas Digitales/
                 ├── Inicio/
                 ├── Modulo Autorizaciones/
@@ -53,6 +54,7 @@ Flujos de operación de negocio y administración de cuentas destino.
 Scripts optimizados para alta concurrencia en microservicios específicos. Divididos por submódulos.
 > 📄 **Ver [Matriz de Casos de Prueba - Optimizaciones](tests/scripts/Baseinet/BASEInet-Optimizaciones/MATRIZ_PRUEBAS_OPTIMIZACIONES.md)**
 
+- **General (Multi-Flujo)**: `G2_PAQUETE_1_BASEINET_DRP_METODOS_GENERAL.jmx` — Suite DRP que agrupa los flujos de los Scripts 01–09 (Login, Autorizaciones, Dispersiones y Consultas) en un único plan de prueba.
 - **Cuentas Digitales**: Consulta de destinatarios autorizados, traspasos, carga de lotes (`CdLoadArchivoLoteBase64`).
 - **Modulo Consultas**: Movimientos MCD, estados de cuenta MT940 y PDF.
 - **Modulo Autorizaciones**: Autorización de traspasos SPEI.
