@@ -3529,18 +3529,18 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
               </collectionProp>
             </HeaderManager>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_A01_generateOTP">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1022546951">&lt;n:code&gt;A01&lt;/n:code&gt;</stringProp>
+                <stringProp name="-21209107">&lt;wsa:Action&gt;vtAuthServer#generateOTP&lt;/wsa:Action&gt;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_A01_generateOTP">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-1022546951">&lt;n:code&gt;A01&lt;/n:code&gt;</stringProp>
-              <stringProp name="-21209107">&lt;wsa:Action&gt;vtAuthServer#generateOTP&lt;/wsa:Action&gt;</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-          </ResponseAssertion>
-          <hashTree/>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
@@ -3639,18 +3639,18 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
               </collectionProp>
             </HeaderManager>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_A01_validateOTP">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1022546951">&lt;n:code&gt;A01&lt;/n:code&gt;</stringProp>
+                <stringProp name="344719758">&lt;wsa:Action&gt;vtAuthServer#validateOTP&lt;/wsa:Action&gt;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_A01_validateOTP">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-1022546951">&lt;n:code&gt;A01&lt;/n:code&gt;</stringProp>
-              <stringProp name="344719758">&lt;wsa:Action&gt;vtAuthServer#validateOTP&lt;/wsa:Action&gt;</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-          </ResponseAssertion>
-          <hashTree/>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
@@ -3748,18 +3748,18 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
               </collectionProp>
             </HeaderManager>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000_userStatus">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1274527627">&lt;n:code&gt;000&lt;/n:code&gt;</stringProp>
+                <stringProp name="-1142493888">&lt;wsa:Action&gt;vtAuthServer#userStatus&lt;/wsa:Action&gt;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000_userStatus">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="1274527627">&lt;n:code&gt;000&lt;/n:code&gt;</stringProp>
-              <stringProp name="-1142493888">&lt;wsa:Action&gt;vtAuthServer#userStatus&lt;/wsa:Action&gt;</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.custom_message"></stringProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-          </ResponseAssertion>
-          <hashTree/>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
@@ -3886,17 +3886,17 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
               <stringProp name="RegexExtractor.match_number">1</stringProp>
             </RegexExtractor>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-450826010">&lt;status&gt;&lt;code&gt;000&lt;/code&gt;&lt;desc&gt;OK&lt;/desc&gt;&lt;techInfo&gt;OK&lt;/techInfo&gt;&lt;/status&gt;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-450826010">&lt;status&gt;&lt;code&gt;000&lt;/code&gt;&lt;desc&gt;OK&lt;/desc&gt;&lt;techInfo&gt;OK&lt;/techInfo&gt;&lt;/status&gt;</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-          </ResponseAssertion>
-          <hashTree/>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
@@ -6673,17 +6673,17 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
               <stringProp name="RegexExtractor.match_number">1</stringProp>
             </RegexExtractor>
             <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-450826010">&lt;status&gt;&lt;code&gt;000&lt;/code&gt;&lt;desc&gt;OK&lt;/desc&gt;&lt;techInfo&gt;OK&lt;/techInfo&gt;&lt;/status&gt;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
           </hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000" enabled="true">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-450826010">&lt;status&gt;&lt;code&gt;000&lt;/code&gt;&lt;desc&gt;OK&lt;/desc&gt;&lt;techInfo&gt;OK&lt;/techInfo&gt;&lt;/status&gt;</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-          </ResponseAssertion>
-          <hashTree/>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">1</intProp>
             <longProp name="timeoutInMs">10000</longProp>
