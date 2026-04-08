@@ -3250,13 +3250,13 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <stringProp name="ThreadGroup.num_threads">35</stringProp>
         <stringProp name="Threads initial delay">0</stringProp>
-        <stringProp name="Start users count">5</stringProp>
+        <stringProp name="Start users count">35</stringProp>
         <stringProp name="Start users count burst">0</stringProp>
         <stringProp name="Start users period">10</stringProp>
         <stringProp name="Stop users count">5</stringProp>
         <stringProp name="Stop users period">1</stringProp>
         <stringProp name="flighttime">3600</stringProp>
-        <stringProp name="rampUp">5</stringProp>
+        <stringProp name="rampUp">35</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
           <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -3554,9 +3554,9 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="ActionProcessor.duration">1000</stringProp>
         </TestAction>
         <hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
             <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
@@ -3651,7 +3651,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <intProp name="Assertion.test_type">2</intProp>
           </ResponseAssertion>
           <hashTree/>
-          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
           </SyncTimer>
@@ -3663,9 +3663,9 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="ActionProcessor.duration">1000</stringProp>
         </TestAction>
         <hashTree>
-          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
             <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
@@ -3773,7 +3773,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
         <hashTree>
           <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
             <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
@@ -3909,7 +3909,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
         <hashTree>
           <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
             <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
-            <stringProp name="RandomTimer.range">100</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
@@ -4031,7 +4031,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <intProp name="Assertion.test_type">2</intProp>
           </ResponseAssertion>
           <hashTree/>
-          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
           </SyncTimer>
