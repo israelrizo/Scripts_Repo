@@ -3351,7 +3351,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
             </elementProp>
             <elementProp name="P_tt" elementType="Argument">
               <stringProp name="Argument.name">P_tt</stringProp>
-              <stringProp name="Argument.value">3000</stringProp>
+              <stringProp name="Argument.value">10000</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="P_AS_ONPREM_URI" elementType="Argument">
@@ -4035,6 +4035,18 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
           </SyncTimer>
+          <hashTree/>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">1000</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">${P_tt}</stringProp>
+            <stringProp name="RandomTimer.range">1000</stringProp>
+          </UniformRandomTimer>
           <hashTree/>
         </hashTree>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_T01_IniciarSesion_AbrirPaginaDeInicio" enabled="false">
