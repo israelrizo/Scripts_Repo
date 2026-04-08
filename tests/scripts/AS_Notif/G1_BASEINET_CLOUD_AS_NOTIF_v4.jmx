@@ -3448,7 +3448,6 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
         </JSR223PreProcessor>
         <hashTree/>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_GenerarOTP">
-          <boolProp name="TransactionController.parent">true</boolProp>
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3560,7 +3559,6 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <hashTree/>
         </hashTree>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_ValidarOTP">
-          <boolProp name="TransactionController.parent">true</boolProp>
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3670,7 +3668,6 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <hashTree/>
         </hashTree>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_userStatus">
-          <boolProp name="TransactionController.parent">true</boolProp>
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -3779,7 +3776,6 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <hashTree/>
         </hashTree>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6020">
-          <boolProp name="TransactionController.parent">true</boolProp>
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -6566,7 +6562,6 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           <hashTree/>
         </hashTree>
         <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6040">
-          <boolProp name="TransactionController.parent">true</boolProp>
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
