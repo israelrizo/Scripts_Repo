@@ -3246,7 +3246,7 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
         </BackendListener>
         <hashTree/>
       </hashTree>
-      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jp@gc - Stepping Thread Group">
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="jp@gc - Stepping Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <stringProp name="ThreadGroup.num_threads">35</stringProp>
         <stringProp name="Threads initial delay">0</stringProp>
@@ -3449,11 +3449,11 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_GenerarOTP" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_GenerarOTP" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - GenerarOTP" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - GenerarOTP">
             <stringProp name="HTTPSampler.domain">${P_AS_QA_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">6104</stringProp>
             <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -3548,7 +3548,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </SyncTimer>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration">1000</stringProp>
@@ -3560,11 +3560,11 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_ValidarOTP" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_ValidarOTP" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - ValidarOTP" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - ValidarOTP">
             <stringProp name="HTTPSampler.domain">${P_AS_QA_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">6104</stringProp>
             <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -3657,7 +3657,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </SyncTimer>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration">1000</stringProp>
@@ -3669,11 +3669,11 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_userStatus" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_AS_userStatus" enabled="false">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - userStatus" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_AS_QA_CLOUD_URI}:6104/tkAuthServer - userStatus">
             <stringProp name="HTTPSampler.domain">${P_AS_QA_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">6104</stringProp>
             <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -3759,13 +3759,13 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
             <longProp name="timeoutInMs">100000</longProp>
           </SyncTimer>
           <hashTree/>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="false">
           <intProp name="ActionProcessor.action">1</intProp>
           <intProp name="ActionProcessor.target">0</intProp>
           <stringProp name="ActionProcessor.duration">1000</stringProp>
@@ -3777,18 +3777,18 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_SendNotification port 6020" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_SendNotification port 6020">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort1}/NotifServer/sendNotification" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort1}/NotifServer/sendNotification">
             <stringProp name="TestPlan.comments">http://10.64.13.249:6020/NotifServer - getPushProviders</stringProp>
             <stringProp name="HTTPSampler.domain">${P_NOTIF_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">${P_NotifPort1}</stringProp>
             <stringProp name="HTTPSampler.protocol">http</stringProp>
             <stringProp name="HTTPSampler.path">NotifServer/sendNotification</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -3888,7 +3888,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
               <stringProp name="RegexExtractor.match_number">1</stringProp>
             </RegexExtractor>
             <hashTree/>
-            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000" enabled="true">
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - CODE_000">
               <collectionProp name="Asserion.test_strings">
                 <stringProp name="-450826010">&lt;status&gt;&lt;code&gt;000&lt;/code&gt;&lt;desc&gt;OK&lt;/desc&gt;&lt;techInfo&gt;OK&lt;/techInfo&gt;&lt;/status&gt;</stringProp>
               </collectionProp>
@@ -4013,9 +4013,9 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
-            <longProp name="timeoutInMs">100000</longProp>
+            <longProp name="timeoutInMs">80000</longProp>
           </SyncTimer>
           <hashTree/>
         </hashTree>
@@ -4031,11 +4031,11 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
-          <stringProp name="ConstantTimer.delay">80000</stringProp>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+          <stringProp name="ConstantTimer.delay">120000</stringProp>
         </ConstantTimer>
         <hashTree/>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6020" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6020">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
@@ -4157,7 +4157,7 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort1}/NotifServer/getPushProviders" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort1}/NotifServer/getPushProviders">
             <stringProp name="TestPlan.comments">http://10.64.13.249:6020/NotifServer - getPushProviders</stringProp>
             <stringProp name="HTTPSampler.domain">${P_NOTIF_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">${P_NotifPort1}</stringProp>
@@ -4271,9 +4271,9 @@ vars.put(&quot;P_Request_ID&quot;, requestId);
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+          <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
             <intProp name="groupSize">35</intProp>
-            <longProp name="timeoutInMs">100000</longProp>
+            <longProp name="timeoutInMs">80000</longProp>
           </SyncTimer>
           <hashTree/>
         </hashTree>
@@ -6927,11 +6927,11 @@ log.info(&quot;CSV saved at: &quot; + csvFilePath);</stringProp>
           </UniformRandomTimer>
           <hashTree/>
         </hashTree>
-        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6040" enabled="true">
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Script_BASEINET_LOGIN_TX_Notif_getPushProviders port 6040">
           <boolProp name="TransactionController.includeTimers">false</boolProp>
         </TransactionController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort2}/NotifServer - getPushProviders" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="http://${P_NOTIF_CLOUD_URI}:${P_NotifPort2}/NotifServer - getPushProviders">
             <stringProp name="TestPlan.comments">http://10.64.13.249:6020/NotifServer - getPushProviders</stringProp>
             <stringProp name="HTTPSampler.domain">${P_NOTIF_CLOUD_URI}</stringProp>
             <stringProp name="HTTPSampler.port">${P_NotifPort2}</stringProp>
