@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="SCALABILITY_TEST - SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="P_DNS" elementType="Argument">
+            <stringProp name="Argument.name">P_DNS</stringProp>
+            <stringProp name="Argument.value">10.51.53.85</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_PORT" elementType="Argument">
+            <stringProp name="Argument.name">P_PORT</stringProp>
+            <stringProp name="Argument.value">61080</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_PathPrefix" elementType="Argument">
+            <stringProp name="Argument.name">P_PathPrefix</stringProp>
+            <stringProp name="Argument.value">api/v1/bdt</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_tt" elementType="Argument">
+            <stringProp name="Argument.name">P_tt</stringProp>
+            <stringProp name="Argument.value">6000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.num_threads">100</stringProp>
+        <stringProp name="Threads initial delay">0</stringProp>
+        <stringProp name="Start users count">20</stringProp>
+        <stringProp name="Start users count burst">0</stringProp>
+        <stringProp name="Start users period">300</stringProp>
+        <stringProp name="Stop users count">5</stringProp>
+        <stringProp name="Stop users period">1</stringProp>
+        <stringProp name="flighttime">2420</stringProp>
+        <stringProp name="rampUp">50</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </kg.apc.jmeter.threads.SteppingThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T01_Signature">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/signature">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/signature</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;idUsuario&quot;: &quot;JOSE LUIS MONTOYA SANCHEZ&quot;,&#xd;
+  &quot;identificador&quot;: &quot;MKO100615RE0&quot;,&#xd;
+  &quot;tipoPersona&quot;: &quot;moral&quot;,&#xd;
+  &quot;numSerieCrt&quot;: &quot;00000100000100016371&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T02_Client_stats">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/clients/stats">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/clients/stats</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;idFuncionarioAutorizado&quot;: &quot;JOSE LUIS MONTOYA SANCHEZ&quot;,&#xd;
+  &quot;identificador&quot;: &quot;MKO100615RE0&quot;,&#xd;
+  &quot;tipoPersona&quot;: &quot;moral&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T03_Client_stats_save" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/clients/stats/save">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/clients/stats/save</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;idFuncionarioAutorizado&quot;: &quot;JOSE LUIS MONTOYA SANCHEZ&quot;,&#xd;
+  &quot;tipoIdNumeroIndentificacion&quot;: &quot;123&quot;,&#xd;
+  &quot;identificador&quot;: &quot;MKO100615RE0&quot;,&#xd;
+  &quot;tipoPersona&quot;: &quot;moral&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T04_Client_decode">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/clients/decode">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/clients/decode</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;codigoRespuesta&quot;: 0,&#xd;
+    &quot;mensajeRespuesta&quot;: &quot;Consulta exitosa.&quot;,&#xd;
+    &quot;cveCifrada&quot;: &quot;A5QF0cV4djm0aEUAEudqL2BRRfnHJLJF+2GdWSd0512i4zzkvu0uC13oGmDGbBIShjCA7Pn7NuGKuL2RF9rFEV+ThwuufwqC73Vhza8LrsXweb5o61XCed9bWX9wI6ELwvAASh3w9CWfgN7/y/txTZhCurc3NCJwa3GGcPoCglHHL2TxEMfylxnD0g8p7s0MSfhRJTmGtFouScqAfxMlIXEpZfft26zaUY7Eh4arp8eH2rq+P7ZcWXTsi7CGh+kYusWcbbueMQC+S/LeD5HpEcGO7ztHsEB6PfFDlJbLp+LiHXdZIWSiVG5hWlxivy2HZ6h07T91xf/rg+zao9NUAU3V2mV8KC2BBzyeG0f1UHSuN78CbJunkYyohLk7jyO5xg0h59MvXvPDX7FY4HN5eb0lCU3L/bpFKFLB/6hilfGiPBfTXwKXEvvRw52AFZjCEJ3ZHAqUjFDfVxc5UavK+IISfRXbxjJn4Q/HrU144UcVMTuntLitmlDjtnHzXbojHcfIhkGHRptbXO9scXIFofkme6lf3PhjIhtdzznMPVTQyUMs/5dCHFjzQhuYZsktDPQcsnRHxQaVUCLCkwWm3RuRaCrIzxqqzskTL1jHSSa2A+cGqTDFMNiSRo+LVYBA41kGWp/LNQjwzXF/weHMlV0k8ODJyAmABY9HcIHVI1Q=&quot;,&#xd;
+    &quot;fechaHora&quot;: &quot;27/02/2026 18:19:00&quot;,&#xd;
+    &quot;cliente&quot;: &quot;f&quot;,&#xd;
+    &quot;numSerieCrt&quot;: &quot;00000100000199901327&quot;,&#xd;
+    &quot;infoFirmado&quot;: &quot;SHA256withRSA&quot;,&#xd;
+    &quot;firma&quot;: &quot;EX/E0FPdxiTKfKSiqXwraOcEZNCu22JEq8ymPHm6FKHzHyBkHpag1skzsXqvFOrJaUATCzf+u1pKbOzrSTxNSePTbN8txj86EOBhKCwiLIDLVMlYsl9UjdM6BNfkRX+yLzF/0k94vSZD2h+7HUaLOVgPeCt0QLY71wv4IT6JR9b0OSL+vT2BV1KrpudDeRQoyK5pUbA5iG9avLrzQUsBKE/fLL46JWsvVL7ZZe4Tdm04UYGY0hJ+0EmMr1s+j0v3w+8R0eEcnmVkPXA9fvhXtVdn3hOFinFIKHfxcBB5zMdYzE/0KtfvDVAXrP16+1ZzLRMPvLTXbqM4Fcs4r0zNqxbPNy0KSvdXjhDukeLDFok3DY88btWci5LoCq78qM+sscr8gBsKjuQ1vABXNpOGD0+ZxCLmwjNmssU+qS/5szDNMj6vcQpZUChPrBQ2EnwrtGgGLBDljoa5RMm7OZoEge4UYO94ht8rjzfNu/G1DhTr3h+X+zy7y6KLLNAx7yXz/GDC3tLsTgJO8eLioM/zVkjxfblXjghHddpFpZ51ou62Igb3/Sl3CQ9sTqYX19EKRCgZfdErivNqFZEXc5lbI+Dhm1ulIaUhDjl9lyi839hs7VkAiM6lTa4MVTqdjwkBFYx2HwhjdsTqCxXzgN0c7oQAAxpjFJmpOcv2usUkEEU=&quot;,&#xd;
+    &quot;advertenciaCliente&quot;: &quot;Usted está consultando información de una persona que no es cliente de su institución financiera. Este tipo de consultas requieren que cuente con autorización firmada por la persona dueña de la información.&quot;,&#xd;
+    &quot;jsonCifrado&quot;: &quot;yICJzZwuD3TQYfrnhgGL6R2Ga8boXctaGxEzY+mlDy7KuM1VhTVKc12CMp3HqEhkaH09PiOtsBEkRrdZp0ibrDnEw3QwdIrzjsa9NUD0pNPK8tzbg3JJkS9VgRJHDsX4ZJqhBo71KqcgoBBujT/ZCBYX9wd4t2IIvQqqiYX5TP4k4XeV10t3D+dOPj/EW1tRjCmTOt+vmSsWtyA2AQ8mbvGvBs3LSz8e+VQcZ287xmiU0ZVHhNN2/mDEOWxY+xTrk2jnZ0MuNlfpchG3LmPxzK8IZve8iJOueAohSbvSKAOA6fqbPi1fJlr057iKoOpA5X6ozNATvSqV2tgBclR/N2nqgmmUI5LVV9ggTFwUdiKV5OkiZrksgLRJp0Dg1v6iKXfs1VZGimFpeyCR9EuysFqK/Dyanzsloua3+GiLxSuAZWTVvV2FzZBaA6Bf4SkJfHkCzwGv/kwfRNY8OsNVtGRXwkTW6O3YEG3wnMuCeo8py6xYwScPaH7ZPXlYxyhH10rjMbB5HYG6Vod9lFMpmrHhg0gkeeW02a16WlzCrjpWFpvATxp64iY1CuFJrA9QEyCpzck7MDiOgRU0Lf1ywWjAVQYrXTarguvYVsRpG5F7RsQ7UM3eagK94+7OiBewCgYY351LmZvrXssERYixU1lBklQoouBIgEFzam78FEDC3KelCJ9NHWzWngOXl28cGi3VSASPbOd+CDX1lMFt15R2qHdn1jJZ8MmDJx1e6m1NOFPlJnTiHXWQv4ET2Eh5fbngY4/e4McRZU1HlFNqokqprGT5s/vk3wVT4Cv1EStklpmWzcntW+l0XwFv02HEL8C2sptV/6PzvkQvmJJsyELwt/e6OUQPs883QggsXpnOT5Adw1eSqlfM5nloQnKeO6mC/P+RsCs4g0OdcXKal7M7iMPbiagOenUWWZwAhGpzIzyACWHdZurIeXJVPmfxnZUoSM+R06NK9s/MLt/ory/fPZjid4i7eOUacR+wrAPu/Bls9IZ8dGUG3x3c1OsJPak9MnLP7FRTnEPgbPYNydszIhJSovnoHLP8HOyrnvCyD06O9a4xfAR1sidzwYm7z9ZHVwuNcxBlgBORVQEnxN1cGPdFkzO6q6CEFWy6icM8EwUuY2p7E0/GJZ9g/uzZyUBZDxsGfNCYdoHbmcwmEnXD+RAaeuGVhJJC8wR2uXvFN8bn3TYjBMIyrfppJJ/SYO4i7OGAeSGv2Ur19DkCxnFO+VoUa2atAflcqjP92Mz1jI7NDY2ooZ2LwCfBIyothH9OvnIipLy+lDCgYhgYoGwP1Cx6qI+NXkjfihZugi8nWD1GdtTYE1JBynvSgNfDT4lLvhWrosR+hJ3fGcJXlTAY4D6cB71wd+muxe9KH2ZqwfP1v/VAU1Nj8vdl3RrlPozpRPr+SJacle1nooWSJbgBD3M2B88Y2ViB+RWqryVEZ4lnCtn1CcuM7TSMLCKe0VbzUWrz/II+XEUs0BwqVzlGHDnYTqiseGAmaKmP6eFi8rrJVsckDt+YK0w7DMoqTXbbAECGyUgCDAo1KVAcYNpCIas3+X80xkAxL12sfjg=&quot;&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert ID_CLIENTE_ORIGINADOR">
+              <stringProp name="JSON_PATH">$.ID_CLIENTE_ORIGINADOR</stringProp>
+              <stringProp name="EXPECTED_VALUE"></stringProp>
+              <boolProp name="JSONVALIDATION">false</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">true</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T05_Health">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/health">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/health</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller" enabled="false"/>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T06_batch_process-deltas">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/process-deltas">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/process-deltas</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="-331542869">Proceso de Deltas iniciado en segundo plano</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_jobIdDelta">
+                <stringProp name="JSONPostProcessor.referenceNames">C_jobIdDelta</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.jobId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T07_Estado_JobID_Delta">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/${C_jobIdDelta}">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_jobIdDelta}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="464938111">El proceso se está ejecutando</stringProp>
+                  <stringProp name="-2024863190">${C_jobIdDelta}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T08_batch_process-all">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/process-all">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/process-all</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="906599310">Proceso masivo (ALL) iniciado en segundo plano</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion">
+                <stringProp name="JSON_PATH">$.jobId</stringProp>
+                <stringProp name="EXPECTED_VALUE">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</stringProp>
+                <boolProp name="JSONVALIDATION">true</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">true</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_jobIdAll">
+                <stringProp name="JSONPostProcessor.referenceNames">C_jobIdAll</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.jobId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T09_Estado_JobID_All">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/${C_jobIdAll}">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_jobIdAll}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="464938111">El proceso se está ejecutando</stringProp>
+                  <stringProp name="221273761">${C_jobIdAll}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T10_Health">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/certificate/health">
+            <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+            <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/certificate/health</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert certificado Cargado True">
+              <stringProp name="JSON_PATH">$.certificadoCargado</stringProp>
+              <stringProp name="EXPECTED_VALUE">true</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <intProp name="groupSize">35</intProp>
+              <longProp name="timeoutInMs">100000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1560</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller"/>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T06_batch_process-deltas">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/process-deltas">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/process-deltas</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="-331542869">Proceso de Deltas iniciado en segundo plano</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_jobIdDelta" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_jobIdDelta</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.jobId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T07_Estado_JobID_Delta">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/${C_jobIdDelta}">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_jobIdDelta}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="464938111">El proceso se está ejecutando</stringProp>
+                  <stringProp name="-2024863190">${C_jobIdDelta}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T08_batch_process-all">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/process-all" enabled="true">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/process-all</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="906599310">Proceso masivo (ALL) iniciado en segundo plano</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion" enabled="true">
+                <stringProp name="JSON_PATH">$.jobId</stringProp>
+                <stringProp name="EXPECTED_VALUE">[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}</stringProp>
+                <boolProp name="JSONVALIDATION">true</boolProp>
+                <boolProp name="EXPECT_NULL">false</boolProp>
+                <boolProp name="INVERT">false</boolProp>
+                <boolProp name="ISREGEX">true</boolProp>
+              </JSONPathAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_jobIdAll" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_jobIdAll</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.jobId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BDT_ESTADISTICA_TRANSACCIONAL_T09_Estado_JobID_All">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="api/v1/bdt/batch/${C_jobIdAll}" enabled="true">
+              <stringProp name="HTTPSampler.domain">${P_DNS}</stringProp>
+              <stringProp name="HTTPSampler.port">${P_PORT}</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_jobIdAll}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="464938111">El proceso se está ejecutando</stringProp>
+                  <stringProp name="221273761">${C_jobIdAll}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message">FAILED! Response was: ${__groovy(prev.getResponseDataAsString())}</stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">http://localhost:8086/write?db=BDT_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">BDT_Estadistica_Transaccional</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">LOAD_TESTING</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
