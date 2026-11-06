@@ -1,0 +1,47 @@
+clientId,contentId,documentType,taxId,teardown,estadoFinalEsperado,binarioAlFinal,notas
+6100097,068VB00000JpdQzYAJ,ine,LTQA800182F81,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100098,068VB00000JejmfYAB,ine,LTQA800183F82,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100099,068VB00000If4LRYAZ,pasaporte,LTQA800184F83,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100100,068VB00000If4N3YAJ,pasaporte,LTQA800185F84,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100101,068VB00000JedGYYAZ,pasaporte,LTQA800186F85,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100102,068VB00000JeiYsYAJ,licencia,LTQA800187F86,8b via outbox,NEEDS_ATTENTION (terminal),404 (descarte automatico),"1er POST: 202 status=PROCESSED. 2do POST identico: 202 status=DUPLICATE y el estado NO cambia. Usar un eventId fijo, no {{$guid}}."
+6100103,068VB00000J7zjlYAB,ine,LTQA800188F87,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100104,068VB00000JpdQzYAJ,ine,LTQA800189F88,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100105,068VB00000JejmfYAB,ine,LTQA800190F89,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100106,068VB00000If4LRYAZ,pasaporte,LTQA800191F90,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100107,068VB00000If4N3YAJ,pasaporte,LTQA800192F91,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100108,068VB00000JedGYYAZ,pasaporte,LTQA800193F92,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100109,068VB00000JeiYsYAJ,licencia,LTQA800194F93,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100110,068VB00000JXawEYAT,acta,LTQ010120M19,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100111,068VB00000JXbM3YAL,poder,LTQ010121M20,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100112,068VB00000J7zjlYAB,ine,LTQA800195F94,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100113,068VB00000JpdQzYAJ,ine,LTQA800196F95,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100114,068VB00000JejmfYAB,ine,LTQA800197F96,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100115,068VB00000If4LRYAZ,pasaporte,LTQA800198F97,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100116,068VB00000If4N3YAJ,pasaporte,LTQA800199F98,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100117,068VB00000JedGYYAZ,pasaporte,LTQA800200F99,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100118,068VB00000JeiYsYAJ,licencia,LTQA800201F100,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100119,068VB00000JXawEYAT,acta,LTQ010122M21,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100120,068VB00000JXbM3YAL,poder,LTQ010123M22,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100121,068VB00000J7zjlYAB,ine,LTQA800202F101,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100122,068VB00000JpdQzYAJ,ine,LTQA800203F102,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100123,068VB00000JejmfYAB,ine,LTQA800204F103,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100124,068VB00000If4LRYAZ,pasaporte,LTQA800205F104,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100125,068VB00000If4N3YAJ,pasaporte,LTQA800206F105,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100126,068VB00000JedGYYAZ,pasaporte,LTQA800207F106,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100127,068VB00000JeiYsYAJ,licencia,LTQA800208F107,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100128,068VB00000JXawEYAT,acta,LTQ010124M23,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100129,068VB00000JXbM3YAL,poder,LTQ010125M24,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100130,068VB00000J7zjlYAB,ine,LTQA800209F108,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100131,068VB00000JpdQzYAJ,ine,LTQA800210F109,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100132,068VB00000JejmfYAB,ine,LTQA800211F110,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100133,068VB00000If4LRYAZ,pasaporte,LTQA800212F111,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100134,068VB00000If4N3YAJ,pasaporte,LTQA800213F112,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100135,068VB00000JedGYYAZ,pasaporte,LTQA800214F113,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100136,068VB00000JeiYsYAJ,licencia,LTQA800215F114,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100137,068VB00000JXawEYAT,acta,LTQ010126M25,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100138,068VB00000JXbM3YAL,poder,LTQ010127M26,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),acta/poder no pasan por SF_CONFIRM_PENDING: omitir el paso 3 y esperar BOW_REVIEW en la primera compuerta.
+6100139,068VB00000J7zjlYAB,ine,LTQA800216F115,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100140,068VB00000JpdQzYAJ,ine,LTQA800217F116,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100141,068VB00000JejmfYAB,ine,LTQA800218F117,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).
+6100142,068VB00000If4LRYAZ,pasaporte,LTQA800219F118,8a DELETE binary,BOW_REVIEW,404 (liberado a mano),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).

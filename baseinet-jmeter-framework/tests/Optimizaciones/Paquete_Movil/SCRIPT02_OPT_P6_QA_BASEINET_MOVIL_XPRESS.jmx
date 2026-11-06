@@ -1,0 +1,1268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="SCRIPT01_OPT_P6_QA_BASEINET_MOVIL_METODOS_GENERALES">
+      <stringProp name="TestPlan.comments">SOAP/HTTP flow: DoSignIn → DoTraspasoSPEI → DoAutorizarTraspaso</stringProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="IP" elementType="Argument">
+            <stringProp name="Argument.name">IP</stringProp>
+            <stringProp name="Argument.value">bsntsv8081.q.gslb</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="Puerto_Movil" elementType="Argument">
+            <stringProp name="Argument.name">Puerto_Movil</stringProp>
+            <stringProp name="Argument.value">8081</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="WebSite_Movil" elementType="Argument">
+            <stringProp name="Argument.name">WebSite_Movil</stringProp>
+            <stringProp name="Argument.value">BaseinetMovil</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager">
+        <boolProp name="clearEachIteration">true</boolProp>
+        <boolProp name="useExpires">true</boolProp>
+        <boolProp name="CacheManager.controlledByThread">false</boolProp>
+      </CacheManager>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+        <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+        <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.implementation"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="BASEINET_MOVIL_METODOS_GENERALES - LOAD XPRESS">
+        <intProp name="ThreadGroup.num_threads">20</intProp>
+        <intProp name="ThreadGroup.ramp_time">100</intProp>
+        <longProp name="ThreadGroup.duration">3600</longProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
+          <stringProp name="delimiter">,</stringProp>
+          <stringProp name="fileEncoding"></stringProp>
+          <stringProp name="filename">data/Movil_Usuarios_Activos_JuanPablo.csv</stringProp>
+          <boolProp name="ignoreFirstLine">true</boolProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <stringProp name="shareMode">shareMode.all</stringProp>
+          <boolProp name="stopThread">false</boolProp>
+          <stringProp name="variableNames">P_Username,C_CuentaFija,P_Pwd</stringProp>
+        </CSVDataSet>
+        <hashTree/>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BASEINET_QA_MOVIL_OPT6_T02_TRASPASO_SPEI" enabled="false">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetCuentas" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:GetCuentas&gt;&#xd;
+         &lt;tem:session&gt;${C_IdSesion}&lt;/tem:session&gt;&#xd;
+         &lt;tem:idDivisa&gt;&lt;/tem:idDivisa&gt;&#xd;
+      &lt;/tem:GetCuentas&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetCuentas" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/GetCuentas</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="false">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_Cuenta</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdCuenta&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdCuenta&gt;&lt;a:IdDivisa&gt;MXP</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import groovy.xml.XmlSlurper
+
+// 1. Get the response data
+def responseString = prev.getResponseDataAsString()
+
+try {
+    // 2. Parse the XML 
+    def xml = new XmlSlurper().parseText(responseString)
+    
+    // 3. Search the entire XML tree (&apos;**&apos;) for the Cuenta node holding MXP
+    def targetCuenta = xml.&apos;**&apos;.find { node -&gt;
+        node.name() == &apos;Cuenta&apos; &amp;&amp; node.IdDivisa.text() == &apos;MXP&apos;
+    }
+    
+    // 4. If the node is found, extract and validate the 18-digit IdCuenta
+    if (targetCuenta != null) {
+        def idCuenta = targetCuenta.IdCuenta.text()
+        
+        if (idCuenta.matches(&quot;\\d{18}&quot;)) {
+            log.info(&quot;Successfully extracted MXP IdCuenta: &quot; + idCuenta)
+            vars.put(&quot;C_Cuenta&quot;, idCuenta) // Saves to a JMeter variable
+        } else {
+            log.warn(&quot;Found MXP account, but IdCuenta is not 18 digits: &quot; + idCuenta)
+        }
+    } else {
+        log.warn(&quot;Could not find a Cuenta node with IdDivisa = MXP.&quot;)
+    }
+    
+} catch (Exception e) {
+    log.error(&quot;Failed to parse the XML response: &quot; + e.getMessage())
+}</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="AddDestinatarioTraspaso" enabled="false">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:AddDestinatarioTraspaso&gt;&#xd;
+         &lt;tem:SessionId&gt;${C_IdSesion}&lt;/tem:SessionId&gt;&#xd;
+         &lt;tem:clabe&gt;145180006272001014&lt;/tem:clabe&gt;&#xd;
+         &lt;tem:nombreDestinatario&gt;Juan Pablo Rojas Martinez&lt;/tem:nombreDestinatario&gt;&#xd;
+         &lt;tem:tipoPersona&gt;Fisica&lt;/tem:tipoPersona&gt;&#xd;
+         &lt;tem:apellidoPaterno&gt;Rojas&lt;/tem:apellidoPaterno&gt;&#xd;
+         &lt;tem:apellidoMaterno&gt;Martinez&lt;/tem:apellidoMaterno&gt;&#xd;
+         &lt;tem:rfcOrCurp&gt;ROMJ920719HDFJRN01&lt;/tem:rfcOrCurp&gt;&#xd;
+         &lt;tem:email&gt;jrojas@bancobase.com&lt;/tem:email&gt;&#xd;
+         &lt;tem:idBanco&gt;11&lt;/tem:idBanco&gt;&#xd;
+         &lt;tem:idDivisa&gt;MXP&lt;/tem:idDivisa&gt;&#xd;
+         &lt;tem:idTipoDestinatario&gt;1&lt;/tem:idTipoDestinatario&gt;&#xd;
+         &lt;tem:cuentaOrigen&gt;${C_Cuenta}&lt;/tem:cuentaOrigen&gt;&#xd;
+         &lt;tem:importe&gt;0.01&lt;/tem:importe&gt;&#xd;
+         &lt;tem:concepto&gt;Prueba de banco tercero&lt;/tem:concepto&gt;&#xd;
+         &lt;tem:referenciaNumerica&gt;&lt;/tem:referenciaNumerica&gt;&#xd;
+         &lt;tem:esFrecuente&gt;false&lt;/tem:esFrecuente&gt;&#xd;
+         &lt;tem:password&gt;&lt;/tem:password&gt;&#xd;
+         &lt;tem:OTP&gt;&lt;/tem:OTP&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+         &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:AddDestinatarioTraspaso&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetDestinatarios" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/AddDestinatarioTraspaso</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdDestinatario</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdTraspaso</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetDestinatarios" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:GetDestinatarios&gt;&#xd;
+         &lt;tem:session&gt;${C_IdSesion}&lt;/tem:session&gt;&#xd;
+         &lt;tem:tipoDestinatario&gt;0&lt;/tem:tipoDestinatario&gt;&#xd;
+      &lt;/tem:GetDestinatarios&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetDestinatarios" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/GetDestinatarios</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="false">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdDestinatario</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdCliente&gt;635&lt;/a:IdCliente&gt;&lt;a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <XPath2Extractor guiclass="XPath2ExtractorGui" testclass="XPath2Extractor" testname="XPath2 Extractor" enabled="true">
+              <stringProp name="XPathExtractor2.default">NOT_FOUND</stringProp>
+              <stringProp name="XPathExtractor2.refname">C_ID_Dest_Pablo</stringProp>
+              <stringProp name="XPathExtractor2.matchNumber">1</stringProp>
+              <stringProp name="XPathExtractor2.xpathQuery">//*[local-name()=&apos;Destinatario&apos;][*[local-name()=&apos;Cuenta&apos;]=&apos;145180006272001014&apos;]/*[local-name()=&apos;IdDestinatario&apos;]/text()</stringProp>
+              <stringProp name="XPathExtractor2.namespaces"></stringProp>
+            </XPath2Extractor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">// 1. Obtener las variables del hilo
+def usuario = vars.get(&quot;P_Username&quot;) ?: &quot;DESCONOCIDO&quot;
+def idDestino = vars.get(&quot;C_ID_Dest_Pablo&quot;) ? vars.get(&quot;C_ID_Dest_Pablo&quot;).trim() : &quot;&quot;
+
+// 2. Definir los dos archivos de salida
+def archivoExitosos = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_pablo.csv&quot;)
+def archivoNotFound = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_not_found.csv&quot;)
+
+// Función auxiliar para inicializar archivo con encabezado si no existe
+def escribirRegistro = { File archivo, String fila -&gt;
+    synchronized(archivo) {
+        if (!archivo.exists()) {
+            archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+                out.writeLine(&quot;P_Username,C_ID_Dest_Pablo&quot;)
+            }
+        }
+        archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+            out.writeLine(fila)
+        }
+    }
+}
+
+// 3. Evaluar y clasificar el resultado
+if (idDestino == &quot;NOT_FOUND&quot; || idDestino.isEmpty() || idDestino == &quot;C_ID_Dest_Pablo_MATCH_FAILED&quot;) {
+    // Escribir en el archivo de no encontrados
+    escribirRegistro(archivoNotFound, &quot;${usuario},${idDestino ?: &apos;NOT_FOUND&apos;}&quot;)
+    log.warn(&quot;Destinatario NO encontrado para el usuario: ${usuario}&quot;)
+} else {
+    // Escribir en el archivo de éxitos
+    escribirRegistro(archivoExitosos, &quot;${usuario},${idDestino}&quot;)
+}</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DoTraspasoSPEI" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:DoTraspasoSPEI&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+         &lt;tem:idCuenta&gt;${C_Cuenta}&lt;/tem:idCuenta&gt;&#xd;
+         &lt;tem:idDestinataio&gt;${C_ID_Dest_Pablo}&lt;/tem:idDestinataio&gt;&#xd;
+         &lt;tem:importe&gt;1&lt;/tem:importe&gt;&#xd;
+         &lt;tem:referenciaNumerica&gt;12345&lt;/tem:referenciaNumerica&gt;&#xd;
+         &lt;tem:concepto&gt;Pruebas perf&lt;/tem:concepto&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+         &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:DoTraspasoSPEI&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - DoTraspasoSPEI" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/DoTraspasoSPEI</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdTraspaso</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number"></stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DoAutorizarTraspaso_SPEI" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:DoAutorizarTraspaso&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+           &lt;tem:idTraspaso&gt;${C_IdTraspaso}&lt;/tem:idTraspaso&gt;&#xd;
+         &lt;tem:password&gt;${P_Pwd}&lt;/tem:password&gt;&#xd;
+         &lt;tem:OTP&gt;&lt;/tem:OTP&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+          &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:DoAutorizarTraspaso&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - DoAutorizarTraspaso" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/DoAutorizarTraspaso</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import java.io.File
+import java.io.FileWriter
+import java.io.BufferedWriter
+
+// 1. Obtener los valores almacenados en las variables de JMeter
+String pUsername = vars.get(&quot;P_Username&quot;) ?: &quot;&quot;
+String cCuenta = vars.get(&quot;C_Cuenta&quot;) ?: &quot;&quot;
+
+// 2. Determinar si fue autorizada según el código de respuesta HTTP
+String responseCode = prev.getResponseCode()
+boolean esAutorizada = (responseCode == &quot;200&quot;)
+
+// 3. Definir las rutas para ambos archivos
+String basePath = &quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/&quot;
+String filePath = esAutorizada ? 
+    &quot;${basePath}resultado_transfer_Autorizadas_06.csv&quot; : 
+    &quot;${basePath}resultado_transfer_NoAutorizadas_06.csv&quot;
+
+File csvFile = new File(filePath)
+
+// 4. Escribir datos (seguro para ejecución multihilo)
+synchronized(this.class) {
+    try {
+        boolean fileExists = csvFile.exists() &amp;&amp; csvFile.length() &gt; 0
+        
+        FileWriter fw = new FileWriter(csvFile, true)
+        BufferedWriter bw = new BufferedWriter(fw)
+        
+        // Escribe la cabecera solo si el archivo es nuevo o está vacío
+        if (!fileExists) {
+            bw.write(&quot;P_Username,C_Cuenta,ResponseCode&quot;)
+            bw.newLine()
+        }
+        
+        // Escribe el registro en el archivo correspondiente
+        bw.write(&quot;${pUsername},${cCuenta},${responseCode}&quot;)
+        bw.newLine()
+        
+        // Limpiar y cerrar flujos
+        bw.flush()
+        bw.close()
+        fw.close()
+    } catch (Exception e) {
+        log.error(&quot;Error al escribir el archivo CSV: &quot; + e.getMessage())
+    }
+}</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT02_BASEINET_QA_MOVIL_OPT6_T01_TRASPASO_XPRESS">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DoSignIn">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/ActivationMovilService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:DoSignIn&gt;&#xd;
+         &lt;tem:usuario&gt;${P_Username}&lt;/tem:usuario&gt;&#xd;
+         &lt;tem:password&gt;${P_Pwd}&lt;/tem:password&gt;&#xd;
+         &lt;tem:OTP&gt;&lt;/tem:OTP&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+         &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:DoSignIn&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - DoSignIn" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/IActivationMovilService/DoSignIn</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">gal</stringProp>
+                  <stringProp name="Header.value">156</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">gla</stringProp>
+                  <stringProp name="Header.value">156.2356</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">glo</stringProp>
+                  <stringProp name="Header.value">45.56329</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate P_infoDevice" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">
+def uuid = java.util.UUID.randomUUID().toString()
+def randomNum = (new Random().nextInt(200) + 1)
+def infoDevice = uuid + &quot;:&quot; + randomNum
+vars.put(&quot;P_infoDevice&quot;, infoDevice)
+            </stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Extract IdSesion" enabled="true">
+              <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+              <stringProp name="RegexExtractor.refname">C_IdSesion</stringProp>
+              <stringProp name="RegexExtractor.regex">&lt;a:Type&gt;http://schemas\.base\.com\.mx/identity/session&lt;/a:Type&gt;&lt;a:Value&gt;([^&lt;]+)&lt;/a:Value&gt;</stringProp>
+              <stringProp name="RegexExtractor.template">$1$</stringProp>
+              <stringProp name="RegexExtractor.default">NOT_FOUND</stringProp>
+              <stringProp name="RegexExtractor.match_number">1</stringProp>
+              <stringProp name="RegexExtractor.scope">main</stringProp>
+              <boolProp name="RegexExtractor.default_empty_value">false</boolProp>
+            </RegexExtractor>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">vars.putObject(&quot;iterationStartTime&quot;, System.currentTimeMillis())</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetCuentas" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:GetCuentas&gt;&#xd;
+         &lt;tem:session&gt;${C_IdSesion}&lt;/tem:session&gt;&#xd;
+         &lt;tem:idDivisa&gt;&lt;/tem:idDivisa&gt;&#xd;
+      &lt;/tem:GetCuentas&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetCuentas" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/GetCuentas</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="false">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_Cuenta</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdCuenta&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdCuenta&gt;&lt;a:IdDivisa&gt;MXP</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import groovy.xml.XmlSlurper
+
+// 1. Get the response data
+def responseString = prev.getResponseDataAsString()
+
+try {
+    // 2. Parse the XML 
+    def xml = new XmlSlurper().parseText(responseString)
+    
+    // 3. Search the entire XML tree (&apos;**&apos;) for the Cuenta node holding MXP
+    def targetCuenta = xml.&apos;**&apos;.find { node -&gt;
+        node.name() == &apos;Cuenta&apos; &amp;&amp; node.IdDivisa.text() == &apos;MXP&apos;
+    }
+    
+    // 4. If the node is found, extract and validate the 18-digit IdCuenta
+    if (targetCuenta != null) {
+        def idCuenta = targetCuenta.IdCuenta.text()
+        
+        if (idCuenta.matches(&quot;\\d{18}&quot;)) {
+            log.info(&quot;Successfully extracted MXP IdCuenta: &quot; + idCuenta)
+            vars.put(&quot;C_Cuenta&quot;, idCuenta) // Saves to a JMeter variable
+        } else {
+            log.warn(&quot;Found MXP account, but IdCuenta is not 18 digits: &quot; + idCuenta)
+        }
+    } else {
+        log.warn(&quot;Could not find a Cuenta node with IdDivisa = MXP.&quot;)
+    }
+    
+} catch (Exception e) {
+    log.error(&quot;Failed to parse the XML response: &quot; + e.getMessage())
+}</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetDestinatarios" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:GetDestinatarios&gt;&#xd;
+         &lt;tem:session&gt;${C_IdSesion}&lt;/tem:session&gt;&#xd;
+         &lt;tem:tipoDestinatario&gt;0&lt;/tem:tipoDestinatario&gt;&#xd;
+      &lt;/tem:GetDestinatarios&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetDestinatarios" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/GetDestinatarios</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="false">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdDestinatario</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdCliente&gt;635&lt;/a:IdCliente&gt;&lt;a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdDestinatario&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number">1</stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <XPath2Extractor guiclass="XPath2ExtractorGui" testclass="XPath2Extractor" testname="XPath2 Extractor" enabled="true">
+              <stringProp name="XPathExtractor2.default">NOT_FOUND</stringProp>
+              <stringProp name="XPathExtractor2.refname">C_ID_Dest_Pablo</stringProp>
+              <stringProp name="XPathExtractor2.matchNumber">1</stringProp>
+              <stringProp name="XPathExtractor2.xpathQuery">//*[local-name()=&apos;Destinatario&apos;][*[local-name()=&apos;Cuenta&apos;]=&apos;145180006272001014&apos;]/*[local-name()=&apos;IdDestinatario&apos;]/text()</stringProp>
+              <stringProp name="XPathExtractor2.namespaces"></stringProp>
+            </XPath2Extractor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">// 1. Obtener las variables del hilo
+def usuario = vars.get(&quot;P_Username&quot;) ?: &quot;DESCONOCIDO&quot;
+def idDestino = vars.get(&quot;C_ID_Dest_Pablo&quot;) ? vars.get(&quot;C_ID_Dest_Pablo&quot;).trim() : &quot;&quot;
+
+// 2. Definir los dos archivos de salida
+def archivoExitosos = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_pablo.csv&quot;)
+def archivoNotFound = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_not_found.csv&quot;)
+
+// Función auxiliar para inicializar archivo con encabezado si no existe
+def escribirRegistro = { File archivo, String fila -&gt;
+    synchronized(archivo) {
+        if (!archivo.exists()) {
+            archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+                out.writeLine(&quot;P_Username,C_ID_Dest_Pablo&quot;)
+            }
+        }
+        archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+            out.writeLine(fila)
+        }
+    }
+}
+
+// 3. Evaluar y clasificar el resultado
+if (idDestino == &quot;NOT_FOUND&quot; || idDestino.isEmpty() || idDestino == &quot;C_ID_Dest_Pablo_MATCH_FAILED&quot;) {
+    // Escribir en el archivo de no encontrados
+    escribirRegistro(archivoNotFound, &quot;${usuario},${idDestino ?: &apos;NOT_FOUND&apos;}&quot;)
+    log.warn(&quot;Destinatario NO encontrado para el usuario: ${usuario}&quot;)
+} else {
+    // Escribir en el archivo de éxitos
+    escribirRegistro(archivoExitosos, &quot;${usuario},${idDestino}&quot;)
+}</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CdAddDestinatarioXPRESS" enabled="false">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:CdAddDestinatarioXPRESS&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+         &lt;tem:IdDestinatario&gt;${C_ID_Dest_Pablo}&lt;/tem:IdDestinatario&gt;&#xd;
+         &lt;tem:IdCuenta&gt;${C_Cuenta}&lt;/tem:IdCuenta&gt;&#xd;
+         &lt;tem:Referencia&gt;56790123&lt;/tem:Referencia&gt;&#xd;
+         &lt;tem:Concepto&gt;Test Perf&lt;/tem:Concepto&gt;&#xd;
+         &lt;tem:OTP&gt;&lt;/tem:OTP&gt;&#xd;
+      &lt;/tem:CdAddDestinatarioXPRESS&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - CdAddDestinatarioXPRESS" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/CdAddDestinatarioXPRESS</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetOperacionesFavoritas" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:GetOperacionesFavoritas&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+      &lt;/tem:GetOperacionesFavoritas&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - GetOperacionesFavoritas" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/GetOperacionesFavoritas</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_OFavorita</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdOperacionFavorita&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdOperacionFavorita&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number"></stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">// 1. Obtener las variables del hilo
+def usuario = vars.get(&quot;P_Username&quot;) ?: &quot;DESCONOCIDO&quot;
+def oFavorita = vars.get(&quot;C_OFavorita&quot;) ? vars.get(&quot;C_OFavorita&quot;).trim() : &quot;&quot;
+
+// 2. Definir los dos archivos de salida
+def archivoExitosos = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_optF.csv&quot;)
+def archivoNotFound = new File(&quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/resultados_not_found.csv&quot;)
+
+// Función auxiliar para inicializar archivo con encabezado si no existe
+def escribirRegistro = { File archivo, String fila -&gt;
+    synchronized(archivo) {
+        if (!archivo.exists()) {
+            archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+                // Encabezado solo para Usuario y C_OFavorita
+                out.writeLine(&quot;P_Username,C_OFavorita&quot;)
+            }
+        }
+        archivo.withWriterAppend(&apos;UTF-8&apos;) { out -&gt;
+            out.writeLine(fila)
+        }
+    }
+}
+
+// 3. Evaluar y clasificar el resultado
+// Es NO ENCONTRADO si está vacío, es &quot;NOT_FOUND&quot; o terminó en MATCH_FAILED
+if (oFavorita.isEmpty() || oFavorita == &quot;NOT_FOUND&quot; || oFavorita.endsWith(&quot;_MATCH_FAILED&quot;)) {
+    // Escribir en el archivo de no encontrados
+    def favLog = oFavorita.isEmpty() ? &apos;NOT_FOUND&apos; : oFavorita
+    escribirRegistro(archivoNotFound, &quot;${usuario},${favLog}&quot;)
+    log.warn(&quot;C_OFavorita NO encontrada para el usuario: ${usuario}&quot;)
+} else {
+    // Escribir en el archivo de éxitos
+    escribirRegistro(archivoExitosos, &quot;${usuario},${oFavorita}&quot;)
+}</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DoTraspasoXPRESS" enabled="true">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:DoTraspasoXPRESS&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+         &lt;tem:idOperacionFavorita&gt;${C_OFavorita}&lt;/tem:idOperacionFavorita&gt;&#xd;
+         &lt;tem:importe&gt;${C_Monto}&lt;/tem:importe&gt;&#xd;
+          &lt;tem:cuentaOrigen&gt;${C_Cuenta}&lt;/tem:cuentaOrigen&gt;&#xd;
+         &lt;tem:concepto&gt;perftestx&lt;/tem:concepto&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+         &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:DoTraspasoXPRESS&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">// Genera un número de centavos aleatorio entre 1 (0.01) y 499 (4.99)
+double monto = (new Random().nextInt(499) + 1) / 100.0
+
+// Formatea siempre con punto decimal (Locale.US) y guarda en la variable de JMeter
+vars.put(&quot;C_Monto&quot;, String.format(java.util.Locale.US, &quot;%.2f&quot;, monto))</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - DoTraspasoXPRESS" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/DoTraspasoXPRESS</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="Boundary Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_IdTraspasoX</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">&lt;a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&lt;/a:IdTraspaso&gt;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOT_FOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number"></stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DoAutorizarTraspaso_Xpress">
+            <stringProp name="HTTPSampler.domain">${IP}</stringProp>
+            <stringProp name="HTTPSampler.port">${Puerto_Movil}</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">//Movil/CuentasDigitalesService.svc</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:tem=&quot;http://tempuri.org/&quot;&gt;&#xd;
+   &lt;soapenv:Header/&gt;&#xd;
+   &lt;soapenv:Body&gt;&#xd;
+      &lt;tem:DoAutorizarTraspaso&gt;&#xd;
+         &lt;tem:idSesion&gt;${C_IdSesion}&lt;/tem:idSesion&gt;&#xd;
+         &lt;tem:idTraspaso&gt;${C_IdTraspasoX}&lt;/tem:idTraspaso&gt;&#xd;
+         &lt;tem:password&gt;${P_Pwd}&lt;/tem:password&gt;&#xd;
+         &lt;tem:OTP&gt;&lt;/tem:OTP&gt;&#xd;
+         &lt;tem:callerId&gt;7.7.7.7&lt;/tem:callerId&gt;&#xd;
+         &lt;tem:infoDevice&gt;${P_infoDevice}&lt;/tem:infoDevice&gt;&#xd;
+      &lt;/tem:DoAutorizarTraspaso&gt;&#xd;
+   &lt;/soapenv:Body&gt;&#xd;
+&lt;/soapenv:Envelope&gt;</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager - DoAutorizarTraspaso" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">text/xml</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">SOAPAction</stringProp>
+                  <stringProp name="Header.value">http://tempuri.org/ICuentasDigitalesService/DoAutorizarTraspaso</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1000ms" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">import java.io.File
+import java.io.FileWriter
+import java.io.BufferedWriter
+
+// 1. Obtener los valores almacenados en las variables de JMeter
+String pUsername = vars.get(&quot;P_Username&quot;) ?: &quot;&quot;
+String cCuenta = vars.get(&quot;C_Cuenta&quot;) ?: &quot;&quot;
+
+// 2. Determinar si fue autorizada según el código de respuesta HTTP
+String responseCode = prev.getResponseCode()
+boolean esAutorizada = (responseCode == &quot;200&quot;)
+
+// 3. Definir las rutas para ambos archivos
+String basePath = &quot;C:/Users/fcabello/Documents/jmeter-framework/baseinet-jmeter-framework/data/&quot;
+String filePath = esAutorizada ? 
+    &quot;${basePath}resultado_transfer_Autorizadas_XPRES.csv&quot; : 
+    &quot;${basePath}resultado_transfer_NoAutorizadas_XPRES.csv&quot;
+
+File csvFile = new File(filePath)
+
+// 4. Escribir datos (seguro para ejecución multihilo)
+synchronized(this.class) {
+    try {
+        boolean fileExists = csvFile.exists() &amp;&amp; csvFile.length() &gt; 0
+        
+        FileWriter fw = new FileWriter(csvFile, true)
+        BufferedWriter bw = new BufferedWriter(fw)
+        
+        // Escribe la cabecera solo si el archivo es nuevo o está vacío
+        if (!fileExists) {
+            bw.write(&quot;P_Username,C_Cuenta,ResponseCode&quot;)
+            bw.newLine()
+        }
+        
+        // Escribe el registro en el archivo correspondiente
+        bw.write(&quot;${pUsername},${cCuenta},${responseCode}&quot;)
+        bw.newLine()
+        
+        // Limpiar y cerrar flujos
+        bw.flush()
+        bw.close()
+        fw.close()
+    } catch (Exception e) {
+        log.error(&quot;Error al escribir el archivo CSV: &quot; + e.getMessage())
+    }
+}</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">// 1. Obtener tiempo de inicio registrado por el PreProcessor
+def startTimeObj = vars.getObject(&quot;iterationStartTime&quot;)
+
+if (startTimeObj != null) {
+    long startTime = startTimeObj as Long
+    long elapsedTime = System.currentTimeMillis() - startTime
+
+    // 2. Definir la ventana objetivo: 6 minutos (360,000 ms)
+    long targetCycleMs = 360000 
+
+    // 3. Calcular el tiempo restante de pausa
+    long pauseTime = targetCycleMs - elapsedTime
+
+    if (pauseTime &gt; 0) {
+        long endTime = System.currentTimeMillis() + pauseTime
+        
+        // Bloque de espera seguro en fragmentos de 1 segundo
+        while (System.currentTimeMillis() &lt; endTime) {
+            try {
+                Thread.sleep(1000)
+            } catch (InterruptedException e) {
+                // Si JMeter se detiene, interrumpe el sleep y sale del bucle al instante
+                break
+            }
+        }
+    }
+}
+
+// Opcional: Descartar este sampler para no registrar la pausa como transacción en Grafana/JTL
+SampleResult.setIgnore()</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">http://localhost:8086/write?db=BASEinet_Movil_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">BASEinet_Movil_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">BASEinet_Movil_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

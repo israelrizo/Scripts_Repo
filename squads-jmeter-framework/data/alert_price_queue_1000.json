@@ -1,0 +1,6002 @@
+[
+  {
+    "matchedPrice": 17.35053,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:23:05.515Z"
+  },
+  {
+    "matchedPrice": 17.42267,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:43:07.515Z"
+  },
+  {
+    "matchedPrice": 17.2538,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:56:50.515Z"
+  },
+  {
+    "matchedPrice": 20.08443,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:31:56.515Z"
+  },
+  {
+    "matchedPrice": 17.42888,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:13:26.515Z"
+  },
+  {
+    "matchedPrice": 20.05334,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:06:18.515Z"
+  },
+  {
+    "matchedPrice": 17.58835,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:20:20.515Z"
+  },
+  {
+    "matchedPrice": 17.21126,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:01:38.515Z"
+  },
+  {
+    "matchedPrice": 19.97444,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:56:01.515Z"
+  },
+  {
+    "matchedPrice": 17.23894,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:41:01.515Z"
+  },
+  {
+    "matchedPrice": 17.22258,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:40:46.515Z"
+  },
+  {
+    "matchedPrice": 17.32484,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:18:36.515Z"
+  },
+  {
+    "matchedPrice": 19.85724,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:58:38.515Z"
+  },
+  {
+    "matchedPrice": 17.21495,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:00:46.515Z"
+  },
+  {
+    "matchedPrice": 17.36847,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:35:37.515Z"
+  },
+  {
+    "matchedPrice": 17.59431,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:55:44.515Z"
+  },
+  {
+    "matchedPrice": 17.42902,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:03:07.515Z"
+  },
+  {
+    "matchedPrice": 17.28236,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:23:23.515Z"
+  },
+  {
+    "matchedPrice": 20.13369,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:18:35.515Z"
+  },
+  {
+    "matchedPrice": 17.58777,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:36:05.515Z"
+  },
+  {
+    "matchedPrice": 17.58964,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:11:09.515Z"
+  },
+  {
+    "matchedPrice": 17.30606,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:48:49.515Z"
+  },
+  {
+    "matchedPrice": 17.29035,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:38:37.515Z"
+  },
+  {
+    "matchedPrice": 17.33474,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:04:19.515Z"
+  },
+  {
+    "matchedPrice": 20.03763,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:02:58.515Z"
+  },
+  {
+    "matchedPrice": 20.12577,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:19:17.515Z"
+  },
+  {
+    "matchedPrice": 20.01646,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:24:37.515Z"
+  },
+  {
+    "matchedPrice": 17.30051,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:45:31.515Z"
+  },
+  {
+    "matchedPrice": 17.20744,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:41:33.515Z"
+  },
+  {
+    "matchedPrice": 17.46432,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:56:23.515Z"
+  },
+  {
+    "matchedPrice": 1.15327,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:04:59.515Z"
+  },
+  {
+    "matchedPrice": 19.82994,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:25:55.516Z"
+  },
+  {
+    "matchedPrice": 17.29615,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:50:34.516Z"
+  },
+  {
+    "matchedPrice": 17.54407,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:36:51.516Z"
+  },
+  {
+    "matchedPrice": 17.36498,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:10:23.516Z"
+  },
+  {
+    "matchedPrice": 17.47474,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:55:04.516Z"
+  },
+  {
+    "matchedPrice": 17.25998,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:45:12.516Z"
+  },
+  {
+    "matchedPrice": 19.95527,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:18:44.516Z"
+  },
+  {
+    "matchedPrice": 1.1422,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:20:26.516Z"
+  },
+  {
+    "matchedPrice": 17.25457,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:34:53.516Z"
+  },
+  {
+    "matchedPrice": 17.27039,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:00:21.516Z"
+  },
+  {
+    "matchedPrice": 19.82766,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:15:57.516Z"
+  },
+  {
+    "matchedPrice": 17.54687,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:27:45.516Z"
+  },
+  {
+    "matchedPrice": 17.55429,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:34:38.516Z"
+  },
+  {
+    "matchedPrice": 17.42839,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:41:27.516Z"
+  },
+  {
+    "matchedPrice": 17.43217,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:37:11.516Z"
+  },
+  {
+    "matchedPrice": 19.91904,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:17:02.516Z"
+  },
+  {
+    "matchedPrice": 17.43373,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:06:17.516Z"
+  },
+  {
+    "matchedPrice": 1.1218,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:19:04.516Z"
+  },
+  {
+    "matchedPrice": 17.30982,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:26:09.516Z"
+  },
+  {
+    "matchedPrice": 19.82796,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:34:55.516Z"
+  },
+  {
+    "matchedPrice": 17.36951,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:34:58.516Z"
+  },
+  {
+    "matchedPrice": 20.26849,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:23:33.516Z"
+  },
+  {
+    "matchedPrice": 20.21068,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:11:48.516Z"
+  },
+  {
+    "matchedPrice": 1.16058,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:58:07.516Z"
+  },
+  {
+    "matchedPrice": 17.35388,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:15:04.516Z"
+  },
+  {
+    "matchedPrice": 17.29455,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:33:04.516Z"
+  },
+  {
+    "matchedPrice": 17.5843,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:44:23.516Z"
+  },
+  {
+    "matchedPrice": 17.52908,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:51:58.516Z"
+  },
+  {
+    "matchedPrice": 17.5561,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:42:29.516Z"
+  },
+  {
+    "matchedPrice": 17.5249,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:27:41.516Z"
+  },
+  {
+    "matchedPrice": 17.23204,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:32:35.516Z"
+  },
+  {
+    "matchedPrice": 20.26325,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:19:01.516Z"
+  },
+  {
+    "matchedPrice": 20.21012,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:11:36.516Z"
+  },
+  {
+    "matchedPrice": 17.34074,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:11:32.516Z"
+  },
+  {
+    "matchedPrice": 17.50479,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:45:06.516Z"
+  },
+  {
+    "matchedPrice": 17.45644,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:06:26.516Z"
+  },
+  {
+    "matchedPrice": 17.32222,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:39:35.516Z"
+  },
+  {
+    "matchedPrice": 17.40655,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:04:03.516Z"
+  },
+  {
+    "matchedPrice": 17.51706,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:15:24.516Z"
+  },
+  {
+    "matchedPrice": 17.49407,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:22:43.516Z"
+  },
+  {
+    "matchedPrice": 17.53071,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:27:42.516Z"
+  },
+  {
+    "matchedPrice": 17.34704,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:57:25.516Z"
+  },
+  {
+    "matchedPrice": 1.18843,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:56:24.516Z"
+  },
+  {
+    "matchedPrice": 1.19231,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:27:19.516Z"
+  },
+  {
+    "matchedPrice": 1.11983,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:52:56.516Z"
+  },
+  {
+    "matchedPrice": 17.37156,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:15:39.516Z"
+  },
+  {
+    "matchedPrice": 17.34717,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:10:51.516Z"
+  },
+  {
+    "matchedPrice": 20.01758,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:42:12.516Z"
+  },
+  {
+    "matchedPrice": 17.48543,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:00:10.516Z"
+  },
+  {
+    "matchedPrice": 17.39767,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:59:29.516Z"
+  },
+  {
+    "matchedPrice": 20.10004,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:48:01.516Z"
+  },
+  {
+    "matchedPrice": 17.36341,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:38:50.516Z"
+  },
+  {
+    "matchedPrice": 17.30472,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:39:14.516Z"
+  },
+  {
+    "matchedPrice": 17.47371,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:34:24.516Z"
+  },
+  {
+    "matchedPrice": 17.25328,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:13:13.516Z"
+  },
+  {
+    "matchedPrice": 17.48533,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:57:06.516Z"
+  },
+  {
+    "matchedPrice": 17.23811,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:47:51.516Z"
+  },
+  {
+    "matchedPrice": 17.29394,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:37:03.516Z"
+  },
+  {
+    "matchedPrice": 1.19672,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:29:59.516Z"
+  },
+  {
+    "matchedPrice": 17.44786,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:19:28.516Z"
+  },
+  {
+    "matchedPrice": 17.2529,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:33:36.516Z"
+  },
+  {
+    "matchedPrice": 17.26795,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:20:45.516Z"
+  },
+  {
+    "matchedPrice": 19.86596,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:22:58.516Z"
+  },
+  {
+    "matchedPrice": 17.30416,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:05:13.516Z"
+  },
+  {
+    "matchedPrice": 1.14992,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:33:58.516Z"
+  },
+  {
+    "matchedPrice": 1.12829,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:22:43.516Z"
+  },
+  {
+    "matchedPrice": 20.26336,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:49:44.516Z"
+  },
+  {
+    "matchedPrice": 19.95777,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:11:15.516Z"
+  },
+  {
+    "matchedPrice": 17.56914,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:45:26.516Z"
+  },
+  {
+    "matchedPrice": 17.22183,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:23:21.516Z"
+  },
+  {
+    "matchedPrice": 17.26542,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:48:18.516Z"
+  },
+  {
+    "matchedPrice": 17.55807,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:12:35.516Z"
+  },
+  {
+    "matchedPrice": 17.59553,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:01:42.516Z"
+  },
+  {
+    "matchedPrice": 17.53834,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:11:34.516Z"
+  },
+  {
+    "matchedPrice": 17.28149,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:07:03.516Z"
+  },
+  {
+    "matchedPrice": 20.17497,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:11:16.516Z"
+  },
+  {
+    "matchedPrice": 20.09284,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:32:36.516Z"
+  },
+  {
+    "matchedPrice": 19.89028,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:43:57.516Z"
+  },
+  {
+    "matchedPrice": 20.13845,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:44:59.516Z"
+  },
+  {
+    "matchedPrice": 17.59253,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:20:37.516Z"
+  },
+  {
+    "matchedPrice": 17.57166,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:54:55.516Z"
+  },
+  {
+    "matchedPrice": 17.23243,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:09:48.516Z"
+  },
+  {
+    "matchedPrice": 17.30773,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:42:03.516Z"
+  },
+  {
+    "matchedPrice": 1.16562,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:51:54.516Z"
+  },
+  {
+    "matchedPrice": 1.19998,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:59:57.516Z"
+  },
+  {
+    "matchedPrice": 20.20078,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:55:43.516Z"
+  },
+  {
+    "matchedPrice": 20.1719,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:19:31.516Z"
+  },
+  {
+    "matchedPrice": 17.2712,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:26:51.516Z"
+  },
+  {
+    "matchedPrice": 17.28329,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:02:39.516Z"
+  },
+  {
+    "matchedPrice": 17.50102,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:18:14.516Z"
+  },
+  {
+    "matchedPrice": 17.52044,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:43:18.516Z"
+  },
+  {
+    "matchedPrice": 17.46621,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:01:47.516Z"
+  },
+  {
+    "matchedPrice": 17.37818,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:20:54.516Z"
+  },
+  {
+    "matchedPrice": 17.44014,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:18:39.516Z"
+  },
+  {
+    "matchedPrice": 20.10693,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:43:56.516Z"
+  },
+  {
+    "matchedPrice": 17.21618,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:49:06.516Z"
+  },
+  {
+    "matchedPrice": 17.45904,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:39:39.516Z"
+  },
+  {
+    "matchedPrice": 17.45889,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:06:38.516Z"
+  },
+  {
+    "matchedPrice": 17.23167,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:45:28.516Z"
+  },
+  {
+    "matchedPrice": 17.25112,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:38:30.516Z"
+  },
+  {
+    "matchedPrice": 17.31819,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:38:02.516Z"
+  },
+  {
+    "matchedPrice": 17.21804,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:06:09.516Z"
+  },
+  {
+    "matchedPrice": 17.23779,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:45:11.516Z"
+  },
+  {
+    "matchedPrice": 17.23271,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:32:48.516Z"
+  },
+  {
+    "matchedPrice": 20.03144,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:23:16.516Z"
+  },
+  {
+    "matchedPrice": 17.3665,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:15:52.516Z"
+  },
+  {
+    "matchedPrice": 17.382,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:58:57.516Z"
+  },
+  {
+    "matchedPrice": 19.97067,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:00:36.516Z"
+  },
+  {
+    "matchedPrice": 17.49881,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:49:25.516Z"
+  },
+  {
+    "matchedPrice": 17.20717,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:26:48.516Z"
+  },
+  {
+    "matchedPrice": 17.46232,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:56:45.516Z"
+  },
+  {
+    "matchedPrice": 20.2829,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:40:13.516Z"
+  },
+  {
+    "matchedPrice": 17.58957,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:18:48.516Z"
+  },
+  {
+    "matchedPrice": 19.84382,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:11:23.516Z"
+  },
+  {
+    "matchedPrice": 17.52639,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:43:07.516Z"
+  },
+  {
+    "matchedPrice": 17.45945,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:49:42.516Z"
+  },
+  {
+    "matchedPrice": 20.22909,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:33:37.516Z"
+  },
+  {
+    "matchedPrice": 17.38537,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:20:05.516Z"
+  },
+  {
+    "matchedPrice": 17.26644,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:29:00.516Z"
+  },
+  {
+    "matchedPrice": 1.14715,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:23:15.516Z"
+  },
+  {
+    "matchedPrice": 17.31793,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:50:27.516Z"
+  },
+  {
+    "matchedPrice": 17.24107,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:33:37.516Z"
+  },
+  {
+    "matchedPrice": 20.16854,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:20:50.516Z"
+  },
+  {
+    "matchedPrice": 17.39444,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:15:05.516Z"
+  },
+  {
+    "matchedPrice": 20.06415,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:42:31.516Z"
+  },
+  {
+    "matchedPrice": 17.2254,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:27:40.516Z"
+  },
+  {
+    "matchedPrice": 17.44908,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:22:19.516Z"
+  },
+  {
+    "matchedPrice": 17.20832,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:41:49.516Z"
+  },
+  {
+    "matchedPrice": 17.37524,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:17:56.516Z"
+  },
+  {
+    "matchedPrice": 1.13392,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:55:10.516Z"
+  },
+  {
+    "matchedPrice": 20.1615,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:31:03.516Z"
+  },
+  {
+    "matchedPrice": 20.13655,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:29:53.516Z"
+  },
+  {
+    "matchedPrice": 20.22227,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:24:39.516Z"
+  },
+  {
+    "matchedPrice": 17.23448,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:59:41.516Z"
+  },
+  {
+    "matchedPrice": 17.26253,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:01:16.516Z"
+  },
+  {
+    "matchedPrice": 20.27153,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:38:21.516Z"
+  },
+  {
+    "matchedPrice": 17.42273,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:37:55.516Z"
+  },
+  {
+    "matchedPrice": 19.97852,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:20:01.516Z"
+  },
+  {
+    "matchedPrice": 20.24723,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:22:37.516Z"
+  },
+  {
+    "matchedPrice": 17.24559,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:18:03.516Z"
+  },
+  {
+    "matchedPrice": 17.39455,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:45:39.516Z"
+  },
+  {
+    "matchedPrice": 20.18505,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:11:26.516Z"
+  },
+  {
+    "matchedPrice": 20.23685,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:51:33.516Z"
+  },
+  {
+    "matchedPrice": 1.14378,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:39:22.516Z"
+  },
+  {
+    "matchedPrice": 1.17817,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:12:57.516Z"
+  },
+  {
+    "matchedPrice": 17.24216,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:13:01.516Z"
+  },
+  {
+    "matchedPrice": 1.1157,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:37:11.516Z"
+  },
+  {
+    "matchedPrice": 20.0492,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:04:38.516Z"
+  },
+  {
+    "matchedPrice": 17.33384,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:13:02.516Z"
+  },
+  {
+    "matchedPrice": 20.01955,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:27:18.516Z"
+  },
+  {
+    "matchedPrice": 17.52366,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:15:16.516Z"
+  },
+  {
+    "matchedPrice": 17.23409,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:35:05.516Z"
+  },
+  {
+    "matchedPrice": 17.466,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:24:39.516Z"
+  },
+  {
+    "matchedPrice": 17.29127,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:38:35.516Z"
+  },
+  {
+    "matchedPrice": 1.18981,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:36:40.516Z"
+  },
+  {
+    "matchedPrice": 17.50806,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:36:29.517Z"
+  },
+  {
+    "matchedPrice": 17.36066,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:53:27.517Z"
+  },
+  {
+    "matchedPrice": 17.50368,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:46:33.517Z"
+  },
+  {
+    "matchedPrice": 17.45264,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:25:42.517Z"
+  },
+  {
+    "matchedPrice": 17.47235,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:16:25.517Z"
+  },
+  {
+    "matchedPrice": 1.10079,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:28:43.517Z"
+  },
+  {
+    "matchedPrice": 17.25874,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:26:59.517Z"
+  },
+  {
+    "matchedPrice": 17.55503,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:07:29.517Z"
+  },
+  {
+    "matchedPrice": 20.19078,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:30:42.517Z"
+  },
+  {
+    "matchedPrice": 19.84214,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:29:44.517Z"
+  },
+  {
+    "matchedPrice": 20.17003,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:44:42.517Z"
+  },
+  {
+    "matchedPrice": 1.12839,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:03:56.517Z"
+  },
+  {
+    "matchedPrice": 17.40853,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:50:32.517Z"
+  },
+  {
+    "matchedPrice": 17.51864,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:54:29.517Z"
+  },
+  {
+    "matchedPrice": 19.95197,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:17:54.517Z"
+  },
+  {
+    "matchedPrice": 17.22398,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:14:15.517Z"
+  },
+  {
+    "matchedPrice": 17.34179,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:59:39.517Z"
+  },
+  {
+    "matchedPrice": 1.14487,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:11:47.517Z"
+  },
+  {
+    "matchedPrice": 17.29444,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:56:22.517Z"
+  },
+  {
+    "matchedPrice": 17.46677,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:56:40.517Z"
+  },
+  {
+    "matchedPrice": 17.29905,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:53:29.517Z"
+  },
+  {
+    "matchedPrice": 17.52914,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:09:14.517Z"
+  },
+  {
+    "matchedPrice": 17.48466,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:42:41.517Z"
+  },
+  {
+    "matchedPrice": 17.36995,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:21:18.517Z"
+  },
+  {
+    "matchedPrice": 17.23123,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:16:40.517Z"
+  },
+  {
+    "matchedPrice": 17.51153,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:25:16.517Z"
+  },
+  {
+    "matchedPrice": 17.36937,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:52:16.517Z"
+  },
+  {
+    "matchedPrice": 20.00846,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:26:22.517Z"
+  },
+  {
+    "matchedPrice": 17.39391,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:59:03.517Z"
+  },
+  {
+    "matchedPrice": 1.15132,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:57:10.517Z"
+  },
+  {
+    "matchedPrice": 17.21304,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:20:29.517Z"
+  },
+  {
+    "matchedPrice": 17.58073,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:40:40.517Z"
+  },
+  {
+    "matchedPrice": 17.42871,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:39:40.517Z"
+  },
+  {
+    "matchedPrice": 17.34859,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:39:13.517Z"
+  },
+  {
+    "matchedPrice": 17.21119,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:31:11.517Z"
+  },
+  {
+    "matchedPrice": 20.01088,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:22:25.517Z"
+  },
+  {
+    "matchedPrice": 17.52765,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:37:08.517Z"
+  },
+  {
+    "matchedPrice": 17.33946,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:29:29.517Z"
+  },
+  {
+    "matchedPrice": 17.32388,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:23:42.517Z"
+  },
+  {
+    "matchedPrice": 20.03761,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:39:05.517Z"
+  },
+  {
+    "matchedPrice": 17.38437,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:20:40.517Z"
+  },
+  {
+    "matchedPrice": 17.49115,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:56:52.517Z"
+  },
+  {
+    "matchedPrice": 17.36385,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:17:56.517Z"
+  },
+  {
+    "matchedPrice": 17.21833,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:35:45.517Z"
+  },
+  {
+    "matchedPrice": 17.54638,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:52:09.517Z"
+  },
+  {
+    "matchedPrice": 17.50864,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:16:04.517Z"
+  },
+  {
+    "matchedPrice": 17.45757,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:41:20.517Z"
+  },
+  {
+    "matchedPrice": 1.15418,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:55:58.517Z"
+  },
+  {
+    "matchedPrice": 17.50022,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:18:56.517Z"
+  },
+  {
+    "matchedPrice": 17.41274,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:41:02.517Z"
+  },
+  {
+    "matchedPrice": 19.92264,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:36:47.517Z"
+  },
+  {
+    "matchedPrice": 20.10343,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:15:14.517Z"
+  },
+  {
+    "matchedPrice": 17.54479,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:19:03.517Z"
+  },
+  {
+    "matchedPrice": 17.36597,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:47:11.517Z"
+  },
+  {
+    "matchedPrice": 17.24586,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:58:09.517Z"
+  },
+  {
+    "matchedPrice": 17.25761,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:25:54.517Z"
+  },
+  {
+    "matchedPrice": 17.58087,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:33:00.517Z"
+  },
+  {
+    "matchedPrice": 17.33012,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:33:54.517Z"
+  },
+  {
+    "matchedPrice": 17.2395,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:39:52.517Z"
+  },
+  {
+    "matchedPrice": 19.92897,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:48:22.517Z"
+  },
+  {
+    "matchedPrice": 17.50085,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:44:46.517Z"
+  },
+  {
+    "matchedPrice": 17.40177,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:53:25.517Z"
+  },
+  {
+    "matchedPrice": 17.38593,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:18:42.517Z"
+  },
+  {
+    "matchedPrice": 17.363,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:01:01.517Z"
+  },
+  {
+    "matchedPrice": 17.58539,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:43:36.517Z"
+  },
+  {
+    "matchedPrice": 20.12578,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:36:15.517Z"
+  },
+  {
+    "matchedPrice": 17.37839,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:30:41.517Z"
+  },
+  {
+    "matchedPrice": 17.59412,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:07:26.517Z"
+  },
+  {
+    "matchedPrice": 1.19614,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:10:24.517Z"
+  },
+  {
+    "matchedPrice": 17.38586,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:55:04.517Z"
+  },
+  {
+    "matchedPrice": 1.10005,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:44:39.517Z"
+  },
+  {
+    "matchedPrice": 17.5358,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:54:00.517Z"
+  },
+  {
+    "matchedPrice": 19.90638,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:02:20.517Z"
+  },
+  {
+    "matchedPrice": 17.41364,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:44:56.517Z"
+  },
+  {
+    "matchedPrice": 17.47937,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:26:03.517Z"
+  },
+  {
+    "matchedPrice": 1.18783,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:28:09.517Z"
+  },
+  {
+    "matchedPrice": 17.52082,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:34:09.517Z"
+  },
+  {
+    "matchedPrice": 17.50108,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:45:17.517Z"
+  },
+  {
+    "matchedPrice": 17.59321,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:01:35.517Z"
+  },
+  {
+    "matchedPrice": 17.43981,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:49:34.517Z"
+  },
+  {
+    "matchedPrice": 17.20082,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:32:21.517Z"
+  },
+  {
+    "matchedPrice": 1.16727,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:27:33.517Z"
+  },
+  {
+    "matchedPrice": 20.15165,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:06:08.517Z"
+  },
+  {
+    "matchedPrice": 17.55069,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:05:00.517Z"
+  },
+  {
+    "matchedPrice": 17.53283,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:12:05.517Z"
+  },
+  {
+    "matchedPrice": 17.52511,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:36:49.517Z"
+  },
+  {
+    "matchedPrice": 17.50719,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:09:08.517Z"
+  },
+  {
+    "matchedPrice": 17.5745,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:21:14.517Z"
+  },
+  {
+    "matchedPrice": 17.20791,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:40:01.517Z"
+  },
+  {
+    "matchedPrice": 17.52651,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:38:35.517Z"
+  },
+  {
+    "matchedPrice": 17.39752,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:21:19.517Z"
+  },
+  {
+    "matchedPrice": 17.5618,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:26:06.517Z"
+  },
+  {
+    "matchedPrice": 17.52845,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:39:20.517Z"
+  },
+  {
+    "matchedPrice": 20.08455,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:29:17.517Z"
+  },
+  {
+    "matchedPrice": 17.46394,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:18:55.517Z"
+  },
+  {
+    "matchedPrice": 17.49839,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:14:32.517Z"
+  },
+  {
+    "matchedPrice": 1.18555,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:42:35.517Z"
+  },
+  {
+    "matchedPrice": 19.81156,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:18:06.517Z"
+  },
+  {
+    "matchedPrice": 19.80098,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:21:29.517Z"
+  },
+  {
+    "matchedPrice": 17.46001,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:56:47.517Z"
+  },
+  {
+    "matchedPrice": 20.00344,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:49:28.517Z"
+  },
+  {
+    "matchedPrice": 17.34459,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:31:10.517Z"
+  },
+  {
+    "matchedPrice": 17.56736,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:10:51.517Z"
+  },
+  {
+    "matchedPrice": 17.27784,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:52:32.517Z"
+  },
+  {
+    "matchedPrice": 20.29513,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:15:51.517Z"
+  },
+  {
+    "matchedPrice": 1.1917,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:42:23.517Z"
+  },
+  {
+    "matchedPrice": 17.22514,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:40:48.517Z"
+  },
+  {
+    "matchedPrice": 17.52322,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:34:40.517Z"
+  },
+  {
+    "matchedPrice": 17.38943,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:42:47.517Z"
+  },
+  {
+    "matchedPrice": 20.05984,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:02:25.517Z"
+  },
+  {
+    "matchedPrice": 20.10978,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:55:36.517Z"
+  },
+  {
+    "matchedPrice": 17.24993,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:28:51.517Z"
+  },
+  {
+    "matchedPrice": 17.55603,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:03:05.517Z"
+  },
+  {
+    "matchedPrice": 17.52095,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:43:07.517Z"
+  },
+  {
+    "matchedPrice": 17.37274,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:39:49.517Z"
+  },
+  {
+    "matchedPrice": 17.31797,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:04:12.517Z"
+  },
+  {
+    "matchedPrice": 17.50079,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:51:54.517Z"
+  },
+  {
+    "matchedPrice": 20.112,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:43:00.517Z"
+  },
+  {
+    "matchedPrice": 17.37124,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:19:47.517Z"
+  },
+  {
+    "matchedPrice": 17.47031,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:09:45.517Z"
+  },
+  {
+    "matchedPrice": 17.43513,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:57:22.517Z"
+  },
+  {
+    "matchedPrice": 17.48532,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:49:29.517Z"
+  },
+  {
+    "matchedPrice": 17.40356,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:21:59.517Z"
+  },
+  {
+    "matchedPrice": 17.44834,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:50:31.517Z"
+  },
+  {
+    "matchedPrice": 17.21763,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:20:51.517Z"
+  },
+  {
+    "matchedPrice": 17.40525,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:21:53.517Z"
+  },
+  {
+    "matchedPrice": 17.41646,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:19:40.517Z"
+  },
+  {
+    "matchedPrice": 17.44133,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:15:58.517Z"
+  },
+  {
+    "matchedPrice": 1.15177,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:36:29.517Z"
+  },
+  {
+    "matchedPrice": 17.52767,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:19:41.517Z"
+  },
+  {
+    "matchedPrice": 17.5906,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:12:16.517Z"
+  },
+  {
+    "matchedPrice": 17.46714,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:51:29.517Z"
+  },
+  {
+    "matchedPrice": 17.5408,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:15:48.517Z"
+  },
+  {
+    "matchedPrice": 17.33145,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:09:15.517Z"
+  },
+  {
+    "matchedPrice": 20.25527,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:42:24.517Z"
+  },
+  {
+    "matchedPrice": 1.16388,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:42:32.517Z"
+  },
+  {
+    "matchedPrice": 17.29561,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:00:30.517Z"
+  },
+  {
+    "matchedPrice": 17.2737,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:29:06.517Z"
+  },
+  {
+    "matchedPrice": 17.34315,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:30:37.517Z"
+  },
+  {
+    "matchedPrice": 17.27776,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:05:47.517Z"
+  },
+  {
+    "matchedPrice": 1.11991,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:21:16.517Z"
+  },
+  {
+    "matchedPrice": 17.3048,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:19:21.517Z"
+  },
+  {
+    "matchedPrice": 19.92298,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:54:44.517Z"
+  },
+  {
+    "matchedPrice": 17.30472,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:55:50.517Z"
+  },
+  {
+    "matchedPrice": 19.86862,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:22:29.517Z"
+  },
+  {
+    "matchedPrice": 1.13051,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:14:12.517Z"
+  },
+  {
+    "matchedPrice": 20.13045,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:18:52.517Z"
+  },
+  {
+    "matchedPrice": 17.55309,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:47:25.517Z"
+  },
+  {
+    "matchedPrice": 17.35128,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:07:07.517Z"
+  },
+  {
+    "matchedPrice": 17.59079,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:00:47.517Z"
+  },
+  {
+    "matchedPrice": 20.09366,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:17:09.517Z"
+  },
+  {
+    "matchedPrice": 17.2213,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:05:26.517Z"
+  },
+  {
+    "matchedPrice": 20.28419,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:04:36.517Z"
+  },
+  {
+    "matchedPrice": 20.19233,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:35:56.517Z"
+  },
+  {
+    "matchedPrice": 17.50052,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:32:31.517Z"
+  },
+  {
+    "matchedPrice": 17.2716,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:33:46.517Z"
+  },
+  {
+    "matchedPrice": 17.48626,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:26:45.517Z"
+  },
+  {
+    "matchedPrice": 17.36038,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:09:03.517Z"
+  },
+  {
+    "matchedPrice": 17.2812,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:16:50.517Z"
+  },
+  {
+    "matchedPrice": 17.37001,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:53:31.518Z"
+  },
+  {
+    "matchedPrice": 17.53697,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:39:00.518Z"
+  },
+  {
+    "matchedPrice": 17.50065,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:30:39.518Z"
+  },
+  {
+    "matchedPrice": 17.29207,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:45:20.518Z"
+  },
+  {
+    "matchedPrice": 17.33455,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:40:19.518Z"
+  },
+  {
+    "matchedPrice": 17.347,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:09:09.518Z"
+  },
+  {
+    "matchedPrice": 17.20989,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:10:58.518Z"
+  },
+  {
+    "matchedPrice": 17.23036,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:58:18.518Z"
+  },
+  {
+    "matchedPrice": 20.0564,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:37:50.518Z"
+  },
+  {
+    "matchedPrice": 1.10984,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:34:45.518Z"
+  },
+  {
+    "matchedPrice": 17.28012,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:42:27.518Z"
+  },
+  {
+    "matchedPrice": 17.49808,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:45:14.518Z"
+  },
+  {
+    "matchedPrice": 20.299,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:23:03.518Z"
+  },
+  {
+    "matchedPrice": 19.94092,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:59:33.518Z"
+  },
+  {
+    "matchedPrice": 1.18219,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:30:35.518Z"
+  },
+  {
+    "matchedPrice": 17.59571,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:13:20.518Z"
+  },
+  {
+    "matchedPrice": 17.48933,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:25:16.518Z"
+  },
+  {
+    "matchedPrice": 17.4348,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:53:45.518Z"
+  },
+  {
+    "matchedPrice": 17.23435,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:04:59.518Z"
+  },
+  {
+    "matchedPrice": 20.14897,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:43:23.518Z"
+  },
+  {
+    "matchedPrice": 17.42338,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:38:09.518Z"
+  },
+  {
+    "matchedPrice": 17.25134,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:29:52.518Z"
+  },
+  {
+    "matchedPrice": 20.21715,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:29:06.518Z"
+  },
+  {
+    "matchedPrice": 17.47431,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:07:17.518Z"
+  },
+  {
+    "matchedPrice": 17.43478,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:37:45.518Z"
+  },
+  {
+    "matchedPrice": 17.58106,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:00:28.518Z"
+  },
+  {
+    "matchedPrice": 17.4412,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:48:41.518Z"
+  },
+  {
+    "matchedPrice": 17.35625,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:50:16.518Z"
+  },
+  {
+    "matchedPrice": 17.33154,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:25:46.518Z"
+  },
+  {
+    "matchedPrice": 19.84662,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:33:51.518Z"
+  },
+  {
+    "matchedPrice": 17.53059,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:43:04.518Z"
+  },
+  {
+    "matchedPrice": 17.2278,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:21:41.518Z"
+  },
+  {
+    "matchedPrice": 17.31644,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:08:28.518Z"
+  },
+  {
+    "matchedPrice": 17.40741,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:47:51.518Z"
+  },
+  {
+    "matchedPrice": 20.00543,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:39:46.518Z"
+  },
+  {
+    "matchedPrice": 17.36737,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:31:55.518Z"
+  },
+  {
+    "matchedPrice": 1.18657,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:12:23.518Z"
+  },
+  {
+    "matchedPrice": 17.52716,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:54:50.518Z"
+  },
+  {
+    "matchedPrice": 17.57566,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:24:01.518Z"
+  },
+  {
+    "matchedPrice": 20.02948,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:25:26.518Z"
+  },
+  {
+    "matchedPrice": 1.14457,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:40:23.518Z"
+  },
+  {
+    "matchedPrice": 20.06293,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:56:22.518Z"
+  },
+  {
+    "matchedPrice": 17.21563,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:12:44.518Z"
+  },
+  {
+    "matchedPrice": 17.56756,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:51:54.518Z"
+  },
+  {
+    "matchedPrice": 17.52937,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:35:00.518Z"
+  },
+  {
+    "matchedPrice": 17.55999,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:01:33.518Z"
+  },
+  {
+    "matchedPrice": 17.46363,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:21:58.518Z"
+  },
+  {
+    "matchedPrice": 17.21747,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:43:37.518Z"
+  },
+  {
+    "matchedPrice": 20.06887,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:47:05.518Z"
+  },
+  {
+    "matchedPrice": 1.14113,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:16:11.518Z"
+  },
+  {
+    "matchedPrice": 17.24209,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:45:49.518Z"
+  },
+  {
+    "matchedPrice": 17.30111,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:52:04.518Z"
+  },
+  {
+    "matchedPrice": 17.45555,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:49:03.518Z"
+  },
+  {
+    "matchedPrice": 17.35974,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:15:09.518Z"
+  },
+  {
+    "matchedPrice": 17.30024,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:47:06.518Z"
+  },
+  {
+    "matchedPrice": 17.3857,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:12:38.518Z"
+  },
+  {
+    "matchedPrice": 17.46281,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:35:18.518Z"
+  },
+  {
+    "matchedPrice": 17.31166,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:29:02.518Z"
+  },
+  {
+    "matchedPrice": 20.10349,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:59:07.518Z"
+  },
+  {
+    "matchedPrice": 17.49658,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:52:12.518Z"
+  },
+  {
+    "matchedPrice": 17.20448,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:06:22.518Z"
+  },
+  {
+    "matchedPrice": 17.27118,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:18:52.518Z"
+  },
+  {
+    "matchedPrice": 17.4787,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:28:22.518Z"
+  },
+  {
+    "matchedPrice": 17.37759,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:55:23.518Z"
+  },
+  {
+    "matchedPrice": 20.18356,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:03:16.518Z"
+  },
+  {
+    "matchedPrice": 1.12,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:20:31.518Z"
+  },
+  {
+    "matchedPrice": 17.20582,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:23:41.518Z"
+  },
+  {
+    "matchedPrice": 17.55291,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:36:46.518Z"
+  },
+  {
+    "matchedPrice": 17.405,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:56:47.518Z"
+  },
+  {
+    "matchedPrice": 17.27582,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:58:19.518Z"
+  },
+  {
+    "matchedPrice": 17.37115,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:54:41.518Z"
+  },
+  {
+    "matchedPrice": 17.32935,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:03:12.518Z"
+  },
+  {
+    "matchedPrice": 17.20479,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:59:29.518Z"
+  },
+  {
+    "matchedPrice": 17.46318,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:01:52.518Z"
+  },
+  {
+    "matchedPrice": 17.21758,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:43:38.518Z"
+  },
+  {
+    "matchedPrice": 17.43955,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:10:23.518Z"
+  },
+  {
+    "matchedPrice": 20.26111,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:31:19.518Z"
+  },
+  {
+    "matchedPrice": 1.15999,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:51:18.518Z"
+  },
+  {
+    "matchedPrice": 17.45414,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:08:28.518Z"
+  },
+  {
+    "matchedPrice": 17.20706,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:46:23.518Z"
+  },
+  {
+    "matchedPrice": 17.49673,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:13:33.518Z"
+  },
+  {
+    "matchedPrice": 17.50358,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:27:00.518Z"
+  },
+  {
+    "matchedPrice": 17.3714,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:07:48.518Z"
+  },
+  {
+    "matchedPrice": 17.25502,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:53:44.518Z"
+  },
+  {
+    "matchedPrice": 17.3503,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:01:38.518Z"
+  },
+  {
+    "matchedPrice": 1.15981,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:43:39.518Z"
+  },
+  {
+    "matchedPrice": 17.32702,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:43:50.518Z"
+  },
+  {
+    "matchedPrice": 20.00745,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:49:56.518Z"
+  },
+  {
+    "matchedPrice": 17.49315,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:52:29.518Z"
+  },
+  {
+    "matchedPrice": 17.22163,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:35:45.518Z"
+  },
+  {
+    "matchedPrice": 17.35259,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:00:44.518Z"
+  },
+  {
+    "matchedPrice": 17.20242,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:08:48.518Z"
+  },
+  {
+    "matchedPrice": 1.10521,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:15:34.518Z"
+  },
+  {
+    "matchedPrice": 17.26947,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:05:28.518Z"
+  },
+  {
+    "matchedPrice": 17.3705,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:21:17.518Z"
+  },
+  {
+    "matchedPrice": 17.27901,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:16:16.518Z"
+  },
+  {
+    "matchedPrice": 17.32124,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:33:12.518Z"
+  },
+  {
+    "matchedPrice": 17.54497,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:46:54.518Z"
+  },
+  {
+    "matchedPrice": 1.13596,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:35:12.518Z"
+  },
+  {
+    "matchedPrice": 17.36908,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:01:10.518Z"
+  },
+  {
+    "matchedPrice": 20.19678,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:48:28.518Z"
+  },
+  {
+    "matchedPrice": 17.23329,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:01:30.518Z"
+  },
+  {
+    "matchedPrice": 17.42114,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:19:38.518Z"
+  },
+  {
+    "matchedPrice": 17.32234,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:02:10.518Z"
+  },
+  {
+    "matchedPrice": 17.39234,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:43:10.518Z"
+  },
+  {
+    "matchedPrice": 19.89786,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:32:34.518Z"
+  },
+  {
+    "matchedPrice": 17.40028,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:48:06.518Z"
+  },
+  {
+    "matchedPrice": 17.36633,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:06:33.518Z"
+  },
+  {
+    "matchedPrice": 17.32312,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:48:41.518Z"
+  },
+  {
+    "matchedPrice": 20.29624,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:41:02.518Z"
+  },
+  {
+    "matchedPrice": 1.11624,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:24:04.518Z"
+  },
+  {
+    "matchedPrice": 20.17579,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:08:26.518Z"
+  },
+  {
+    "matchedPrice": 20.11749,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:35:38.518Z"
+  },
+  {
+    "matchedPrice": 17.57061,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:52:16.518Z"
+  },
+  {
+    "matchedPrice": 17.56859,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:43:21.518Z"
+  },
+  {
+    "matchedPrice": 19.81413,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:10:48.518Z"
+  },
+  {
+    "matchedPrice": 17.57771,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:26:11.518Z"
+  },
+  {
+    "matchedPrice": 17.43134,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:14:44.518Z"
+  },
+  {
+    "matchedPrice": 17.23692,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:12:59.518Z"
+  },
+  {
+    "matchedPrice": 20.28707,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:48:56.518Z"
+  },
+  {
+    "matchedPrice": 1.1876,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:09:11.518Z"
+  },
+  {
+    "matchedPrice": 17.32089,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:21:23.518Z"
+  },
+  {
+    "matchedPrice": 17.36464,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:42:59.518Z"
+  },
+  {
+    "matchedPrice": 17.51068,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:29:56.518Z"
+  },
+  {
+    "matchedPrice": 17.28381,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:28:38.518Z"
+  },
+  {
+    "matchedPrice": 17.26736,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:38:15.518Z"
+  },
+  {
+    "matchedPrice": 17.5095,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:34:54.518Z"
+  },
+  {
+    "matchedPrice": 17.31534,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:28:56.518Z"
+  },
+  {
+    "matchedPrice": 17.27456,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:29:07.518Z"
+  },
+  {
+    "matchedPrice": 17.40105,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:17:12.518Z"
+  },
+  {
+    "matchedPrice": 17.28503,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:32:51.518Z"
+  },
+  {
+    "matchedPrice": 20.20459,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:15:08.518Z"
+  },
+  {
+    "matchedPrice": 1.18716,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:52:21.518Z"
+  },
+  {
+    "matchedPrice": 1.11092,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:47:21.518Z"
+  },
+  {
+    "matchedPrice": 17.35109,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:21:18.518Z"
+  },
+  {
+    "matchedPrice": 17.43426,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:01:46.518Z"
+  },
+  {
+    "matchedPrice": 17.24032,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:00:26.518Z"
+  },
+  {
+    "matchedPrice": 19.80361,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:10:08.518Z"
+  },
+  {
+    "matchedPrice": 17.51671,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:44:27.518Z"
+  },
+  {
+    "matchedPrice": 17.58482,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:00:10.518Z"
+  },
+  {
+    "matchedPrice": 17.33481,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:26:29.518Z"
+  },
+  {
+    "matchedPrice": 17.55606,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:58:17.518Z"
+  },
+  {
+    "matchedPrice": 1.16651,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:27:22.518Z"
+  },
+  {
+    "matchedPrice": 17.34241,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:02:51.518Z"
+  },
+  {
+    "matchedPrice": 17.54822,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:38:20.518Z"
+  },
+  {
+    "matchedPrice": 17.24916,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:38:45.518Z"
+  },
+  {
+    "matchedPrice": 17.44734,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:56:51.518Z"
+  },
+  {
+    "matchedPrice": 17.27517,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:05:22.518Z"
+  },
+  {
+    "matchedPrice": 17.54937,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:31:05.518Z"
+  },
+  {
+    "matchedPrice": 17.39381,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:00:45.518Z"
+  },
+  {
+    "matchedPrice": 17.57259,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:43:32.518Z"
+  },
+  {
+    "matchedPrice": 20.2526,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:59:44.518Z"
+  },
+  {
+    "matchedPrice": 17.48478,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:02:22.518Z"
+  },
+  {
+    "matchedPrice": 17.23484,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:34:34.518Z"
+  },
+  {
+    "matchedPrice": 20.27753,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:00:35.518Z"
+  },
+  {
+    "matchedPrice": 17.28466,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:51:17.518Z"
+  },
+  {
+    "matchedPrice": 17.48631,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:48:26.518Z"
+  },
+  {
+    "matchedPrice": 1.17663,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:18:54.519Z"
+  },
+  {
+    "matchedPrice": 17.5806,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:45:08.519Z"
+  },
+  {
+    "matchedPrice": 1.16335,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:24:07.519Z"
+  },
+  {
+    "matchedPrice": 19.9664,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:43:28.519Z"
+  },
+  {
+    "matchedPrice": 20.10034,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:58:06.519Z"
+  },
+  {
+    "matchedPrice": 1.1743,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:53:11.519Z"
+  },
+  {
+    "matchedPrice": 17.42476,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:11:54.519Z"
+  },
+  {
+    "matchedPrice": 17.24628,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:38:22.519Z"
+  },
+  {
+    "matchedPrice": 17.49623,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:28:03.519Z"
+  },
+  {
+    "matchedPrice": 17.25097,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:51:09.519Z"
+  },
+  {
+    "matchedPrice": 17.20067,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:12:41.519Z"
+  },
+  {
+    "matchedPrice": 17.53885,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:03:25.519Z"
+  },
+  {
+    "matchedPrice": 20.19876,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:46:17.519Z"
+  },
+  {
+    "matchedPrice": 17.43631,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:18:07.519Z"
+  },
+  {
+    "matchedPrice": 17.54094,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:25:35.519Z"
+  },
+  {
+    "matchedPrice": 19.94841,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:29:47.519Z"
+  },
+  {
+    "matchedPrice": 17.25897,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:23:02.519Z"
+  },
+  {
+    "matchedPrice": 20.22456,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:53:25.519Z"
+  },
+  {
+    "matchedPrice": 17.40095,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:44:20.519Z"
+  },
+  {
+    "matchedPrice": 1.17065,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:43:05.519Z"
+  },
+  {
+    "matchedPrice": 20.04751,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:33:13.519Z"
+  },
+  {
+    "matchedPrice": 1.13331,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:30:01.519Z"
+  },
+  {
+    "matchedPrice": 19.82628,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:56:43.519Z"
+  },
+  {
+    "matchedPrice": 19.94955,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:54:35.519Z"
+  },
+  {
+    "matchedPrice": 17.33496,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:00:48.519Z"
+  },
+  {
+    "matchedPrice": 19.99553,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:24:51.519Z"
+  },
+  {
+    "matchedPrice": 17.27804,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:09:06.519Z"
+  },
+  {
+    "matchedPrice": 17.50091,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:37:26.519Z"
+  },
+  {
+    "matchedPrice": 17.26548,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:36:23.519Z"
+  },
+  {
+    "matchedPrice": 17.31643,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:03:27.519Z"
+  },
+  {
+    "matchedPrice": 17.49935,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:30:24.519Z"
+  },
+  {
+    "matchedPrice": 20.08784,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:59:06.519Z"
+  },
+  {
+    "matchedPrice": 1.14271,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:38:38.519Z"
+  },
+  {
+    "matchedPrice": 17.58966,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:47:04.519Z"
+  },
+  {
+    "matchedPrice": 17.40617,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:05:24.519Z"
+  },
+  {
+    "matchedPrice": 17.25943,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:46:29.519Z"
+  },
+  {
+    "matchedPrice": 17.29634,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:40:27.519Z"
+  },
+  {
+    "matchedPrice": 17.58182,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:43:08.519Z"
+  },
+  {
+    "matchedPrice": 17.38547,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:40:28.519Z"
+  },
+  {
+    "matchedPrice": 17.37805,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:19:33.519Z"
+  },
+  {
+    "matchedPrice": 17.24882,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:51:23.519Z"
+  },
+  {
+    "matchedPrice": 17.59494,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:43:44.519Z"
+  },
+  {
+    "matchedPrice": 17.23782,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:42:55.519Z"
+  },
+  {
+    "matchedPrice": 17.45784,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:49:54.519Z"
+  },
+  {
+    "matchedPrice": 17.23978,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:07:29.519Z"
+  },
+  {
+    "matchedPrice": 17.52515,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:21:26.519Z"
+  },
+  {
+    "matchedPrice": 17.41457,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:22:02.519Z"
+  },
+  {
+    "matchedPrice": 17.43389,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:08:29.519Z"
+  },
+  {
+    "matchedPrice": 1.18976,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:52:56.519Z"
+  },
+  {
+    "matchedPrice": 17.20213,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:15:06.519Z"
+  },
+  {
+    "matchedPrice": 17.25153,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:55:59.519Z"
+  },
+  {
+    "matchedPrice": 17.425,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:36:51.519Z"
+  },
+  {
+    "matchedPrice": 1.15061,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:52:22.519Z"
+  },
+  {
+    "matchedPrice": 17.59084,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:39:11.519Z"
+  },
+  {
+    "matchedPrice": 17.57849,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:41:44.519Z"
+  },
+  {
+    "matchedPrice": 17.25594,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:18:04.519Z"
+  },
+  {
+    "matchedPrice": 17.59441,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:37:29.519Z"
+  },
+  {
+    "matchedPrice": 17.28394,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:03:58.519Z"
+  },
+  {
+    "matchedPrice": 17.27523,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:51:33.519Z"
+  },
+  {
+    "matchedPrice": 1.16021,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:08:55.519Z"
+  },
+  {
+    "matchedPrice": 17.2514,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:59:15.519Z"
+  },
+  {
+    "matchedPrice": 17.30427,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:07:45.519Z"
+  },
+  {
+    "matchedPrice": 17.5779,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:28:46.519Z"
+  },
+  {
+    "matchedPrice": 17.22822,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:38:37.519Z"
+  },
+  {
+    "matchedPrice": 17.27705,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:10:24.519Z"
+  },
+  {
+    "matchedPrice": 17.5282,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:24:52.519Z"
+  },
+  {
+    "matchedPrice": 19.95818,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:53:53.519Z"
+  },
+  {
+    "matchedPrice": 17.44144,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:51:36.519Z"
+  },
+  {
+    "matchedPrice": 17.244,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:17:36.519Z"
+  },
+  {
+    "matchedPrice": 17.23559,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:44:46.519Z"
+  },
+  {
+    "matchedPrice": 17.51924,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:20:09.519Z"
+  },
+  {
+    "matchedPrice": 17.59179,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:54:33.519Z"
+  },
+  {
+    "matchedPrice": 1.17827,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:17:48.519Z"
+  },
+  {
+    "matchedPrice": 17.5502,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:12:59.519Z"
+  },
+  {
+    "matchedPrice": 17.48018,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:36:50.519Z"
+  },
+  {
+    "matchedPrice": 17.23963,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:28:41.519Z"
+  },
+  {
+    "matchedPrice": 17.50075,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:07:39.519Z"
+  },
+  {
+    "matchedPrice": 20.13891,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:19:58.519Z"
+  },
+  {
+    "matchedPrice": 17.30362,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:45:13.519Z"
+  },
+  {
+    "matchedPrice": 17.35152,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:46:12.519Z"
+  },
+  {
+    "matchedPrice": 1.16392,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:37:30.519Z"
+  },
+  {
+    "matchedPrice": 17.3673,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:01:42.519Z"
+  },
+  {
+    "matchedPrice": 17.3416,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:24:33.519Z"
+  },
+  {
+    "matchedPrice": 17.58105,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:35:00.519Z"
+  },
+  {
+    "matchedPrice": 17.23478,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:53:39.519Z"
+  },
+  {
+    "matchedPrice": 20.22262,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:54:09.519Z"
+  },
+  {
+    "matchedPrice": 20.27243,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:44:54.519Z"
+  },
+  {
+    "matchedPrice": 17.49736,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:18:20.519Z"
+  },
+  {
+    "matchedPrice": 1.1424,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:13:52.519Z"
+  },
+  {
+    "matchedPrice": 17.47405,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:55:56.519Z"
+  },
+  {
+    "matchedPrice": 17.27607,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:13:19.519Z"
+  },
+  {
+    "matchedPrice": 20.17483,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:28:01.519Z"
+  },
+  {
+    "matchedPrice": 17.21694,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:33:32.519Z"
+  },
+  {
+    "matchedPrice": 17.55277,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:19:48.519Z"
+  },
+  {
+    "matchedPrice": 17.53576,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:50:29.519Z"
+  },
+  {
+    "matchedPrice": 17.35164,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:34:20.519Z"
+  },
+  {
+    "matchedPrice": 17.47163,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:08:02.519Z"
+  },
+  {
+    "matchedPrice": 17.31742,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:36:49.519Z"
+  },
+  {
+    "matchedPrice": 20.08442,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:35:48.519Z"
+  },
+  {
+    "matchedPrice": 1.19591,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:50:08.519Z"
+  },
+  {
+    "matchedPrice": 20.22418,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:44:33.519Z"
+  },
+  {
+    "matchedPrice": 17.38414,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:48:36.519Z"
+  },
+  {
+    "matchedPrice": 17.33989,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:03:22.519Z"
+  },
+  {
+    "matchedPrice": 17.24054,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:30:09.519Z"
+  },
+  {
+    "matchedPrice": 17.40573,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:44:28.519Z"
+  },
+  {
+    "matchedPrice": 17.39496,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:47:15.519Z"
+  },
+  {
+    "matchedPrice": 17.38828,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:47:54.519Z"
+  },
+  {
+    "matchedPrice": 17.55688,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:44:15.519Z"
+  },
+  {
+    "matchedPrice": 1.16563,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:48:10.519Z"
+  },
+  {
+    "matchedPrice": 17.49884,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:36:56.519Z"
+  },
+  {
+    "matchedPrice": 20.15461,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:47:35.519Z"
+  },
+  {
+    "matchedPrice": 17.25347,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:38:09.519Z"
+  },
+  {
+    "matchedPrice": 1.11603,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:14:39.519Z"
+  },
+  {
+    "matchedPrice": 1.19829,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:21:48.519Z"
+  },
+  {
+    "matchedPrice": 17.39823,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:51:58.519Z"
+  },
+  {
+    "matchedPrice": 20.19017,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:25:22.519Z"
+  },
+  {
+    "matchedPrice": 20.17095,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:54:36.519Z"
+  },
+  {
+    "matchedPrice": 17.24315,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:06:10.519Z"
+  },
+  {
+    "matchedPrice": 17.4,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:48:01.519Z"
+  },
+  {
+    "matchedPrice": 17.33686,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:52:53.519Z"
+  },
+  {
+    "matchedPrice": 17.31289,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:04:38.519Z"
+  },
+  {
+    "matchedPrice": 17.261,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:36:43.519Z"
+  },
+  {
+    "matchedPrice": 17.24601,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:41:20.519Z"
+  },
+  {
+    "matchedPrice": 17.37166,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:56:33.519Z"
+  },
+  {
+    "matchedPrice": 20.05117,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:49:32.519Z"
+  },
+  {
+    "matchedPrice": 1.15912,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:20:36.519Z"
+  },
+  {
+    "matchedPrice": 17.36051,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:41:52.519Z"
+  },
+  {
+    "matchedPrice": 1.14263,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:23:02.519Z"
+  },
+  {
+    "matchedPrice": 19.99018,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:38:12.519Z"
+  },
+  {
+    "matchedPrice": 1.12218,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:14:52.519Z"
+  },
+  {
+    "matchedPrice": 17.37083,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:36:58.519Z"
+  },
+  {
+    "matchedPrice": 17.34543,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:28:24.519Z"
+  },
+  {
+    "matchedPrice": 17.55804,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:12:22.519Z"
+  },
+  {
+    "matchedPrice": 17.46417,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:58:37.519Z"
+  },
+  {
+    "matchedPrice": 17.31206,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:00:22.519Z"
+  },
+  {
+    "matchedPrice": 17.57933,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:31:26.519Z"
+  },
+  {
+    "matchedPrice": 17.23875,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:36:20.519Z"
+  },
+  {
+    "matchedPrice": 19.86515,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:32:14.519Z"
+  },
+  {
+    "matchedPrice": 20.09446,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:01:13.519Z"
+  },
+  {
+    "matchedPrice": 17.28401,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:31:08.519Z"
+  },
+  {
+    "matchedPrice": 19.86524,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:12:02.519Z"
+  },
+  {
+    "matchedPrice": 17.56487,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:40:14.519Z"
+  },
+  {
+    "matchedPrice": 20.26275,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:47:40.519Z"
+  },
+  {
+    "matchedPrice": 17.32059,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:20:25.519Z"
+  },
+  {
+    "matchedPrice": 17.26147,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:42:54.519Z"
+  },
+  {
+    "matchedPrice": 17.48464,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:22:08.519Z"
+  },
+  {
+    "matchedPrice": 17.48693,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:13:47.519Z"
+  },
+  {
+    "matchedPrice": 17.40951,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:37:01.519Z"
+  },
+  {
+    "matchedPrice": 17.47868,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:08:56.519Z"
+  },
+  {
+    "matchedPrice": 17.42647,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:13:21.519Z"
+  },
+  {
+    "matchedPrice": 17.41299,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:40:07.519Z"
+  },
+  {
+    "matchedPrice": 17.40371,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:06:01.519Z"
+  },
+  {
+    "matchedPrice": 17.28277,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:52:10.519Z"
+  },
+  {
+    "matchedPrice": 17.43685,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:01:28.519Z"
+  },
+  {
+    "matchedPrice": 17.4831,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:38:53.519Z"
+  },
+  {
+    "matchedPrice": 19.94818,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:35:30.519Z"
+  },
+  {
+    "matchedPrice": 17.28957,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:04:09.519Z"
+  },
+  {
+    "matchedPrice": 17.25926,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:51:13.519Z"
+  },
+  {
+    "matchedPrice": 17.51625,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:03:00.519Z"
+  },
+  {
+    "matchedPrice": 17.20056,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:39:34.519Z"
+  },
+  {
+    "matchedPrice": 17.34764,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:41:47.519Z"
+  },
+  {
+    "matchedPrice": 17.25344,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:52:31.519Z"
+  },
+  {
+    "matchedPrice": 1.1626,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:45:08.519Z"
+  },
+  {
+    "matchedPrice": 17.58609,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:22:29.519Z"
+  },
+  {
+    "matchedPrice": 1.15374,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:47:14.519Z"
+  },
+  {
+    "matchedPrice": 1.12573,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:35:43.519Z"
+  },
+  {
+    "matchedPrice": 17.30752,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:01:41.519Z"
+  },
+  {
+    "matchedPrice": 17.49192,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:16:23.519Z"
+  },
+  {
+    "matchedPrice": 17.3916,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:05:10.519Z"
+  },
+  {
+    "matchedPrice": 17.52624,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:49:07.519Z"
+  },
+  {
+    "matchedPrice": 17.57734,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:07:04.519Z"
+  },
+  {
+    "matchedPrice": 17.32406,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:20:33.519Z"
+  },
+  {
+    "matchedPrice": 17.27514,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:04:18.519Z"
+  },
+  {
+    "matchedPrice": 17.38201,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:02:44.519Z"
+  },
+  {
+    "matchedPrice": 19.86865,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:43:47.519Z"
+  },
+  {
+    "matchedPrice": 17.3536,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:12:05.519Z"
+  },
+  {
+    "matchedPrice": 20.12224,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:52:57.519Z"
+  },
+  {
+    "matchedPrice": 17.23344,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:51:09.519Z"
+  },
+  {
+    "matchedPrice": 17.51696,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:49:23.519Z"
+  },
+  {
+    "matchedPrice": 17.5273,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:19:43.519Z"
+  },
+  {
+    "matchedPrice": 17.50387,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:45:18.519Z"
+  },
+  {
+    "matchedPrice": 17.39156,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:39:38.519Z"
+  },
+  {
+    "matchedPrice": 17.30698,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:55:22.519Z"
+  },
+  {
+    "matchedPrice": 19.85141,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:57:38.519Z"
+  },
+  {
+    "matchedPrice": 17.53459,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:39:03.519Z"
+  },
+  {
+    "matchedPrice": 1.1024,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:39:49.519Z"
+  },
+  {
+    "matchedPrice": 17.46215,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:41:12.519Z"
+  },
+  {
+    "matchedPrice": 17.48594,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:47:18.520Z"
+  },
+  {
+    "matchedPrice": 17.24405,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:26:04.520Z"
+  },
+  {
+    "matchedPrice": 17.44628,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:34:11.520Z"
+  },
+  {
+    "matchedPrice": 1.19199,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:41:08.520Z"
+  },
+  {
+    "matchedPrice": 17.37145,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:51:49.520Z"
+  },
+  {
+    "matchedPrice": 17.3701,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:56:53.520Z"
+  },
+  {
+    "matchedPrice": 19.97419,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:49:29.520Z"
+  },
+  {
+    "matchedPrice": 1.16617,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:54:52.520Z"
+  },
+  {
+    "matchedPrice": 20.23086,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:48:57.520Z"
+  },
+  {
+    "matchedPrice": 17.25911,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:16:32.520Z"
+  },
+  {
+    "matchedPrice": 19.85658,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:33:21.520Z"
+  },
+  {
+    "matchedPrice": 17.32922,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:04:23.520Z"
+  },
+  {
+    "matchedPrice": 19.9763,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:15:49.520Z"
+  },
+  {
+    "matchedPrice": 17.58914,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:39:45.520Z"
+  },
+  {
+    "matchedPrice": 20.12698,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:44:37.520Z"
+  },
+  {
+    "matchedPrice": 17.39884,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:18:29.520Z"
+  },
+  {
+    "matchedPrice": 17.29205,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:32:33.520Z"
+  },
+  {
+    "matchedPrice": 20.06347,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:31:05.520Z"
+  },
+  {
+    "matchedPrice": 17.20115,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:30:01.520Z"
+  },
+  {
+    "matchedPrice": 17.58305,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:31:33.520Z"
+  },
+  {
+    "matchedPrice": 1.13609,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:57:55.520Z"
+  },
+  {
+    "matchedPrice": 17.5341,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:51:57.520Z"
+  },
+  {
+    "matchedPrice": 17.28983,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:25:35.520Z"
+  },
+  {
+    "matchedPrice": 1.1704,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:44:08.520Z"
+  },
+  {
+    "matchedPrice": 17.36988,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:50:07.520Z"
+  },
+  {
+    "matchedPrice": 17.22951,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:35:45.520Z"
+  },
+  {
+    "matchedPrice": 17.25651,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:53:20.520Z"
+  },
+  {
+    "matchedPrice": 17.53243,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:14:38.520Z"
+  },
+  {
+    "matchedPrice": 20.03488,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:29:28.520Z"
+  },
+  {
+    "matchedPrice": 17.3198,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:24:46.520Z"
+  },
+  {
+    "matchedPrice": 17.45794,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:15:14.520Z"
+  },
+  {
+    "matchedPrice": 17.224,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:41:51.520Z"
+  },
+  {
+    "matchedPrice": 20.05165,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:15:46.520Z"
+  },
+  {
+    "matchedPrice": 20.13995,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:31:07.520Z"
+  },
+  {
+    "matchedPrice": 19.92903,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:25:07.520Z"
+  },
+  {
+    "matchedPrice": 17.26272,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:42:27.520Z"
+  },
+  {
+    "matchedPrice": 17.58043,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:07:00.520Z"
+  },
+  {
+    "matchedPrice": 17.28756,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:19:54.520Z"
+  },
+  {
+    "matchedPrice": 17.23088,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:18:46.520Z"
+  },
+  {
+    "matchedPrice": 17.45676,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:41:38.520Z"
+  },
+  {
+    "matchedPrice": 17.34859,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:36:18.520Z"
+  },
+  {
+    "matchedPrice": 17.24176,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:44:00.520Z"
+  },
+  {
+    "matchedPrice": 19.96774,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:25:12.520Z"
+  },
+  {
+    "matchedPrice": 17.24259,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:57:17.520Z"
+  },
+  {
+    "matchedPrice": 17.56387,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:36:30.520Z"
+  },
+  {
+    "matchedPrice": 17.57168,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:53:41.520Z"
+  },
+  {
+    "matchedPrice": 17.42805,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:10:11.520Z"
+  },
+  {
+    "matchedPrice": 1.14838,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:14:29.520Z"
+  },
+  {
+    "matchedPrice": 17.32344,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:24:46.520Z"
+  },
+  {
+    "matchedPrice": 1.15002,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:28:19.520Z"
+  },
+  {
+    "matchedPrice": 20.28693,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:37:55.520Z"
+  },
+  {
+    "matchedPrice": 17.49658,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:24:40.520Z"
+  },
+  {
+    "matchedPrice": 19.87509,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:19:46.520Z"
+  },
+  {
+    "matchedPrice": 17.54081,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:49:30.520Z"
+  },
+  {
+    "matchedPrice": 17.38524,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:15:49.520Z"
+  },
+  {
+    "matchedPrice": 20.20374,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:49:53.520Z"
+  },
+  {
+    "matchedPrice": 1.15016,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:24:09.520Z"
+  },
+  {
+    "matchedPrice": 19.96951,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:59:42.520Z"
+  },
+  {
+    "matchedPrice": 20.01545,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:59:21.520Z"
+  },
+  {
+    "matchedPrice": 17.44415,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:08:46.520Z"
+  },
+  {
+    "matchedPrice": 17.59776,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:09:03.520Z"
+  },
+  {
+    "matchedPrice": 17.54818,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:31:48.520Z"
+  },
+  {
+    "matchedPrice": 17.32549,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:48:57.520Z"
+  },
+  {
+    "matchedPrice": 17.4306,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:26:46.520Z"
+  },
+  {
+    "matchedPrice": 17.48426,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:18:12.520Z"
+  },
+  {
+    "matchedPrice": 1.19785,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:01:06.520Z"
+  },
+  {
+    "matchedPrice": 1.19398,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:15:12.520Z"
+  },
+  {
+    "matchedPrice": 17.31465,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:07:58.520Z"
+  },
+  {
+    "matchedPrice": 1.1129,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:02:10.520Z"
+  },
+  {
+    "matchedPrice": 20.27602,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:39:18.520Z"
+  },
+  {
+    "matchedPrice": 17.40238,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:08:28.520Z"
+  },
+  {
+    "matchedPrice": 17.45755,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:16:36.520Z"
+  },
+  {
+    "matchedPrice": 17.54122,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:00:42.520Z"
+  },
+  {
+    "matchedPrice": 17.35971,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:34:26.520Z"
+  },
+  {
+    "matchedPrice": 17.38491,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:59:26.520Z"
+  },
+  {
+    "matchedPrice": 17.45699,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:43:19.520Z"
+  },
+  {
+    "matchedPrice": 17.49271,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:55:32.520Z"
+  },
+  {
+    "matchedPrice": 17.33149,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:13:39.520Z"
+  },
+  {
+    "matchedPrice": 1.14863,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:31:57.520Z"
+  },
+  {
+    "matchedPrice": 17.21531,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:35:02.520Z"
+  },
+  {
+    "matchedPrice": 17.28539,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:48:37.520Z"
+  },
+  {
+    "matchedPrice": 19.8312,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:02:06.520Z"
+  },
+  {
+    "matchedPrice": 1.12134,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:51:34.520Z"
+  },
+  {
+    "matchedPrice": 1.16837,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:31:02.520Z"
+  },
+  {
+    "matchedPrice": 17.23344,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:43:20.520Z"
+  },
+  {
+    "matchedPrice": 17.31933,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:24:48.520Z"
+  },
+  {
+    "matchedPrice": 17.46786,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:59:34.520Z"
+  },
+  {
+    "matchedPrice": 19.84622,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:14:32.520Z"
+  },
+  {
+    "matchedPrice": 1.12969,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:58:41.520Z"
+  },
+  {
+    "matchedPrice": 1.14816,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:47:31.520Z"
+  },
+  {
+    "matchedPrice": 17.47716,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:20:00.520Z"
+  },
+  {
+    "matchedPrice": 17.55751,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:51:43.520Z"
+  },
+  {
+    "matchedPrice": 20.08924,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:54:29.520Z"
+  },
+  {
+    "matchedPrice": 17.5294,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:10:42.520Z"
+  },
+  {
+    "matchedPrice": 17.38346,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:30:38.520Z"
+  },
+  {
+    "matchedPrice": 19.8568,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:07:35.520Z"
+  },
+  {
+    "matchedPrice": 17.20147,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:07:03.520Z"
+  },
+  {
+    "matchedPrice": 17.45557,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:21:59.520Z"
+  },
+  {
+    "matchedPrice": 17.59161,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:48:45.520Z"
+  },
+  {
+    "matchedPrice": 20.10047,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:01:17.520Z"
+  },
+  {
+    "matchedPrice": 17.27646,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:12:51.520Z"
+  },
+  {
+    "matchedPrice": 19.8081,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:24:52.520Z"
+  },
+  {
+    "matchedPrice": 19.86237,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:04:07.520Z"
+  },
+  {
+    "matchedPrice": 1.14141,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:52:16.520Z"
+  },
+  {
+    "matchedPrice": 20.01292,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:34:01.520Z"
+  },
+  {
+    "matchedPrice": 1.14588,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:15:15.520Z"
+  },
+  {
+    "matchedPrice": 17.26506,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:48:09.520Z"
+  },
+  {
+    "matchedPrice": 17.46384,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:36:28.520Z"
+  },
+  {
+    "matchedPrice": 17.44815,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:30:17.520Z"
+  },
+  {
+    "matchedPrice": 19.85191,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:15:27.520Z"
+  },
+  {
+    "matchedPrice": 1.11037,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:37:44.520Z"
+  },
+  {
+    "matchedPrice": 17.43249,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:08:23.520Z"
+  },
+  {
+    "matchedPrice": 19.90594,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:36:44.520Z"
+  },
+  {
+    "matchedPrice": 17.27822,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:09:51.520Z"
+  },
+  {
+    "matchedPrice": 17.5175,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:39:37.520Z"
+  },
+  {
+    "matchedPrice": 1.16449,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:25:05.520Z"
+  },
+  {
+    "matchedPrice": 1.17822,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:57:05.520Z"
+  },
+  {
+    "matchedPrice": 19.93225,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:54:00.520Z"
+  },
+  {
+    "matchedPrice": 17.56362,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:07:46.520Z"
+  },
+  {
+    "matchedPrice": 17.5162,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:29:41.520Z"
+  },
+  {
+    "matchedPrice": 17.42887,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:53:24.520Z"
+  },
+  {
+    "matchedPrice": 17.35654,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:49:01.520Z"
+  },
+  {
+    "matchedPrice": 20.08893,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:31:44.520Z"
+  },
+  {
+    "matchedPrice": 17.49125,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:06:44.520Z"
+  },
+  {
+    "matchedPrice": 17.37496,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:05:43.520Z"
+  },
+  {
+    "matchedPrice": 17.45258,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:51:18.520Z"
+  },
+  {
+    "matchedPrice": 1.18373,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:57:23.520Z"
+  },
+  {
+    "matchedPrice": 17.23731,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:16:29.520Z"
+  },
+  {
+    "matchedPrice": 17.43732,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:11:26.520Z"
+  },
+  {
+    "matchedPrice": 20.2603,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:52:35.520Z"
+  },
+  {
+    "matchedPrice": 17.49694,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:10:33.520Z"
+  },
+  {
+    "matchedPrice": 17.51104,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:58:01.520Z"
+  },
+  {
+    "matchedPrice": 17.2887,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:12:03.520Z"
+  },
+  {
+    "matchedPrice": 20.16316,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:12:40.520Z"
+  },
+  {
+    "matchedPrice": 17.30999,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:51:02.520Z"
+  },
+  {
+    "matchedPrice": 17.59392,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:39:21.520Z"
+  },
+  {
+    "matchedPrice": 17.43836,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:31:51.520Z"
+  },
+  {
+    "matchedPrice": 17.55784,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:52:39.520Z"
+  },
+  {
+    "matchedPrice": 17.34456,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T13:27:59.520Z"
+  },
+  {
+    "matchedPrice": 17.51818,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:00:58.520Z"
+  },
+  {
+    "matchedPrice": 17.45027,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:24:23.520Z"
+  },
+  {
+    "matchedPrice": 17.32543,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:49:45.520Z"
+  },
+  {
+    "matchedPrice": 17.20406,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:02:25.520Z"
+  },
+  {
+    "matchedPrice": 17.54192,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:12:49.520Z"
+  },
+  {
+    "matchedPrice": 1.14839,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:55:41.520Z"
+  },
+  {
+    "matchedPrice": 17.3018,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:40:25.520Z"
+  },
+  {
+    "matchedPrice": 17.41438,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:49:10.520Z"
+  },
+  {
+    "matchedPrice": 19.85739,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:37:15.520Z"
+  },
+  {
+    "matchedPrice": 17.2879,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:57:08.520Z"
+  },
+  {
+    "matchedPrice": 17.2797,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:00:16.520Z"
+  },
+  {
+    "matchedPrice": 20.12596,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:38:36.520Z"
+  },
+  {
+    "matchedPrice": 17.57854,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:35:21.520Z"
+  },
+  {
+    "matchedPrice": 17.47482,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:23:33.520Z"
+  },
+  {
+    "matchedPrice": 17.51726,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T21:39:49.520Z"
+  },
+  {
+    "matchedPrice": 20.27688,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:54:46.520Z"
+  },
+  {
+    "matchedPrice": 20.01187,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:05:22.520Z"
+  },
+  {
+    "matchedPrice": 17.44292,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:25:24.520Z"
+  },
+  {
+    "matchedPrice": 17.34958,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:19:57.520Z"
+  },
+  {
+    "matchedPrice": 17.2135,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:19:39.520Z"
+  },
+  {
+    "matchedPrice": 17.44155,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:11:35.520Z"
+  },
+  {
+    "matchedPrice": 17.27196,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:03:41.520Z"
+  },
+  {
+    "matchedPrice": 19.97887,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T19:51:37.520Z"
+  },
+  {
+    "matchedPrice": 17.34879,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:14:31.520Z"
+  },
+  {
+    "matchedPrice": 17.47532,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:54:42.520Z"
+  },
+  {
+    "matchedPrice": 17.5181,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:14:46.520Z"
+  },
+  {
+    "matchedPrice": 17.31345,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:29:52.520Z"
+  },
+  {
+    "matchedPrice": 17.42438,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:47:53.520Z"
+  },
+  {
+    "matchedPrice": 20.01088,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:07:29.520Z"
+  },
+  {
+    "matchedPrice": 19.89908,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:42:41.520Z"
+  },
+  {
+    "matchedPrice": 17.5961,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:21:10.520Z"
+  },
+  {
+    "matchedPrice": 17.26846,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:10:16.520Z"
+  },
+  {
+    "matchedPrice": 17.43057,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:02:44.520Z"
+  },
+  {
+    "matchedPrice": 17.54244,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:52:56.520Z"
+  },
+  {
+    "matchedPrice": 17.53666,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:20:51.520Z"
+  },
+  {
+    "matchedPrice": 20.25902,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:24:39.520Z"
+  },
+  {
+    "matchedPrice": 17.22778,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T12:34:56.520Z"
+  },
+  {
+    "matchedPrice": 19.93734,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:07:08.520Z"
+  },
+  {
+    "matchedPrice": 17.50985,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:24:03.520Z"
+  },
+  {
+    "matchedPrice": 17.31938,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:43:59.520Z"
+  },
+  {
+    "matchedPrice": 20.28358,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:04:53.520Z"
+  },
+  {
+    "matchedPrice": 1.11027,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:57:12.520Z"
+  },
+  {
+    "matchedPrice": 19.86937,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:49:56.520Z"
+  },
+  {
+    "matchedPrice": 17.23521,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:07:23.520Z"
+  },
+  {
+    "matchedPrice": 1.19341,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:14:24.520Z"
+  },
+  {
+    "matchedPrice": 19.82154,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:36:58.520Z"
+  },
+  {
+    "matchedPrice": 17.33173,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:52:04.521Z"
+  },
+  {
+    "matchedPrice": 17.56994,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:19:46.521Z"
+  },
+  {
+    "matchedPrice": 17.54476,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:30:21.521Z"
+  },
+  {
+    "matchedPrice": 17.24895,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:39:17.521Z"
+  },
+  {
+    "matchedPrice": 17.39604,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:58:28.521Z"
+  },
+  {
+    "matchedPrice": 20.04135,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:05:23.521Z"
+  },
+  {
+    "matchedPrice": 20.15569,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:21:36.521Z"
+  },
+  {
+    "matchedPrice": 19.92119,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:51:16.521Z"
+  },
+  {
+    "matchedPrice": 17.39784,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:13:01.521Z"
+  },
+  {
+    "matchedPrice": 17.38726,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:51:11.521Z"
+  },
+  {
+    "matchedPrice": 17.33618,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:20:30.521Z"
+  },
+  {
+    "matchedPrice": 20.12764,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:57:34.521Z"
+  },
+  {
+    "matchedPrice": 17.34546,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:06:14.521Z"
+  },
+  {
+    "matchedPrice": 17.51201,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:11:45.521Z"
+  },
+  {
+    "matchedPrice": 17.26568,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:40:41.521Z"
+  },
+  {
+    "matchedPrice": 17.25892,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:40:57.521Z"
+  },
+  {
+    "matchedPrice": 17.55764,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T17:58:57.521Z"
+  },
+  {
+    "matchedPrice": 17.46475,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:52:50.521Z"
+  },
+  {
+    "matchedPrice": 17.57077,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:47:26.521Z"
+  },
+  {
+    "matchedPrice": 17.26025,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:12:07.521Z"
+  },
+  {
+    "matchedPrice": 17.37654,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:08:01.521Z"
+  },
+  {
+    "matchedPrice": 17.35301,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:38:02.521Z"
+  },
+  {
+    "matchedPrice": 17.36108,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:24:51.521Z"
+  },
+  {
+    "matchedPrice": 17.40745,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:52:45.521Z"
+  },
+  {
+    "matchedPrice": 17.58359,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:30:04.521Z"
+  },
+  {
+    "matchedPrice": 17.21428,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:00:06.521Z"
+  },
+  {
+    "matchedPrice": 17.24041,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T05:06:48.521Z"
+  },
+  {
+    "matchedPrice": 17.36182,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:00:23.521Z"
+  },
+  {
+    "matchedPrice": 17.52963,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:39:58.521Z"
+  },
+  {
+    "matchedPrice": 17.51429,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:30:22.521Z"
+  },
+  {
+    "matchedPrice": 17.43853,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:15:49.521Z"
+  },
+  {
+    "matchedPrice": 17.56311,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:34:42.521Z"
+  },
+  {
+    "matchedPrice": 20.14397,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:13:19.521Z"
+  },
+  {
+    "matchedPrice": 17.26666,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T11:07:15.521Z"
+  },
+  {
+    "matchedPrice": 17.20509,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:06:53.521Z"
+  },
+  {
+    "matchedPrice": 17.27101,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:53:32.521Z"
+  },
+  {
+    "matchedPrice": 17.5041,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:04:04.521Z"
+  },
+  {
+    "matchedPrice": 17.38953,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T09:54:58.521Z"
+  },
+  {
+    "matchedPrice": 20.03628,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:03:42.521Z"
+  },
+  {
+    "matchedPrice": 17.59617,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T08:34:13.521Z"
+  },
+  {
+    "matchedPrice": 17.502,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:03:15.521Z"
+  },
+  {
+    "matchedPrice": 17.49447,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:49:49.521Z"
+  },
+  {
+    "matchedPrice": 20.2949,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:58:56.521Z"
+  },
+  {
+    "matchedPrice": 17.3835,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:43:51.521Z"
+  },
+  {
+    "matchedPrice": 20.24569,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:35:22.521Z"
+  },
+  {
+    "matchedPrice": 17.40772,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T22:18:36.521Z"
+  },
+  {
+    "matchedPrice": 1.18563,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:41:23.521Z"
+  },
+  {
+    "matchedPrice": 17.29775,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:36:32.521Z"
+  },
+  {
+    "matchedPrice": 17.23571,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:26:21.521Z"
+  },
+  {
+    "matchedPrice": 17.30957,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T08:30:39.521Z"
+  },
+  {
+    "matchedPrice": 17.56413,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:38:11.521Z"
+  },
+  {
+    "matchedPrice": 17.36692,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:25:58.521Z"
+  },
+  {
+    "matchedPrice": 17.43181,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:23:57.521Z"
+  },
+  {
+    "matchedPrice": 17.51813,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:11:39.521Z"
+  },
+  {
+    "matchedPrice": 17.20333,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:43:00.521Z"
+  },
+  {
+    "matchedPrice": 17.40927,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T04:58:59.521Z"
+  },
+  {
+    "matchedPrice": 17.26504,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T17:11:59.521Z"
+  },
+  {
+    "matchedPrice": 17.31789,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:12:14.521Z"
+  },
+  {
+    "matchedPrice": 17.53019,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T01:45:29.521Z"
+  },
+  {
+    "matchedPrice": 17.20204,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:40:17.521Z"
+  },
+  {
+    "matchedPrice": 17.25509,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:25:04.521Z"
+  },
+  {
+    "matchedPrice": 17.50755,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:33:49.521Z"
+  },
+  {
+    "matchedPrice": 19.87132,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:57:52.521Z"
+  },
+  {
+    "matchedPrice": 17.23229,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:31:29.521Z"
+  },
+  {
+    "matchedPrice": 17.34185,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:18:35.521Z"
+  },
+  {
+    "matchedPrice": 17.56167,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:41:55.521Z"
+  },
+  {
+    "matchedPrice": 17.26932,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:57:13.521Z"
+  },
+  {
+    "matchedPrice": 19.86959,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:35:31.521Z"
+  },
+  {
+    "matchedPrice": 17.42171,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T16:35:25.521Z"
+  },
+  {
+    "matchedPrice": 17.42667,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T07:49:18.521Z"
+  },
+  {
+    "matchedPrice": 17.51296,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:11:53.521Z"
+  },
+  {
+    "matchedPrice": 17.37676,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:21:05.521Z"
+  },
+  {
+    "matchedPrice": 1.17126,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:47:57.521Z"
+  },
+  {
+    "matchedPrice": 17.3682,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:54:00.521Z"
+  },
+  {
+    "matchedPrice": 17.42356,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T00:28:31.521Z"
+  },
+  {
+    "matchedPrice": 20.1076,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T18:51:37.521Z"
+  },
+  {
+    "matchedPrice": 17.34924,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:44:44.521Z"
+  },
+  {
+    "matchedPrice": 19.99633,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T03:28:41.521Z"
+  },
+  {
+    "matchedPrice": 17.5052,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T01:42:58.521Z"
+  },
+  {
+    "matchedPrice": 17.30807,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:33:11.521Z"
+  },
+  {
+    "matchedPrice": 17.52878,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T15:37:56.521Z"
+  },
+  {
+    "matchedPrice": 19.86072,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:13:43.521Z"
+  },
+  {
+    "matchedPrice": 17.42482,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:43:43.521Z"
+  },
+  {
+    "matchedPrice": 17.47027,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:44:23.521Z"
+  },
+  {
+    "matchedPrice": 17.48766,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:02:17.521Z"
+  },
+  {
+    "matchedPrice": 17.28028,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T03:41:37.521Z"
+  },
+  {
+    "matchedPrice": 17.55196,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T18:41:40.521Z"
+  },
+  {
+    "matchedPrice": 17.3895,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:28:10.521Z"
+  },
+  {
+    "matchedPrice": 17.24872,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:04:59.521Z"
+  },
+  {
+    "matchedPrice": 1.18203,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T05:23:06.521Z"
+  },
+  {
+    "matchedPrice": 17.54373,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T11:57:12.521Z"
+  },
+  {
+    "matchedPrice": 17.20866,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T03:45:26.521Z"
+  },
+  {
+    "matchedPrice": 17.40461,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:21:30.521Z"
+  },
+  {
+    "matchedPrice": 17.31578,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:15:31.521Z"
+  },
+  {
+    "matchedPrice": 17.46708,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:38:51.521Z"
+  },
+  {
+    "matchedPrice": 17.24293,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:13:38.521Z"
+  },
+  {
+    "matchedPrice": 17.31337,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T07:09:09.521Z"
+  },
+  {
+    "matchedPrice": 17.43222,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:12:26.521Z"
+  },
+  {
+    "matchedPrice": 17.46288,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-11T02:08:34.521Z"
+  },
+  {
+    "matchedPrice": 1.13547,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T10:39:32.521Z"
+  },
+  {
+    "matchedPrice": 20.02918,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:55:51.521Z"
+  },
+  {
+    "matchedPrice": 17.54234,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:59:39.521Z"
+  },
+  {
+    "matchedPrice": 1.15251,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:20:30.521Z"
+  },
+  {
+    "matchedPrice": 17.34075,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T10:57:56.521Z"
+  },
+  {
+    "matchedPrice": 20.19335,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T03:43:18.521Z"
+  },
+  {
+    "matchedPrice": 17.35757,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T13:59:10.521Z"
+  },
+  {
+    "matchedPrice": 1.16058,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T06:43:19.521Z"
+  },
+  {
+    "matchedPrice": 20.05349,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T22:58:58.521Z"
+  },
+  {
+    "matchedPrice": 17.43554,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T06:24:51.521Z"
+  },
+  {
+    "matchedPrice": 17.36151,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T02:37:12.521Z"
+  },
+  {
+    "matchedPrice": 19.87959,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:49:39.521Z"
+  },
+  {
+    "matchedPrice": 17.47173,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T19:15:54.521Z"
+  },
+  {
+    "matchedPrice": 1.18086,
+    "exchangeType": "EUR_USD",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T23:51:22.521Z"
+  },
+  {
+    "matchedPrice": 19.887,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T12:24:04.521Z"
+  },
+  {
+    "matchedPrice": 1.10619,
+    "exchangeType": "EUR_USD",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T23:31:37.521Z"
+  },
+  {
+    "matchedPrice": 17.49997,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T14:03:58.521Z"
+  },
+  {
+    "matchedPrice": 17.53627,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T16:00:07.521Z"
+  },
+  {
+    "matchedPrice": 17.3798,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T04:29:17.521Z"
+  },
+  {
+    "matchedPrice": 17.27989,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:48:52.521Z"
+  },
+  {
+    "matchedPrice": 17.31444,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T21:47:36.521Z"
+  },
+  {
+    "matchedPrice": 17.41141,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-11T00:33:47.521Z"
+  },
+  {
+    "matchedPrice": 17.45165,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T20:17:03.521Z"
+  },
+  {
+    "matchedPrice": 17.25623,
+    "exchangeType": "USD_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T14:36:13.521Z"
+  },
+  {
+    "matchedPrice": 20.08415,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "BUY",
+    "targetAt": "2026-08-10T15:17:24.521Z"
+  },
+  {
+    "matchedPrice": 17.49199,
+    "exchangeType": "USD_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T20:46:20.521Z"
+  },
+  {
+    "matchedPrice": 20.08519,
+    "exchangeType": "EUR_MXN",
+    "transactionType": "SELL",
+    "targetAt": "2026-08-10T09:27:34.521Z"
+  }
+]

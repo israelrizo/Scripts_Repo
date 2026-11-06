@@ -1,0 +1,1302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Plan de Pruebas OAuth">
+      <stringProp name="TestPlan.comments">La variable secret estará vacia, contactar administrador</stringProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="credential_client_secret" elementType="Argument">
+            <stringProp name="Argument.name">credential_client_secret</stringProp>
+            <stringProp name="Argument.value">CSxx2ByA8Ay6XzYx</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="credential_client_id" elementType="Argument">
+            <stringProp name="Argument.name">credential_client_id</stringProp>
+            <stringProp name="Argument.value">gfb-blacklistapi-qa-tester</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="kong_server_qa" elementType="Argument">
+            <stringProp name="Argument.name">kong_server_qa</stringProp>
+            <stringProp name="Argument.value">kongproxy-qa.bancobase.net</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_TT" elementType="Argument">
+            <stringProp name="Argument.name">P_TT</stringProp>
+            <stringProp name="Argument.value">3000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="BlackListAPI_Carga_Masiva - Scalability">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.num_threads">20</stringProp>
+        <stringProp name="Threads initial delay">0</stringProp>
+        <stringProp name="Start users count">5</stringProp>
+        <stringProp name="Start users count burst">0</stringProp>
+        <stringProp name="Start users period">300</stringProp>
+        <stringProp name="Stop users count">5</stringProp>
+        <stringProp name="Stop users period">1</stringProp>
+        <stringProp name="flighttime">2700</stringProp>
+        <stringProp name="rampUp">5</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </kg.apc.jmeter.threads.SteppingThreadGroup>
+      <hashTree>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables POST-SEARCHES-SPID">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="P_businessProcess" elementType="Argument">
+              <stringProp name="Argument.name">P_businessProcess</stringProp>
+              <stringProp name="Argument.value">BL01</stringProp>
+              <stringProp name="Argument.desc">Proceso de Negocio</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_businessType" elementType="Argument">
+              <stringProp name="Argument.name">P_businessType</stringProp>
+              <stringProp name="Argument.value">Output</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Tipo de Negocio</stringProp>
+            </elementProp>
+            <elementProp name="P_transactionId" elementType="Argument">
+              <stringProp name="Argument.name">P_transactionId</stringProp>
+              <stringProp name="Argument.value">${__time(yyyy-MM-dd)}T${__time(HH:mm:ss.SSS)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">ID único de la transacción</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_1" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_1</stringProp>
+              <stringProp name="Argument.value">32300</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">ID del cliente 1 o 366600</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType</stringProp>
+              <stringProp name="Argument.value">ORDENANTE</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Rol</stringProp>
+            </elementProp>
+            <elementProp name="P_names" elementType="Argument">
+              <stringProp name="Argument.name">P_names</stringProp>
+              <stringProp name="Argument.value">Osama</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Nombre </stringProp>
+            </elementProp>
+            <elementProp name="P_surnames" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames</stringProp>
+              <stringProp name="Argument.value">Bin Laden</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+            </elementProp>
+            <elementProp name="P_personType" elementType="Argument">
+              <stringProp name="Argument.name">P_personType</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona (Fisica o Moral)</stringProp>
+            </elementProp>
+            <elementProp name="P_gender" elementType="Argument">
+              <stringProp name="Argument.name">P_gender</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Genero</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_2" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_2</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">ID del Cliente</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType_2" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType_2</stringProp>
+              <stringProp name="Argument.value">DESTINATARIO</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Rpol</stringProp>
+            </elementProp>
+            <elementProp name="P_names_2" elementType="Argument">
+              <stringProp name="Argument.name">P_names_2</stringProp>
+              <stringProp name="Argument.value">Joaquin</stringProp>
+              <stringProp name="Argument.desc">Nombre</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_surnames_2" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames_2</stringProp>
+              <stringProp name="Argument.value">Guzman Loera</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_personType_2" elementType="Argument">
+              <stringProp name="Argument.name">P_personType_2</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_gender_2" elementType="Argument">
+              <stringProp name="Argument.name">P_gender_2</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.desc">Genero del Cliente</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate_2" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate_2</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc_2" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc_2</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName_2" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName_2</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality_2" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality_2</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables POST-SEARCHES-RECIPIENTS" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="P_businessProcess_3" elementType="Argument">
+              <stringProp name="Argument.name">P_businessProcess_3</stringProp>
+              <stringProp name="Argument.value">BL02</stringProp>
+              <stringProp name="Argument.desc">Proceso de Negocio</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_3" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_3</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID del Cliente</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType_3" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType_3</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Roll</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_names_3" elementType="Argument">
+              <stringProp name="Argument.name">P_names_3</stringProp>
+              <stringProp name="Argument.value">Osama</stringProp>
+              <stringProp name="Argument.desc">Nombre </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_surnames_3" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames_3</stringProp>
+              <stringProp name="Argument.value">Bin Laden</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_personType_3" elementType="Argument">
+              <stringProp name="Argument.name">P_personType_3</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona (Fisica o Moral)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_gender_3" elementType="Argument">
+              <stringProp name="Argument.name">P_gender_3</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.desc">Genero</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate_3" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate_3</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc_3" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc_3</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName_3" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName_3</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality_3" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality_3</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_4" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_4</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID del Cliente</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType_4" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType_4</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Roll</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_names_4" elementType="Argument">
+              <stringProp name="Argument.name">P_names_4</stringProp>
+              <stringProp name="Argument.value">Joaquin</stringProp>
+              <stringProp name="Argument.desc">Nombre </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_surnames_4" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames_4</stringProp>
+              <stringProp name="Argument.value">Guzman Loera</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_personType_4" elementType="Argument">
+              <stringProp name="Argument.name">P_personType_4</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona (Fisica o Moral)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_gender_4" elementType="Argument">
+              <stringProp name="Argument.name">P_gender_4</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.desc">Genero</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate_4" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate_4</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc_4" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc_4</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName_4" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName_4</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality_4" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality_4</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables POST-SEARCHES-ONBOARDING" enabled="true">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="P_businessProcess_5" elementType="Argument">
+              <stringProp name="Argument.name">P_businessProcess_5</stringProp>
+              <stringProp name="Argument.value">BL03</stringProp>
+              <stringProp name="Argument.desc">Proceso de Negocio</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_5" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_5</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID del Cliente</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType_5" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType_5</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Roll</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_names_5" elementType="Argument">
+              <stringProp name="Argument.name">P_names_5</stringProp>
+              <stringProp name="Argument.value">Osama</stringProp>
+              <stringProp name="Argument.desc">Nombre </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_surnames_5" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames_5</stringProp>
+              <stringProp name="Argument.value">Bin Laden</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_personType_5" elementType="Argument">
+              <stringProp name="Argument.name">P_personType_5</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona (Fisica o Moral)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_gender_5" elementType="Argument">
+              <stringProp name="Argument.name">P_gender_5</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.desc">Genero</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate_5" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate_5</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc_5" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc_5</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName_5" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName_5</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality_5" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality_5</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_clientId_6" elementType="Argument">
+              <stringProp name="Argument.name">P_clientId_6</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID del Cliente</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_roleType_6" elementType="Argument">
+              <stringProp name="Argument.name">P_roleType_6</stringProp>
+              <stringProp name="Argument.value">null</stringProp>
+              <stringProp name="Argument.desc">ID de tipo de Roll</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_names_6" elementType="Argument">
+              <stringProp name="Argument.name">P_names_6</stringProp>
+              <stringProp name="Argument.value">Joaquin</stringProp>
+              <stringProp name="Argument.desc">Nombre </stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_surnames_6" elementType="Argument">
+              <stringProp name="Argument.name">P_surnames_6</stringProp>
+              <stringProp name="Argument.value">Guzman Loera</stringProp>
+              <stringProp name="Argument.desc">Apellido</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_personType_6" elementType="Argument">
+              <stringProp name="Argument.name">P_personType_6</stringProp>
+              <stringProp name="Argument.value">FISICA</stringProp>
+              <stringProp name="Argument.desc">Tipo de persona (Fisica o Moral)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_gender_6" elementType="Argument">
+              <stringProp name="Argument.name">P_gender_6</stringProp>
+              <stringProp name="Argument.value">MALE</stringProp>
+              <stringProp name="Argument.desc">Genero</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_birthdate_6" elementType="Argument">
+              <stringProp name="Argument.name">P_birthdate_6</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Fecha de Nacimiento (Opcional)</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_rfc_6" elementType="Argument">
+              <stringProp name="Argument.name">P_rfc_6</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">RFC</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_companyName_6" elementType="Argument">
+              <stringProp name="Argument.name">P_companyName_6</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nombre de Empresa</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_nationality_6" elementType="Argument">
+              <stringProp name="Argument.name">P_nationality_6</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.desc">Nacionalidad</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler ">
+          <stringProp name="cacheKey">false</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="script">long now = System.currentTimeMillis();
+String lastStr = vars.get(&quot;last_exec_time&quot;);
+long last = (lastStr != null) ? lastStr.toLong() : 0;
+
+if (now - last &gt;= 510000) {
+    vars.put(&quot;last_exec_time&quot;, String.valueOf(now));
+    vars.put(&quot;run_transaction&quot;, &quot;true&quot;);
+} else {
+    vars.put(&quot;run_transaction&quot;, &quot;false&quot;);
+}
+
+if (now - last &gt;= 1800000) {
+    vars.put(&quot;last_exec_time&quot;, String.valueOf(now));
+    vars.put(&quot;run_transaction_30mins&quot;, &quot;true&quot;);
+} else {
+    vars.put(&quot;run_transaction_30mins&quot;, &quot;false&quot;);
+}
+
+// Prevents this logic sampler from polluting your final HTML reports/results
+SampleResult.setIgnore();</stringProp>
+          <stringProp name="scriptLanguage">groovy</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller"/>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T01_OAuthToken" enabled="true">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Generar Token" enabled="true">
+              <stringProp name="HTTPSampler.domain">esbint.q.gslb</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">/esb/api/authApiV2/oauth/token</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">grant_type=client_credentials&amp;client_id=${credential_client_id}&amp;client_secret=${credential_client_secret}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP HeaderManager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+                  </elementProp>
+                </collectionProp>
+                <stringProp name="TestPlan.comments">Created from cURL on 2025-09-08T16:17:43.1587708</stringProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_accessTokenScope</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.access_token</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller every 8.5 minutes">
+          <stringProp name="IfController.condition">${__eval(${run_transaction})}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T01_OAuthToken">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Generar Token" enabled="true">
+              <stringProp name="HTTPSampler.domain">esbint.q.gslb</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">/esb/api/authApiV2/oauth/token</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">grant_type=client_credentials&amp;client_id=${credential_client_id}&amp;client_secret=${credential_client_secret}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP HeaderManager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+                  </elementProp>
+                </collectionProp>
+                <stringProp name="TestPlan.comments">Created from cURL on 2025-09-08T16:17:43.1587708</stringProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_accessTokenScope</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.access_token</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T02_SEARCH_LN-SPID">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-SPID" enabled="true">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+&quot;contextRequest&quot;:{&#xd;
+        &quot;businessProcess&quot;: &quot;${P_businessProcess}&quot;,&#xd;
+        &quot;businessType&quot;: &quot;${P_businessType}&quot;, &#xd;
+        &quot;transactionId&quot;: &quot;JMETER${__time(yyyy-MM-dd)}T${__time(HH:mm:ss.SSS)}&quot; &#xd;
+    },&#xd;
+    &quot;people&quot;: [&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_1},&#xd;
+            &quot;roleType&quot;: &quot;${P_roleType}&quot;,&#xd;
+            &quot;names&quot;: &quot;${P_names}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;${P_birthdate}&quot;,&#xd;
+            &quot;rfc&quot;: &quot;${P_rfc}&quot;,&#xd;
+            &quot;companyName&quot;: &quot;${P_companyName}&quot;,&#xd;
+            &quot;nationality&quot;: &quot;${P_nationality}&quot;&#xd;
+        },&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_2},&#xd;
+            &quot;roleType&quot;: &quot;${P_roleType_2}&quot;,&#xd;
+            &quot;names&quot;: &quot;${P_names_2}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames_2}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType_2}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender_2}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;${P_birthdate_2}&quot;,&#xd;
+            &quot;rfc&quot;: &quot;${P_rfc_2}&quot;,&#xd;
+            &quot;companyName&quot;: &quot;${P_companyName_2}&quot;,&#xd;
+            &quot;nationality&quot;: &quot;${P_nationality_2}&quot;&#xd;
+        }&#xd;
+]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="false">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T03_SEARCHES_LN-RECIPIENTS" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-RECIPIENTS" enabled="true">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+&quot;contextRequest&quot;:{&#xd;
+        &quot;businessProcess&quot;: &quot;${P_businessProcess_3}&quot; &#xd;
+    },&#xd;
+    &quot;people&quot;: [&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_3},&#xd;
+            &quot;roleType&quot;: ${P_roleType_3},&#xd;
+            &quot;names&quot;: &quot;${P_names_3}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames_3}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType_3}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender_3}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;&quot;,&#xd;
+            &quot;rfc&quot;: &quot;&quot;,&#xd;
+            &quot;companyName&quot;: &quot;&quot;,&#xd;
+            &quot;nationality&quot;: &quot;&quot;&#xd;
+        }&#xd;
+    ]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="false">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T04_SEARCHES_LN-ONBOARDING" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-ONBOARDING" enabled="true">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+   &quot;contextRequest&quot;:{&#xd;
+       &quot;businessProcess&quot;: &quot;${P_businessProcess_5}&quot;&#xd;
+   },&#xd;
+   &quot;people&quot;: [&#xd;
+    ${P_Searches}&#xd;
+  ]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">
+// Initialize random number generator for a value between 1 and 50
+int randomCount = new Random().nextInt(50) + 1;
+
+List&lt;String&gt; elements = new ArrayList&lt;&gt;();
+
+// Generate the elements (customizing the string as needed)
+for (int i = 1; i &lt;= randomCount; i++) {
+    // You can replace &quot;item_&quot; + i with random UUIDs, specific values, or test data
+    elements.add(&quot;{\&quot;clientId\&quot;: null,\&quot;roleType\&quot;: null,\&quot;names\&quot;: \&quot;Zinhue\&quot;,\&quot;surnames\&quot;: \&quot;Gonzalez Montelongo\&quot;,\&quot;personType\&quot;: \&quot;FISICA\&quot;,\&quot;gender\&quot;: \&quot;Masculino\&quot;,\&quot;birthdate\&quot;: \&quot;2000-08-16\&quot;,\&quot;rfc\&quot;: \&quot;GOMZ910816L38\&quot;,\&quot;companyName\&quot;: \&quot;\&quot;,\&quot;nationality\&quot;: \&quot;Mexicana\&quot;}&quot;); 
+}
+
+// Concatenate the list using a comma
+String concatenatedResult = String.join(&quot;,&quot;, elements);
+
+// Store the result in a JMeter variable named &apos;randomCommaString&apos;
+vars.put(&quot;P_Searches&quot;, concatenatedResult);
+
+// Optional: Print to the JMeter console for debugging purposes
+log.info(&quot;Generated &quot; + randomCount + &quot; elements: &quot; + concatenatedResult);
+</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="false">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T02_SEARCH_LN-SPID">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-SPID">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+&quot;contextRequest&quot;:{&#xd;
+        &quot;businessProcess&quot;: &quot;${P_businessProcess}&quot;,&#xd;
+        &quot;businessType&quot;: &quot;${P_businessType}&quot;, &#xd;
+        &quot;transactionId&quot;: &quot;JMETER${__time(yyyy-MM-dd)}T${__time(HH:mm:ss.SSS)}&quot; &#xd;
+    },&#xd;
+    &quot;people&quot;: [&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_1},&#xd;
+            &quot;roleType&quot;: &quot;${P_roleType}&quot;,&#xd;
+            &quot;names&quot;: &quot;${P_names}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;${P_birthdate}&quot;,&#xd;
+            &quot;rfc&quot;: &quot;${P_rfc}&quot;,&#xd;
+            &quot;companyName&quot;: &quot;${P_companyName}&quot;,&#xd;
+            &quot;nationality&quot;: &quot;${P_nationality}&quot;&#xd;
+        },&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_2},&#xd;
+            &quot;roleType&quot;: &quot;${P_roleType_2}&quot;,&#xd;
+            &quot;names&quot;: &quot;${P_names_2}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames_2}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType_2}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender_2}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;${P_birthdate_2}&quot;,&#xd;
+            &quot;rfc&quot;: &quot;${P_rfc_2}&quot;,&#xd;
+            &quot;companyName&quot;: &quot;${P_companyName_2}&quot;,&#xd;
+            &quot;nationality&quot;: &quot;${P_nationality_2}&quot;&#xd;
+        }&#xd;
+]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T03_SEARCHES_LN-RECIPIENTS">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-RECIPIENTS">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+&quot;contextRequest&quot;:{&#xd;
+        &quot;businessProcess&quot;: &quot;${P_businessProcess_3}&quot; &#xd;
+    },&#xd;
+    &quot;people&quot;: [&#xd;
+        {&#xd;
+            &quot;clientId&quot;: ${P_clientId_3},&#xd;
+            &quot;roleType&quot;: ${P_roleType_3},&#xd;
+            &quot;names&quot;: &quot;${P_names_3}&quot;,&#xd;
+            &quot;surnames&quot;: &quot;${P_surnames_3}&quot;,&#xd;
+            &quot;personType&quot;: &quot;${P_personType_3}&quot;,&#xd;
+            &quot;gender&quot;: &quot;${P_gender_3}&quot;,&#xd;
+            &quot;birthdate&quot;: &quot;&quot;,&#xd;
+            &quot;rfc&quot;: &quot;&quot;,&#xd;
+            &quot;companyName&quot;: &quot;&quot;,&#xd;
+            &quot;nationality&quot;: &quot;&quot;&#xd;
+        }&#xd;
+    ]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_LN_T04_SEARCHES_LN-ONBOARDING">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_accessTokenScope}</stringProp>
+              </elementProp>
+              <elementProp name="Content-Type" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST-SEARCHES-ONBOARDING">
+            <intProp name="HTTPSampler.concurrentPool">6</intProp>
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">/blacklist/api/v1/searches?includeExtendedData=true</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+   &quot;contextRequest&quot;:{&#xd;
+       &quot;businessProcess&quot;: &quot;${P_businessProcess_5}&quot;&#xd;
+   },&#xd;
+   &quot;people&quot;: [&#xd;
+    ${P_Searches}&#xd;
+  ]&#xd;
+}&#xd;
+</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">
+// Initialize random number generator for a value between 1 and 50
+int randomCount = new Random().nextInt(50) + 1;
+
+List&lt;String&gt; elements = new ArrayList&lt;&gt;();
+
+// Generate the elements (customizing the string as needed)
+for (int i = 1; i &lt;= randomCount; i++) {
+    // You can replace &quot;item_&quot; + i with random UUIDs, specific values, or test data
+    elements.add(&quot;{\&quot;clientId\&quot;: null,\&quot;roleType\&quot;: null,\&quot;names\&quot;: \&quot;Zinhue\&quot;,\&quot;surnames\&quot;: \&quot;Gonzalez Montelongo\&quot;,\&quot;personType\&quot;: \&quot;FISICA\&quot;,\&quot;gender\&quot;: \&quot;Masculino\&quot;,\&quot;birthdate\&quot;: \&quot;2000-08-16\&quot;,\&quot;rfc\&quot;: \&quot;GOMZ910816L38\&quot;,\&quot;companyName\&quot;: \&quot;\&quot;,\&quot;nationality\&quot;: \&quot;Mexicana\&quot;}&quot;); 
+}
+
+// Concatenate the list using a comma
+String concatenatedResult = String.join(&quot;,&quot;, elements);
+
+// Store the result in a JMeter variable named &apos;randomCommaString&apos;
+vars.put(&quot;P_Searches&quot;, concatenatedResult);
+
+// Optional: Print to the JMeter console for debugging purposes
+log.info(&quot;Generated &quot; + randomCount + &quot; elements: &quot; + concatenatedResult);
+</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
+              <stringProp name="groupSize">${__groovy(ctx.getThreadGroup().getNumberOfThreads())}</stringProp>
+              <longProp name="timeoutInMs">300000</longProp>
+            </SyncTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller every 30 minutes" enabled="false">
+          <stringProp name="IfController.condition">${__eval(${run_transaction_30mins})}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_Blacklist_API_CargaMasiva_T07_GET_CRICUIT_BREAKER" enabled="true">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Circuit Breaker True" enabled="true">
+              <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">blacklist/api/v1/circuit-breaker/lexisnexis</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;open&quot;: true,//true=circuito abierto, omite flujo de lexis | false=circuito cerrado, flujo normal consulta lexis&#xd;
+  &quot;ticketId&quot;: &quot;RITM00007&quot;, //Número de ticket service now&#xd;
+  &quot;reason&quot;: &quot;Prueba credenciales para tester&quot;&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">0</stringProp>
+          </TestAction>
+          <hashTree>
+            <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+              <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+            </UniformRandomTimer>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Circuit breaker true">
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <longProp name="ThreadGroup.duration">2</longProp>
+        <longProp name="ThreadGroup.delay">1800</longProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_CargaMasiva_T07_GET_CRICUIT_BREAKER-TRUE">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Circuit Breaker true">
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">blacklist/api/v1/circuit-breaker/lexisnexis</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;open&quot;: true,//true=circuito abierto, omite flujo de lexis | false=circuito cerrado, flujo normal consulta lexis&#xd;
+  &quot;ticketId&quot;: &quot;RITM00007&quot;, //Número de ticket service now&#xd;
+  &quot;reason&quot;: &quot;Prueba credenciales para tester&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Circuit breaker back to false">
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <longProp name="ThreadGroup.duration">2</longProp>
+        <longProp name="ThreadGroup.delay">2950</longProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT03_QA_Blacklist_API_CargaMasiva_T07_GET_CRICUIT_BREAKER-FALSE">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Circuit Breaker false">
+            <stringProp name="HTTPSampler.domain">${kong_server_qa}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">blacklist/api/v1/circuit-breaker/lexisnexis</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;open&quot;: false,//true=circuito abierto, omite flujo de lexis | false=circuito cerrado, flujo normal consulta lexis&#xd;
+  &quot;ticketId&quot;: &quot;RITM00007&quot;, //Número de ticket service now&#xd;
+  &quot;reason&quot;: &quot;Prueba credenciales para tester&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">http://localhost:8086/write?db=BlackList_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">BlackList_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">BlackList_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="P_host" elementType="Argument">
+            <stringProp name="Argument.name">P_host</stringProp>
+            <stringProp name="Argument.value">kongproxy-qa.bancobase.net</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults">
+        <stringProp name="HTTPSampler.domain">${P_host}</stringProp>
+        <stringProp name="HTTPSampler.protocol">https</stringProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json </stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">username</stringProp>
+            <stringProp name="Header.value">loadtest.qa@bancobase.com </stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Connection</stringProp>
+            <stringProp name="Header.value">keep-alive</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">*/*</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">traceId</stringProp>
+            <stringProp name="Header.value">${__UUID()}</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding"></stringProp>
+        <stringProp name="filename">data/Onboarding-load-test.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">false</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">true</boolProp>
+        <stringProp name="variableNames">P_clientId,P_contentId,P_documentType,P_taxId,P_teardown,P_estadoFinalEsperado,P_binarioAlFinal,P_notas</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding"></stringProp>
+        <stringProp name="filename">C:\Users\emancilla\Documents\Documentos 2026\JMeter_Framework_Completo\squads-jmeter-framework\data\Onboarding-loadtest-matrizB.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">P_clientId,P_contentId,P_documentType,P_taxId,P_teardown,P_estadoFinalEsperado,P_binarioAlFinal,P_notas</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <intProp name="ThreadGroup.num_threads">15</intProp>
+        <intProp name="ThreadGroup.ramp_time">180</intProp>
+        <longProp name="ThreadGroup.duration">3780</longProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="false">
+          <intProp name="calcMode">1</intProp>
+          <doubleProp>
+            <name>throughput</name>
+            <value>5.0</value>
+            <savedValue>0.0</savedValue>
+          </doubleProp>
+        </ConstantThroughputTimer>
+        <hashTree/>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_ONBOARDING_T01_POST_PROCESS_START">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <PreciseThroughputTimer guiclass="TestBeanGUI" testclass="PreciseThroughputTimer" testname="Precise Throughput Timer">
+            <doubleProp>
+              <name>allowedThroughputSurplus</name>
+              <value>1.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="batchSize">1</intProp>
+            <intProp name="batchThreadDelay">0</intProp>
+            <longProp name="duration">3780</longProp>
+            <intProp name="exactLimit">10000</intProp>
+            <longProp name="randomSeed">0</longProp>
+            <doubleProp>
+              <name>throughput</name>
+              <value>300.0</value>
+              <savedValue>0.0</savedValue>
+            </doubleProp>
+            <intProp name="throughputPeriod">3600</intProp>
+          </PreciseThroughputTimer>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T01_POST_PROCESS_START" enabled="true">
+            <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/process-manager/api/v1/processes</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+  &quot;contentId&quot;: &quot;${P_contentId}&quot;,&#xd;
+  &quot;documentType&quot;: &quot;${P_documentType}&quot;,&#xd;
+  &quot;clientId&quot;: &quot;${P_clientId}&quot;,&#xd;
+  &quot;taxId&quot;: &quot;${P_taxId}&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor">
+              <stringProp name="JSONPostProcessor.referenceNames">P_documentId;P_currentState</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.documentId;$.currentState</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">vars.put(&apos;gateTries&apos;, &apos;0&apos;)</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="49588">202</stringProp>
+                <stringProp name="49586">200</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">40</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+            <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion" enabled="false">
+              <stringProp name="DurationAssertion.duration">15000</stringProp>
+            </DurationAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch Controller">
+          <stringProp name="SwitchController.value">${__groovy(def dt = vars.get(&apos;P_documentType&apos;); (dt == &apos;acta&apos; || dt == &apos;poder&apos;) ? &apos;acta_poder&apos; : &apos;default&apos;)}</stringProp>
+        </SwitchController>
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="acta_poder" enabled="true"/>
+          <hashTree>
+            <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="SCRIPT01_QA_ONBOARDING_T04_GET_VALIDATION">
+              <stringProp name="WhileController.condition">${__groovy(!&apos;BOW_REVIEW&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;REJECTED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;FAILED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;NEEDS_ATTENTION&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; Integer.parseInt(vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;) &lt; Integer.parseInt(vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;))}</stringProp>
+            </WhileController>
+            <hashTree>
+              <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action">
+                <intProp name="ActionProcessor.action">1</intProp>
+                <intProp name="ActionProcessor.target">0</intProp>
+                <stringProp name="ActionProcessor.duration">10000</stringProp>
+              </TestAction>
+              <hashTree/>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T04_GET_VALIDATION">
+                <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/process-manager/api/v1/processes/${P_documentId}</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">GET</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                  <stringProp name="JSONPostProcessor.referenceNames">P_currentState;P_terminal</stringProp>
+                  <stringProp name="JSONPostProcessor.jsonPathExprs">$.currentState;$.terminal</stringProp>
+                  <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+                  <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;false</stringProp>
+                </JSONPostProcessor>
+                <hashTree/>
+                <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                  <stringProp name="scriptLanguage">groovy</stringProp>
+                  <stringProp name="parameters"></stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="cacheKey">true</stringProp>
+                  <stringProp name="script">def target = &apos;BOW_REVIEW&apos;
+def deadStates = [&apos;REJECTED&apos;, &apos;FAILED&apos;, &apos;NEEDS_ATTENTION&apos;]
+int maxTries = (vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;).toInteger()
+
+String currentState = vars.get(&apos;P_currentState&apos;)
+int tries = (vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;).toInteger() + 1
+vars.put(&apos;gateTries&apos;, tries.toString())
+
+// 1. Caso Exitoso: alcanzó la compuerta de validación
+if (currentState == target) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    log.info(&quot;Compuerta 2 alcanzada exitosamente: &quot; + target)
+} 
+// 2. Caso Estado Muerto/Fallido
+else if (deadStates.contains(currentState)) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;FALLO: La saga termino en estado &quot; + currentState + &quot; sin alcanzar &quot; + target)
+} 
+// 3. Caso Timeout: superó el número máximo de reintentos
+else if (tries &gt;= maxTries) {
+    //vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;TIMEOUT: Se alcanzaron &quot; + maxTries + &quot; reintentos en &quot; + target + &quot;. Estado actual: &quot; + currentState)
+}</stringProp>
+                </JSR223PostProcessor>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_ONBOARDING_T05_DELETE_BINARY_TEARDOWN">
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T05_DELETE_BINARY_TEARDOWN" enabled="true">
+                <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/document-management-service/api/v1/documents/${P_documentId}/binary</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">DELETE</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                  <collectionProp name="HeaderManager.headers">
+                    <elementProp name="" elementType="Header">
+                      <stringProp name="Header.name">X-User</stringProp>
+                      <stringProp name="Header.value">loadtest.qa@bancobase.com </stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </HeaderManager>
+                <hashTree/>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="49590">204</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.custom_message"></stringProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">8</intProp>
+                  <stringProp name="Scope.variable"></stringProp>
+                </ResponseAssertion>
+                <hashTree/>
+                <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                  <stringProp name="scriptLanguage">groovy</stringProp>
+                  <stringProp name="parameters"></stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="cacheKey">true</stringProp>
+                  <stringProp name="script">int code = prev.getResponseCode().toInteger()
+
+if (code == 204) {
+    log.info(&quot;Teardown exitoso: Binario liberado correctamente para documentId &quot; + vars.get(&apos;P_documentId&apos;))
+} else if (code == 404) {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN (404): El documentId no existe en el DMS.&quot;)
+} else if (code == 500) {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN (500): Conflicto de finalizacion en curso. Verificar que no se encime con pasos posteriores.&quot;)
+} else {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN: Respuesta inesperada con codigo HTTP &quot; + code)
+}</stringProp>
+                </JSR223PostProcessor>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+          </hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="default" enabled="true"/>
+          <hashTree>
+            <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller" enabled="true">
+              <stringProp name="IfController.condition">${__groovy(&apos;EXTRACTION_REQUESTED&apos;.equals(vars.get(&apos;P_currentState&apos;)) || &apos;SF_CONFIRM_PENDING&apos;.equals(vars.get(&apos;P_currentState&apos;)))}</stringProp>
+              <boolProp name="IfController.evaluateAll">false</boolProp>
+              <boolProp name="IfController.useExpression">true</boolProp>
+            </IfController>
+            <hashTree>
+              <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="SCRIPT01_QA_ONBOARDING_T02_GET_SF_COMFIRM_PENDING" enabled="true">
+                <stringProp name="WhileController.condition">${__groovy(!&apos;SF_CONFIRM_PENDING&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;REJECTED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;FAILED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;NEEDS_ATTENTION&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; Integer.parseInt(vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;) &lt; Integer.parseInt(vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;))}</stringProp>
+              </WhileController>
+              <hashTree>
+                <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+                  <intProp name="ActionProcessor.action">1</intProp>
+                  <intProp name="ActionProcessor.target">0</intProp>
+                  <stringProp name="ActionProcessor.duration">15000</stringProp>
+                </TestAction>
+                <hashTree/>
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T02_GET_SF_COMFIRM_PENDING" enabled="true">
+                  <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/process-manager/api/v1/processes/${P_documentId}</stringProp>
+                  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                  <stringProp name="HTTPSampler.method">GET</stringProp>
+                  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                    <collectionProp name="Arguments.arguments"/>
+                  </elementProp>
+                </HTTPSamplerProxy>
+                <hashTree>
+                  <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                    <stringProp name="JSONPostProcessor.referenceNames">P_currentState;P_terminal</stringProp>
+                    <stringProp name="JSONPostProcessor.jsonPathExprs">$.currentState;$.terminal</stringProp>
+                    <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+                    <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;false</stringProp>
+                  </JSONPostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">def target = &apos;SF_CONFIRM_PENDING&apos;
+def deadStates = [&apos;REJECTED&apos;, &apos;FAILED&apos;, &apos;NEEDS_ATTENTION&apos;]
+int maxTries = (vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;).toInteger()
+
+String currentState = vars.get(&apos;P_currentState&apos;)
+int tries = (vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;).toInteger() + 1
+vars.put(&apos;gateTries&apos;, tries.toString())
+
+// 1. Caso Exitoso: alcanzó la compuerta
+if (currentState == target) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    log.info(&quot;Compuerta alcanzada exitosamente: &quot; + target)
+} 
+// 2. Caso Estado Muerto/Fallido
+else if (deadStates.contains(currentState)) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;FALLO: La saga termino en estado &quot; + currentState + &quot; sin alcanzar &quot; + target)
+} 
+// 3. Caso Timeout: superó el número máximo de reintentos
+else if (tries &gt;= maxTries) {
+    //vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;TIMEOUT: Se alcanzaron &quot; + maxTries + &quot; reintentos en &quot; + target + &quot;. Estado actual: &quot; + currentState)
+}</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller">
+                <stringProp name="IfController.condition">${__groovy(&apos;SF_CONFIRM_PENDING&apos;.equals(vars.get(&apos;P_currentState&apos;)))}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+                <boolProp name="IfController.useExpression">true</boolProp>
+              </IfController>
+              <hashTree>
+                <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_ONBOARDING_T03_PATCH_SF_COMFIRMATION" enabled="true">
+                  <boolProp name="TransactionController.includeTimers">false</boolProp>
+                </TransactionController>
+                <hashTree>
+                  <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T03_PATCH_SF_COMFIRMATION" enabled="true">
+                    <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/process-manager/api/v1/processes/${P_documentId}/sf-confirmation</stringProp>
+                    <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                    <stringProp name="HTTPSampler.method">PATCH</stringProp>
+                    <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                    <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+                    <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                      <collectionProp name="Arguments.arguments">
+                        <elementProp name="" elementType="HTTPArgument">
+                          <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                          <stringProp name="Argument.value">{&#xd;
+  &quot;fullName&quot;: &quot;LOADTEST QA&quot;&#xd;
+}</stringProp>
+                          <stringProp name="Argument.metadata">=</stringProp>
+                        </elementProp>
+                      </collectionProp>
+                    </elementProp>
+                  </HTTPSamplerProxy>
+                  <hashTree>
+                    <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                      <collectionProp name="Asserion.test_strings">
+                        <stringProp name="49586">200</stringProp>
+                      </collectionProp>
+                      <stringProp name="Assertion.custom_message"></stringProp>
+                      <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                      <boolProp name="Assertion.assume_success">false</boolProp>
+                      <intProp name="Assertion.test_type">8</intProp>
+                    </ResponseAssertion>
+                    <hashTree/>
+                    <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                      <stringProp name="JSONPostProcessor.referenceNames">P_currentState</stringProp>
+                      <stringProp name="JSONPostProcessor.jsonPathExprs">$.currentState</stringProp>
+                      <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                      <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+                    </JSONPostProcessor>
+                    <hashTree/>
+                    <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                      <stringProp name="scriptLanguage">groovy</stringProp>
+                      <stringProp name="parameters"></stringProp>
+                      <stringProp name="filename"></stringProp>
+                      <stringProp name="cacheKey">true</stringProp>
+                      <stringProp name="script">// Reinicia el contador de compuertas para el siguiente polling (Paso 4)
+vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+
+// Validar que la respuesta del PATCH entregue el nuevo estado esperado
+String currentState = vars.get(&apos;P_currentState&apos;)
+if (currentState != &apos;VALIDATION_REQUESTED&apos;) {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO PATCH: Se esperaba estado VALIDATION_REQUESTED pero la API devolvio &quot; + currentState)
+}</stringProp>
+                    </JSR223PostProcessor>
+                    <hashTree/>
+                  </hashTree>
+                </hashTree>
+                <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="SCRIPT01_QA_ONBOARDING_T04_GET_VALIDATION" enabled="true">
+                  <stringProp name="WhileController.condition">${__groovy(!&apos;BOW_REVIEW&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;REJECTED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;FAILED&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; !&apos;NEEDS_ATTENTION&apos;.equals(vars.get(&apos;P_currentState&apos;)) &amp;&amp; Integer.parseInt(vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;) &lt; Integer.parseInt(vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;))}</stringProp>
+                </WhileController>
+                <hashTree>
+                  <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Flow Control Action" enabled="true">
+                    <intProp name="ActionProcessor.action">1</intProp>
+                    <intProp name="ActionProcessor.target">0</intProp>
+                    <stringProp name="ActionProcessor.duration">15000</stringProp>
+                  </TestAction>
+                  <hashTree/>
+                  <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T04_GET_VALIDATION" enabled="true">
+                    <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/process-manager/api/v1/processes/${P_documentId}</stringProp>
+                    <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                    <stringProp name="HTTPSampler.method">GET</stringProp>
+                    <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                    <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                    <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                      <collectionProp name="Arguments.arguments"/>
+                    </elementProp>
+                  </HTTPSamplerProxy>
+                  <hashTree>
+                    <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+                      <stringProp name="JSONPostProcessor.referenceNames">P_currentState;P_terminal</stringProp>
+                      <stringProp name="JSONPostProcessor.jsonPathExprs">$.currentState;$.terminal</stringProp>
+                      <stringProp name="JSONPostProcessor.match_numbers">1;1</stringProp>
+                      <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND;false</stringProp>
+                    </JSONPostProcessor>
+                    <hashTree/>
+                    <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                      <stringProp name="scriptLanguage">groovy</stringProp>
+                      <stringProp name="parameters"></stringProp>
+                      <stringProp name="filename"></stringProp>
+                      <stringProp name="cacheKey">true</stringProp>
+                      <stringProp name="script">def target = &apos;BOW_REVIEW&apos;
+def deadStates = [&apos;REJECTED&apos;, &apos;FAILED&apos;, &apos;NEEDS_ATTENTION&apos;]
+int maxTries = (vars.get(&apos;gateMaxTries&apos;) ?: &apos;30&apos;).toInteger()
+
+String currentState = vars.get(&apos;P_currentState&apos;)
+int tries = (vars.get(&apos;gateTries&apos;) ?: &apos;0&apos;).toInteger() + 1
+vars.put(&apos;gateTries&apos;, tries.toString())
+
+// 1. Caso Exitoso: alcanzó la compuerta de validación
+if (currentState == target) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    log.info(&quot;Compuerta 2 alcanzada exitosamente: &quot; + target)
+} 
+// 2. Caso Estado Muerto/Fallido
+else if (deadStates.contains(currentState)) {
+    vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;FALLO: La saga termino en estado &quot; + currentState + &quot; sin alcanzar &quot; + target)
+} 
+// 3. Caso Timeout: superó el número máximo de reintentos
+else if (tries &gt;= maxTries) {
+    //vars.put(&apos;gateTries&apos;, &apos;0&apos;)
+    //prev.setSuccessful(false)
+    //prev.setResponseMessage(&quot;TIMEOUT: Se alcanzaron &quot; + maxTries + &quot; reintentos en &quot; + target + &quot;. Estado actual: &quot; + currentState)
+}</stringProp>
+                    </JSR223PostProcessor>
+                    <hashTree/>
+                  </hashTree>
+                </hashTree>
+                <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_ONBOARDING_T05_DELETE_BINARY_TEARDOWN" enabled="true">
+                  <boolProp name="TransactionController.includeTimers">false</boolProp>
+                </TransactionController>
+                <hashTree>
+                  <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T05_DELETE_BINARY_TEARDOWN" enabled="true">
+                    <stringProp name="HTTPSampler.path">/advisor-tool/onboarding/document-management-service/api/v1/documents/${P_documentId}/binary</stringProp>
+                    <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                    <stringProp name="HTTPSampler.method">DELETE</stringProp>
+                    <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                    <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                    <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                      <collectionProp name="Arguments.arguments"/>
+                    </elementProp>
+                  </HTTPSamplerProxy>
+                  <hashTree>
+                    <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                      <collectionProp name="HeaderManager.headers">
+                        <elementProp name="" elementType="Header">
+                          <stringProp name="Header.name">X-User</stringProp>
+                          <stringProp name="Header.value">loadtest.qa@bancobase.com </stringProp>
+                        </elementProp>
+                      </collectionProp>
+                    </HeaderManager>
+                    <hashTree/>
+                    <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                      <collectionProp name="Asserion.test_strings">
+                        <stringProp name="49590">204</stringProp>
+                      </collectionProp>
+                      <stringProp name="Assertion.custom_message"></stringProp>
+                      <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                      <boolProp name="Assertion.assume_success">false</boolProp>
+                      <intProp name="Assertion.test_type">8</intProp>
+                      <stringProp name="Scope.variable"></stringProp>
+                    </ResponseAssertion>
+                    <hashTree/>
+                    <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+                      <stringProp name="scriptLanguage">groovy</stringProp>
+                      <stringProp name="parameters"></stringProp>
+                      <stringProp name="filename"></stringProp>
+                      <stringProp name="cacheKey">true</stringProp>
+                      <stringProp name="script">int code = prev.getResponseCode().toInteger()
+
+if (code == 204) {
+    log.info(&quot;Teardown exitoso: Binario liberado correctamente para documentId &quot; + vars.get(&apos;P_documentId&apos;))
+} else if (code == 404) {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN (404): El documentId no existe en el DMS.&quot;)
+} else if (code == 500) {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN (500): Conflicto de finalizacion en curso. Verificar que no se encime con pasos posteriores.&quot;)
+} else {
+    prev.setSuccessful(false)
+    prev.setResponseMessage(&quot;FALLO TEARDOWN: Respuesta inesperada con codigo HTTP &quot; + code)
+}</stringProp>
+                    </JSR223PostProcessor>
+                    <hashTree/>
+                  </hashTree>
+                </hashTree>
+              </hashTree>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <DebugPostProcessor guiclass="TestBeanGUI" testclass="DebugPostProcessor" testname="Debug PostProcessor" enabled="false">
+        <boolProp name="displayJMeterProperties">false</boolProp>
+        <boolProp name="displayJMeterVariables">true</boolProp>
+        <boolProp name="displaySamplerProperties">true</boolProp>
+        <boolProp name="displaySystemProperties">false</boolProp>
+      </DebugPostProcessor>
+      <hashTree/>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">http://localhost:8086/write?db=ONBOARDING_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">ONBOARDING_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">ONBOARDING_QA_LoadTest</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

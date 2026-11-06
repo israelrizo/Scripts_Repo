@@ -1,0 +1,72 @@
+name: JMeter Performance Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag del script a ejecutar'
+        required: true
+        type: choice
+        options:
+          - login_qa
+          - login_sil
+          - dispersiones_qa
+          - edo_cuenta
+          - drp_flujo_critico
+          - opt1_metodos_general
+          - opt1_autorizar_traspaso
+          - opt1_get_cuentas
+          - opt1_get_cuentas_traspasos
+          - opt1_get_destinatarios
+          - opt1_get_estado_cuenta_pdf
+          - opt1_get_movimientos
+          - opt1_get_traspasos_comprobantes
+          - opt1_load_archivo_lote
+          - opt1_validate_cuenta
+          - opt2_metodos_general
+          - opt2_add_destinatario
+          - opt2_capturar_traspaso
+          - opt2_get_estado_cuenta_pdf
+          - opt2_get_traspasos_comprobantes
+
+jobs:
+  run-jmeter-test:
+    # AQUI SE DEFINE EL GENERADOR.
+    # Cambiar 'ubuntu-latest' por el tag del self-hosted runner instalado en el generador.
+    # Ejemplo: runs-on: [self-hosted, generador-jmeter]
+    runs-on: ubuntu-latest 
+
+    steps:
+      - name: Checkout del Repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Java (Requerido por JMeter)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar JMeter (Solo necesario si el runner no lo tiene preinstalado)
+        run: |
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xzf apache-jmeter-5.6.3.tgz
+          echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+
+      - name: Dar permisos de ejecucion
+        run: chmod +x run_by_tag.sh
+
+      - name: Ejecutar Prueba en Generador
+        run: |
+          ./run_by_tag.sh ${{ github.event.inputs.tag }}
+
+      - name: Encontrar Artefacto Comprimido
+        id: find_tar
+        run: |
+          TAR_FILE=$(ls results/*.tar.gz)
+          echo "tar_file=$TAR_FILE" >> $GITHUB_OUTPUT
+
+      - name: Subir Resultados al Pipeline
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-results-${{ github.run_id }}
+          path: ${{ steps.find_tar.outputs.tar_file }}
