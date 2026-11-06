@@ -12,12 +12,12 @@
            (8090 → 8090, no inbound SG rule)   │   ├─ reads InfluxDB :8086  (live charts)      │
                                                │   └─ serves results/*/html_report             │
                                                │  InfluxDB :8086 · Grafana :3000               │
-                                               │  /opt/Scripts_Repo  (git clone, branch)       │
+                                               │  /mnt/jmeter/JMeter_Scripts/jmeter-framework  │
                                                └──────┬──────────────────────────▲─────────────┘
                                          RMI 1099 + 50000                metrics :8086 (HTTP)
                                        ┌──────────────┴──────┐     ┌───────────┴─────────┐
                                        │ SLAVE 1 jmeter-server│     │ SLAVE 2 jmeter-server│
-                                       │ /opt/Scripts_Repo    │     │ /opt/Scripts_Repo    │
+                                       │ same /mnt/jmeter path│     │ same /mnt/jmeter path│
                                        │ (data/ synced)       │     │ (data/ synced)       │
                                        └──────────────────────┘     └──────────────────────┘
 ```
@@ -33,15 +33,28 @@ Why this shape:
 
 ## 2. Master setup
 
+The app works from wherever the repository already lives; nothing has to be under `/opt`.
+With the scripts in `/mnt/jmeter/JMeter_Scripts/jmeter-framework/`:
+
 ```bash
-sudo git clone -b New_Repo <repo-url> /opt/Scripts_Repo
-cd /opt/Scripts_Repo/webapp
-./deploy/install_master.sh                       # venv, deps, systemd unit, /etc env file
-sudo vi /etc/jmeter-control-center.env           # SR_REMOTE_HOSTS, paths, Influx/Grafana
-sudo -u jmeter ./.venv/bin/python manage_users.py add <you> --role admin
+cd /mnt/jmeter/JMeter_Scripts/jmeter-framework
+git pull                                          # brings webapp/ (branch New_Repo)
+cd webapp
+./deploy/install_master.sh                        # venv, deps, systemd unit, /etc env file
+sudo vi /etc/jmeter-control-center.env            # SR_REMOTE_HOSTS, Influx/Grafana, Confluence hosts
+sudo -u <owner> ./.venv/bin/python manage_users.py add <you> --role admin
 sudo systemctl enable --now jmeter-control-center
 journalctl -u jmeter-control-center -f
 ```
+
+The installer:
+
+* takes the repo root from its own location (`SR_REPO_ROOT` = parent of `webapp/`);
+* runs the service as the **owner of the scripts folder** (override with `SERVICE_USER=…`), so `results/`,
+  `tests/` and `run_by_tag.sh` stay writable without changing any permissions on `/mnt/jmeter`;
+* resolves `jmeter` from that user's login shell and writes it to `SR_JMETER_BIN`, because systemd does not
+  read `/etc/profile.d` or `~/.bashrc`. If `jmeter` works in your terminal, it will work in the service.
+* adds `RequiresMountsFor=` so the app only starts after `/mnt/jmeter` is mounted.
 
 From your laptop (Session Manager plugin installed):
 
@@ -57,8 +70,7 @@ Python 3.9+ is enough (Amazon Linux 2023 ships 3.9/3.11). No Node/npm, no build 
 
 ## 3. Slaves setup (both)
 
-1. Same JMeter version **and the same plugins** as the Master (`/opt/apache-jmeter-5.6.3`, incl.
-   `lib/ext/jmeter-plugins-*`). A plugin missing on a slave makes the remote engine fail to load the plan.
+1. Same JMeter version **and the same plugins** as the Master (incl. `lib/ext/jmeter-plugins-*`). A plugin missing on a slave makes the remote engine fail to load the plan.
 2. `server.rmi.ssl.disable=true` on **Master and Slaves** (or generate `rmi_keystore.jks` with
    `bin/create-rmi-keystore.sh` and copy it to all three). Mismatches give "Connection refused / SSL" errors.
 3. Fixed RMI ports so the Security Group is small: `server_port=1099`, `server.rmi.localport=50000`
@@ -73,7 +85,14 @@ Python 3.9+ is enough (Amazon Linux 2023 ships 3.9/3.11). No Node/npm, no build 
    | Slaves → Master | 8086 | Backend Listener → InfluxDB |
    | Master → Slaves | 22 | optional, *Sync to slaves* (rsync) |
 
-5. Clone `Scripts_Repo` at the same path (`/opt/Scripts_Repo`) so relative CSV paths resolve identically.
+5. The scripts must exist on every slave at the **same absolute path** (`/mnt/jmeter/JMeter_Scripts/jmeter-framework`).
+   If `/mnt/jmeter` is a shared filesystem (EFS/NFS) mounted on all three nodes, that is already true and
+   *Sync to slaves* is unnecessary (leave `SR_SLAVE_SSH_USER` empty). Otherwise sync it.
+6. **CSV paths in distributed mode:** a relative path such as `data/usuarios.csv` is resolved by each slave
+   against the folder where `jmeter-server` was started, not against the project, so it fails on the slaves.
+   Use `${__P(data_dir,data)}/usuarios.csv` in the CSV Data Set Config: local/CLI runs keep working
+   (`data_dir` defaults to `data`) and web runs pass `-Gdata_dir=<project>/data` automatically, an absolute
+   path that exists on every node.
 
 The dashboard shows each slave as **up/down** by probing its RMI port.
 

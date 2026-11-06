@@ -26,9 +26,8 @@ class Config:
     HOST = _env("SR_HOST", "127.0.0.1")
     PORT = int(_env("SR_PORT", "8090"))
 
-    # JMeter installation on the Master (the jmeter.log files point to this path)
-    JMETER_HOME = _env("SR_JMETER_HOME", "/opt/apache-jmeter-5.6.3")
-    JMETER_BIN = _env("SR_JMETER_BIN", str(Path(JMETER_HOME) / "bin" / "jmeter"))
+    # JMeter on the Master: SR_JMETER_BIN, else the `jmeter` found on PATH, else $JMETER_HOME/bin/jmeter
+    JMETER_BIN = None  # resolved below
 
     # Distributed mode: comma separated slave addresses (private IPs) running jmeter-server
     REMOTE_HOSTS = [h.strip() for h in _env("SR_REMOTE_HOSTS", "").split(",") if h.strip()]
@@ -50,6 +49,32 @@ class Config:
 
     DATA_EXTENSIONS = {".csv", ".txt", ".json", ".xml", ".dat", ".tsv", ".properties", ".pdf",
                        ".zip", ".b64", ".xlsx", ".jpg", ".png"}
+
+
+def _resolve_jmeter():
+    """Find the real jmeter binary, never our own PATH shim in webapp/bin."""
+    explicit = _env("SR_JMETER_BIN")
+    if explicit:
+        return explicit
+    shim_dir = (WEBAPP_DIR / "bin").resolve()
+    for d in os.environ.get("PATH", "").split(os.pathsep):
+        if not d:
+            continue
+        cand = Path(d) / "jmeter"
+        try:
+            if cand.resolve().parent == shim_dir:
+                continue
+        except OSError:
+            continue
+        if cand.is_file() and os.access(cand, os.X_OK):
+            return str(cand)
+    home = _env("SR_JMETER_HOME") or _env("JMETER_HOME")
+    if home:
+        return str(Path(home) / "bin" / "jmeter")
+    return "/opt/apache-jmeter-5.6.3/bin/jmeter"
+
+
+Config.JMETER_BIN = _resolve_jmeter()
 
 
 def load_secret_key():

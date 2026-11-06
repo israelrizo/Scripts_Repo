@@ -16,6 +16,10 @@ if [ -z "$REAL" ] || [ ! -x "$REAL" ]; then
 fi
 
 ARGS=("$@")
+# Absolute data folder of the project (run_by_tag.sh runs from the project root).
+# Scripts using ${__P(data_dir,data)}/file.csv then resolve the same absolute path on
+# the Master and on every Slave (relative paths resolve against jmeter-server's own cwd).
+ARGS+=("-Jdata_dir=$PWD/data")
 # shellcheck disable=SC2206
 EXTRA=( $SR_EXTRA_PROPS )
 ARGS+=("${EXTRA[@]}")
