@@ -5,16 +5,18 @@
 <div class="page-head"><div><h1>Users</h1><p class="sub"><b>admin</b>: everything + users + new projects · <b>operator</b>: upload, tags, run/stop · <b>viewer</b>: read-only &amp; reports</p></div></div>
 <div class="grid two">
   <div class="panel"><div class="table-wrap"><table>
-    <thead><tr><th>User</th><th>Role</th><th>Created</th><th class="right">Actions</th></tr></thead>
+    <thead><tr><th>User</th><th>Role</th><th>2FA</th><th>Created</th><th class="right">Actions</th></tr></thead>
     <tbody>
     {% for u in users %}
       <tr>
-        <td><b>{{ u.username }}</b></td>
+        <td><b>{{ u.username }}</b>{% if u.email %}<br><span class="hint">{{ u.email }}</span>{% endif %}</td>
         <td><form method="post" style="margin:0">{{ csrf() }}<input type="hidden" name="action" value="role"><input type="hidden" name="username" value="{{ u.username }}">
           <select name="role" onchange="this.form.submit()" style="width:auto">{% for r in roles %}<option {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}</select></form></td>
+        <td>{{ '✓' if u.has_2fa else '—' }}</td>
         <td class="nowrap">{{ u.created|dt }}</td>
         <td><div class="actions">
           <form method="post" data-prompt-password>{{ csrf() }}<input type="hidden" name="action" value="password"><input type="hidden" name="username" value="{{ u.username }}"><input type="hidden" name="password"><button class="btn sm">Reset password</button></form>
+          {% if u.has_2fa %}<form method="post" data-confirm="Remove 2FA of {{ u.username }} (lost phone)?">{{ csrf() }}<input type="hidden" name="action" value="reset_2fa"><input type="hidden" name="username" value="{{ u.username }}"><button class="btn sm">Reset 2FA</button></form>{% endif %}
           {% if u.username != me.username %}<form method="post" data-confirm="Delete user {{ u.username }}?">{{ csrf() }}<input type="hidden" name="action" value="delete"><input type="hidden" name="username" value="{{ u.username }}"><button class="btn sm danger">Delete</button></form>{% endif %}
         </div></td>
       </tr>

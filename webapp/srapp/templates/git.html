@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Git{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Scripts repository</h1>
+    <p class="sub mono">{{ st.remote or 'no remote' }} · branch <b>{{ st.branch }}</b>
+      {% if st.ahead is not none %} · ↑{{ st.ahead }} ↓{{ st.behind }}{% endif %}</p>
+    <p class="sub">Last commit: {{ st.last }}</p></div>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('git_page', fetch=1) }}">⟳ Fetch</a>
+    {% if can('operator') %}<form method="post">{{ csrf() }}<input type="hidden" name="action" value="pull"><button class="btn {{ 'primary' if st.behind }}">↓ Pull {% if st.behind %}({{ st.behind }}){% endif %}</button></form>{% endif %}
+  </div>
+</div>
+{% if st.fetch_error %}<div class="flash warn">Fetch failed: {{ st.fetch_error }}</div>{% endif %}
+{% if st.behind %}<div class="flash warn">The Master is {{ st.behind }} commit(s) behind Bitbucket. Pull before committing.</div>{% endif %}
+<form class="panel" method="post">
+  {{ csrf() }}<input type="hidden" name="action" value="commit">
+  <h2>Uncommitted changes <span class="chip">{{ st.files|length }}</span></h2>
+  <p class="hint">Uploads, new projects and tag edits made in the UI change the working tree on the Master. Commit them so Bitbucket stays the source of truth (author: you).</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th><input type="checkbox" onclick="document.querySelectorAll('input[name=paths]').forEach(c=>c.checked=this.checked)" checked></th><th>File</th><th>Change</th></tr></thead>
+    <tbody>{% for f in st.files %}<tr><td><input type="checkbox" name="paths" value="{{ f.path }}" checked></td><td class="mono">{{ f.path }}</td><td>{{ f.kind }}</td></tr>
+    {% else %}<tr><td colspan="3" class="empty">Working tree clean.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if st.files and can('operator') %}
+  <div class="row mt" style="align-items:flex-end">
+    <div class="field" style="flex:4"><label>Commit message</label><input type="text" name="message" required minlength="5" placeholder="Baseinet: add Paquete 7 scripts and tags"></div>
+    <div class="field" style="flex:1"><button class="btn primary">Commit &amp; push</button></div>
+  </div>
+  {% endif %}
+</form>
+{% endblock %}

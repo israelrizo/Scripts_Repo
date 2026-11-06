@@ -1,0 +1,15 @@
+{{ subject }}
+
+Proyecto : {{ s.label }}
+Tag      : {{ s.tag }}
+Script   : {{ s.script }}
+Usuario  : {{ s.user }}
+Inicio   : {{ s.started }}{% if event == 'end' %}   Fin: {{ s.ended }}   Duración: {{ s.duration }}{% endif %}
+{% if s.jira %}Jira     : {{ s.jira }}
+{% endif %}{% if event == 'end' and s.totals %}
+Peticiones {{ s.totals.samples }} | Error {{ s.totals.error_pct }} % | Prom {{ '%.0f'|format(s.totals.avg or 0) }} ms | p95 {{ '%.0f'|format(s.totals.p95 or 0) }} ms | TPS {{ s.totals.tps }}
+{% for name, expected, actual, passed in s.checks %}- {{ 'OK ' if passed else 'NOK' }} {{ name }}: {{ actual }} ({{ expected }})
+{% endfor %}{% endif %}
+{% if s.report_url %}Reporte : {{ s.report_url }}
+{% endif %}{% if s.grafana_url %}Grafana : {{ s.grafana_url }}
+{% endif %}Consola : {{ s.run_url }}

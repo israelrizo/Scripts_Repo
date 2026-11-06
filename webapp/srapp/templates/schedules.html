@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Schedules{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Scheduled executions</h1>
+<p class="sub">Server time {{ tz_now }} · if the generator is busy at the scheduled time the run waits up to 30 min, then the slot is skipped.</p></div></div>
+
+<div class="panel">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Project · tag</th><th>When</th><th>Next run</th><th>Options</th><th>Last result</th><th>By</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% for s in items %}
+      <tr>
+        <td><a href="{{ url_for('project', name=s.project) }}">{{ s.project.replace('-jmeter-framework','')|upper }}</a> · <code>{{ s.tag }}</code></td>
+        <td>{{ s.describe }}</td>
+        <td class="nowrap">{% if s.enabled %}{{ s.next }}{% else %}<span class="badge">paused</span>{% endif %}</td>
+        <td class="muted">{% if s.distributed %}<span class="chip">slaves</span> {% endif %}{% if s.jira %}<span class="chip">{{ s.jira }}</span> {% endif %}<span class="mono">{{ s.props }}</span></td>
+        <td>{% set h = s.history[0] if s.history else None %}{% if h %}{% if h.result.startswith('run ') %}<a href="{{ url_for('run_detail', run_id=h.result[4:]) }}">{{ h.result }}</a>{% else %}<span class="muted">{{ h.result }}</span>{% endif %}<br><span class="hint">{{ h.slot[:16].replace('T',' ') }}</span>{% else %}—{% endif %}</td>
+        <td>{{ s.created_by }}</td>
+        <td><div class="actions">{% if can('operator') %}
+          <form method="post">{{ csrf() }}<input type="hidden" name="action" value="toggle"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn sm">{{ 'Pause' if s.enabled else 'Resume' }}</button></form>
+          <form method="post" data-confirm="Delete this schedule?">{{ csrf() }}<input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="{{ s.id }}"><button class="btn sm danger">Delete</button></form>
+        {% endif %}</div></td>
+      </tr>
+    {% else %}<tr><td colspan="7" class="empty">No scheduled executions.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+{% if can('operator') %}
+<form class="panel mt" method="post" id="new-schedule">
+  {{ csrf() }}<input type="hidden" name="action" value="create">
+  <h2>Schedule an execution</h2>
+  <div class="row">
+    <div class="field"><label>Project</label>
+      <select name="project" id="sch-project" required>{% for p in tags %}<option {{ 'selected' if p == preset_project }}>{{ p }}</option>{% endfor %}</select></div>
+    <div class="field"><label>Tag</label><select name="tag" id="sch-tag" required data-preset="{{ preset_tag }}"></select></div>
+  </div>
+  <div class="row">
+    <div class="field"><label>Repeat</label>
+      <select name="kind" id="sch-kind"><option value="once">Once</option><option value="daily">Every day</option><option value="weekly">Weekly</option></select></div>
+    <div class="field" id="sch-date"><label>Date</label><input type="date" name="date"></div>
+    <div class="field"><label>Time</label><input type="time" name="at" required value="21:00"></div>
+  </div>
+  <div class="field" id="sch-days" style="display:none"><label>Days</label>
+    {% for d in days %}<label class="check" style="display:inline-flex;margin-right:12px"><input type="checkbox" name="days" value="{{ loop.index0 }}" {{ 'checked' if loop.index0 < 5 }}> {{ d }}</label>{% endfor %}</div>
+  <div class="row">
+    <div class="field"><label>Property overrides</label><input type="text" name="props" placeholder="-Jthreads=50 -Jduration=1800"></div>
+    <div class="field"><label>Jira ticket</label><input type="text" name="jira" placeholder="PERF-123"></div>
+  </div>
+  <div class="row">
+    <div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500" placeholder="Nightly regression"></div>
+    <div class="field"><label>Also notify</label><input type="text" name="extra_emails" placeholder="dev.lead@bancobase.com"></div>
+  </div>
+  {% if slaves %}<label class="check field"><input type="checkbox" name="distributed" value="1" checked> Distributed on the slaves</label>{% endif %}
+  <button class="btn primary">Schedule</button>
+</form>
+<script id="sch-tags" type="application/json">{{ tags|tojson }}</script>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+(function () {
+  const data = document.getElementById('sch-tags'); if (!data) return;
+  const tags = JSON.parse(data.textContent), p = document.getElementById('sch-project'), t = document.getElementById('sch-tag');
+  const fill = () => { t.replaceChildren(...(tags[p.value] || []).map((x) => { const o = document.createElement('option'); o.textContent = x; if (x === t.dataset.preset) o.selected = true; return o; })); };
+  p.addEventListener('change', fill); fill();
+  const k = document.getElementById('sch-kind');
+  const sync = () => { document.getElementById('sch-date').style.display = k.value === 'once' ? '' : 'none'; document.getElementById('sch-days').style.display = k.value === 'weekly' ? '' : 'none'; };
+  k.addEventListener('change', sync); sync();
+  const d = document.querySelector('input[name=date]'); if (d && !d.value) d.value = new Date().toISOString().slice(0, 10);
+})();
+</script>
+{% endblock %}

@@ -145,3 +145,50 @@ The dashboard shows each slave as **up/down** by probing its RMI port.
 * Each user publishes with **their own** token, so Confluence permissions and page history show the real author.
 * Tokens are encrypted at rest with `webapp/instance/confluence.key`; losing that file only means users must re-enter tokens.
 * Charts in the report come from InfluxDB: fix findings #1 and #2 above (listener URL and `TAG_host`) before relying on them for distributed runs.
+
+## 7. Opening the Control Center from a laptop (launcher with icon)
+
+`webapp/tools/launcher/` contains a launcher for the engineers' laptops (macOS / Linux / WSL):
+
+```bash
+cd webapp/tools/launcher
+./build_macos_app.sh            # macOS: creates ~/Applications/JMeter Control Center.app (Dock / Launchpad icon)
+./install_linux_desktop.sh      # Linux: adds it to the application menu
+vi ~/.jmeter-control-center.conf   # INSTANCE_ID of the Master, AWS_PROFILE, AWS_REGION
+```
+
+Double-clicking it opens a Terminal that starts the SSM port forwards (`8090` and Grafana `3000`), waits until
+the port answers and opens `http://localhost:8090`. Closing the window closes the tunnels. Requires AWS CLI v2 and
+the Session Manager plugin; set `AWS_SSO_LOGIN=yes` if you use IAM Identity Center.
+
+## 8. E-mail, Jira, Bitbucket and shift-left
+
+* **E-mail** — *Settings → E-mail notifications*: SMTP host (Gmail/Google Workspace relay, Amazon SES, Office 365),
+  from address and `Always notify` (default `qaperformance@bancobase.com`). Each project adds its staff in
+  *project → Settings*; the run dialog adds extra recipients. *Preview quick report (mock)* shows the template.
+* **Jira** — each engineer sets the Jira URL (and token, or reuses the Confluence token) under *Atlassian*. The
+  ticket typed in the run dialog / schedule gets a comment with the results, SLA verdict and links at the end.
+* **Bitbucket (scripts repo)** — *Git* page: pull, and commit & push the changes made in the UI (uploads, tags,
+  new projects) authored by the web user. Uses the Master's existing git credentials for `origin`.
+* **Shift-left (application repos, e.g. baseinet)** — *project → Settings*: application repository
+  (`workspace/repo`), tag, users, duration and SLA → **Open PR in Bitbucket**. The PR adds `perf/perf-gate.sh`
+  (+ a custom pipeline if the repo has no `bitbucket-pipelines.yml`). One-time per repo:
+  1. Install a **Bitbucket self-hosted runner (Linux Shell)** on the Master with label `jmeter-master`
+     (Repository/Workspace settings → Runners). The Control Center only listens on `127.0.0.1`, so the gate must run there.
+  2. Create an API token (*Account → API tokens*, operator user) and save it as a **secured** repository
+     variable `JMCC_TOKEN` (optional `JMCC_JIRA`).
+  The step fails the pipeline when the run fails or the p95 / error % SLA is not met.
+* **Scheduler** — runs inside the service; set the timezone in *Settings → Application* (EC2 is UTC).
+
+## 9. Live monitor troubleshooting
+
+*Settings → InfluxDB diagnostics* runs every query of the monitor one by one and shows InfluxDB's exact answer
+(connection, databases, measurements, applications, last sample, each panel). Typical causes:
+
+| Symptom | Cause / fix |
+|---------|-------------|
+| `HTTP 401` | InfluxDB auth enabled → `SR_INFLUX_USER` / `SR_INFLUX_PASSWORD` (1.x) or `SR_INFLUX_TOKEN` (2.x) |
+| `HTTP 404` on `/query` | InfluxDB 2.x without a DBRP mapping for the database |
+| Applications list empty | Backend Listener writing to another InfluxDB (slaves' `localhost`, see §4 #1) or different measurement |
+| Last sample is old | Nothing is writing: check the listener URL / port 8086 from the slaves |
+| Users panel 0 while others work | Fixed in this version (the outer sub-query had no time range → InfluxDB 1.x HTTP 500) |

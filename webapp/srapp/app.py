@@ -11,7 +11,8 @@ from flask import (Flask, abort, flash, g, jsonify, redirect, render_template, r
                    send_file, send_from_directory, session, url_for)
 from markupsafe import Markup
 
-from . import confluence, influx, projects, runner, users
+from . import confluence, influx, projects, runner, settings, totp, users
+from . import compare as cmp
 from . import report as rpt
 from .config import Config, load_secret_key
 
@@ -64,6 +65,14 @@ app.jinja_env.globals["csrf_token"] = csrf_token
 @app.before_request
 def _load_user():
     g.user = None
+    g.api = False
+    if request.path.startswith("/api/v1/"):
+        auth = request.headers.get("Authorization", "")
+        u = users.user_by_token(auth[7:].strip()) if auth.startswith("Bearer ") else None
+        if not u:
+            return jsonify(error="invalid or missing API token"), 401
+        g.user, g.api = u, True
+        return None
     name = session.get("user")
     if name:
         u = users.get(name)
@@ -87,7 +96,8 @@ def _headers(resp):
 
 @app.context_processor
 def _ctx():
-    return {"me": g.get("user"), "can": can, "cfg": Config, "grafana_url": influx.GRAFANA_URL}
+    return {"me": g.get("user"), "can": can, "cfg": Config, "grafana_url": settings.get()["grafana"].get("url"),
+            "grafana_link": settings.grafana_link}
 
 
 def can(role):
@@ -143,19 +153,54 @@ def login():
         if count >= LOCK_AFTER and time.time() - first < LOCK_SECONDS:
             flash("Too many failed attempts, try again in a few minutes.", "error")
             return render_template("login.html"), 429
-        if users.authenticate(username, request.form.get("password", "")):
+        user = users.authenticate(username, request.form.get("password", ""))
+        if user:
             _failed_logins.pop(key, None)
-            session.clear()
-            session.permanent = True
-            session["user"] = username
-            csrf_token()
             nxt = request.args.get("next", "")
-            return redirect(nxt if nxt.startswith("/") and not nxt.startswith("//") else url_for("dashboard"))
+            session.clear()
+            if user.get("totp_enc"):
+                session["pending_2fa"] = {"user": username, "ts": time.time(), "next": nxt}
+                csrf_token()
+                return redirect(url_for("login_2fa"))
+            return _complete_login(username, nxt)
         if time.time() - first >= LOCK_SECONDS:
             count, first = 0, time.time()
         _failed_logins[key] = (count + 1, first)
         flash("Invalid username or password.", "error")
     return render_template("login.html")
+
+
+def _complete_login(username, nxt=""):
+    session.clear()
+    session.permanent = True
+    session["user"] = username
+    csrf_token()
+    return redirect(nxt if nxt.startswith("/") and not nxt.startswith("//") else url_for("dashboard"))
+
+
+@app.route("/login/2fa", methods=["GET", "POST"])
+def login_2fa():
+    pending = session.get("pending_2fa")
+    if not pending or time.time() - pending["ts"] > 300:
+        session.pop("pending_2fa", None)
+        flash("Sign in again.", "error")
+        return redirect(url_for("login"))
+    if request.method == "POST":
+        key = (request.remote_addr, "2fa:" + pending["user"])
+        count, first = _failed_logins.get(key, (0, time.time()))
+        if count >= LOCK_AFTER and time.time() - first < LOCK_SECONDS:
+            session.pop("pending_2fa", None)
+            flash("Too many wrong codes, try again later.", "error")
+            return redirect(url_for("login"))
+        u = users.get(pending["user"]) or {}
+        counter = totp.verify(settings.decrypt(u.get("totp_enc", "")), request.form.get("code"), u.get("totp_last"))
+        if counter is not None:
+            users.set_totp_last(pending["user"], counter)
+            _failed_logins.pop(key, None)
+            return _complete_login(pending["user"], pending.get("next", ""))
+        _failed_logins[key] = (count + 1, first)
+        flash("Wrong or expired code.", "error")
+    return render_template("login_2fa.html", username=pending["user"])
 
 
 @app.post("/logout")
@@ -167,19 +212,52 @@ def logout():
 @app.route("/account", methods=["GET", "POST"])
 @login_required()
 def account():
+    me = g.user["username"]
     if request.method == "POST":
-        if not users.authenticate(g.user["username"], request.form.get("current", "")):
-            flash("Current password is wrong.", "error")
-        elif request.form.get("new") != request.form.get("confirm"):
-            flash("New passwords do not match.", "error")
-        else:
-            try:
-                users.set_password(g.user["username"], request.form.get("new", ""))
+        action = request.form.get("action", "password")
+        try:
+            if action == "password":
+                if not users.authenticate(me, request.form.get("current", "")):
+                    raise ValueError("Current password is wrong.")
+                if request.form.get("new") != request.form.get("confirm"):
+                    raise ValueError("New passwords do not match.")
+                users.set_password(me, request.form.get("new", ""))
                 flash("Password updated.", "ok")
-            except ValueError as exc:
-                flash(str(exc), "error")
+            elif action == "email":
+                users.set_email(me, request.form.get("email"))
+                flash("E-mail saved.", "ok")
+            elif action == "2fa_start":
+                session["totp_setup"] = totp.new_secret()
+            elif action == "2fa_confirm":
+                secret = session.get("totp_setup")
+                counter = totp.verify(secret or "", request.form.get("code"))
+                if not secret or counter is None:
+                    raise ValueError("Code not valid, scan the QR again and use the current code.")
+                users.set_totp(me, settings.encrypt(secret))
+                users.set_totp_last(me, counter)
+                session.pop("totp_setup", None)
+                flash("Two-factor authentication enabled.", "ok")
+            elif action == "2fa_disable":
+                u = users.get(me)
+                if totp.verify(settings.decrypt(u.get("totp_enc", "")), request.form.get("code"), u.get("totp_last")) is None:
+                    raise ValueError("Wrong code; 2FA is still enabled.")
+                users.clear_totp(me)
+                flash("Two-factor authentication disabled.", "ok")
+            elif action == "token_add":
+                token = users.add_api_token(me, request.form.get("name", "ci"))
+                session["new_token"] = token
+                flash("API token created. Copy it now, it will not be shown again.", "ok")
+            elif action == "token_delete":
+                users.delete_api_token(me, request.form.get("id", ""))
+                flash("API token revoked.", "ok")
+        except ValueError as exc:
+            flash(str(exc), "error")
         return redirect(url_for("account"))
-    return render_template("account.html")
+    u = users.get(me) or {}
+    setup = session.get("totp_setup")
+    return render_template("account.html", u=u, has_2fa=bool(u.get("totp_enc")), setup=setup,
+                           qr=totp.qr_svg(totp.uri(setup, me)) if setup else None,
+                           new_token=session.pop("new_token", None), tokens=u.get("api_tokens", []))
 
 
 # --------------------------------------------------------------------------- dashboard
@@ -227,9 +305,31 @@ def project(name):
         ctx.update(runs=runner.list_runs(project=name))
     elif tab == "monitor":
         ctx.update(targets=_safe_targets(name))
+    elif tab == "settings":
+        ctx.update(ps=settings.project(name))
+    if tab == "results":
+        ctx.update(baselines=cmp.baselines(name), grafana_links=_grafana_links(name, ctx["results"]))
     if tab in ("tags", "scripts"):
         ctx.update(all_scripts=[s["path"] for s in projects.list_scripts(name) if s["path"].endswith(".jmx")])
     return render_template("project.html", **ctx)
+
+
+def _grafana_links(name, results):
+    """Deep link per execution: project dashboard + application + execution time window."""
+    if not settings.get()["grafana"].get("url"):
+        return {}
+    apps = {}
+    for t in projects.parse_tags(name):
+        if t["exists"]:
+            tg = influx.listener_targets(projects.project_dir(name) / t["script"])
+            if tg:
+                apps[t["script"].rsplit("/", 1)[-1][:-4]] = tg[0]["application"]
+    out = {}
+    for r in results:
+        start = _result_window(r["name"])
+        script = rpt._script_name(r["name"])
+        out[r["name"]] = settings.grafana_link(name, apps.get(script), start, int(r["mtime"] * 1000) + 15000)
+    return out
 
 
 def _safe_targets(name):
@@ -308,8 +408,14 @@ def download_file(name):
 @login_required("operator")
 def run(name):
     _project_or_404(name)
+    try:
+        extra = settings.parse_emails(request.form.get("extra_emails", ""))
+    except ValueError as exc:
+        raise projects.ProjectError(str(exc))
     meta = runner.start_tag_run(name, request.form.get("tag", ""), g.user["username"],
-                                request.form.get("props", ""), bool(request.form.get("distributed")))
+                                request.form.get("props", ""), bool(request.form.get("distributed")),
+                                jira=request.form.get("jira", ""), notes=request.form.get("notes", ""),
+                                extra_emails=extra, notify=bool(request.form.get("notify")))
     return redirect(url_for("run_detail", run_id=meta["id"]))
 
 
@@ -350,13 +456,31 @@ def download_result(name, run_name):
 @login_required()
 def compare(name):
     _project_or_404(name)
-    selected = request.args.getlist("r")[:6]
-    if not selected:
-        selected = [r["name"] for r in projects.list_results(name, limit=2) if r["has_report"]]
-    stats = {r: projects.result_stats(name, r) for r in selected}
-    tx_names = sorted({t for s in stats.values() for t in s if t != "Total"})
-    return render_template("compare.html", name=name, selected=selected, stats=stats, tx_names=tx_names,
+    base = request.args.get("base") or None
+    others = [r for r in request.args.getlist("r") if r][:5]
+    if not base and not others:
+        base, others = cmp.default_selection(name)
+    elif not base and others:
+        base, others = others[0], others[1:]
+    try:
+        thr = max(1.0, min(200.0, float(request.args.get("thr", 10))))
+    except ValueError:
+        thr = 10.0
+    data = cmp.build(name, base, others, request.args.get("metric", "p95"), thr) if (base or others) else None
+    if data and request.args.get("format") == "csv":
+        return app.response_class(cmp.to_csv(data), mimetype="text/csv", headers={
+            "Content-Disposition": f"attachment; filename=compare_{name}.csv"})
+    return render_template("compare.html", name=name, data=data, baselines=cmp.baselines(name),
                            all_results=[r for r in projects.list_results(name) if r["has_report"]])
+
+
+@app.post("/p/<name>/results/<run_name>/baseline")
+@login_required("operator")
+def set_baseline(name, run_name):
+    _project_or_404(name)
+    cmp.set_baseline(name, run_name)
+    flash(f"{run_name} is now the baseline for its script.", "ok")
+    return redirect(request.referrer or url_for("project", name=name, tab="results"))
 
 
 def _result_window(run_name):
@@ -420,8 +544,11 @@ def monitor():
     try:
         dbs = influx.databases()
         err = None
-    except influx.InfluxError as exc:
+    except Exception as exc:  # noqa: BLE001 - always render the page, show why Influx failed
+        app.logger.exception("monitor: listing databases failed")
         dbs, err = [], str(exc)
+    if db and db not in dbs and not err:
+        err = f"Database {db} not found in InfluxDB"
     return render_template("monitor.html", dbs=dbs, db=db, app_name=app_name, start=start, end=end,
                            influx_error=err)
 
@@ -431,7 +558,8 @@ def monitor():
 def influx_apps():
     try:
         return jsonify(apps=influx.applications(request.args.get("db", "")))
-    except influx.InfluxError as exc:
+    except Exception as exc:  # noqa: BLE001
+        app.logger.exception("influx apps failed")
         return jsonify(error=str(exc)), 502
 
 
@@ -446,6 +574,9 @@ def influx_dashboard():
                                 request.args.get("measurement", "jmeter"))
     except influx.InfluxError as exc:
         return jsonify(error=str(exc)), 502
+    except Exception as exc:  # noqa: BLE001 - never a bare 500: tell the user what broke
+        app.logger.exception("influx dashboard failed")
+        return jsonify(error=f"{type(exc).__name__}: {exc} (see Settings → InfluxDB diagnostics)"), 500
     data.update(start=start, end=end)
     return jsonify(data)
 
@@ -477,7 +608,8 @@ def confluence_settings():
         except confluence.ConfluenceError as exc:
             flash(str(exc), "error")
         return redirect(url_for("confluence_settings"))
-    return render_template("confluence_settings.html", s=confluence.get_settings(me))
+    from . import atlassian
+    return render_template("confluence_settings.html", s=confluence.get_settings(me), atl=atlassian.get(me))
 
 
 @app.route("/p/<name>/results/<run_name>/confluence", methods=["GET", "POST"])
@@ -543,6 +675,9 @@ def admin_users():
             elif action == "password":
                 users.set_password(username, request.form.get("password", ""))
                 flash(f"Password of {username} reset.", "ok")
+            elif action == "reset_2fa":
+                users.clear_totp(username)
+                flash(f"2FA of {username} removed; they can enrol again from their account.", "ok")
             elif action == "delete":
                 if username == g.user["username"]:
                     raise ValueError("You cannot delete yourself")
@@ -552,3 +687,7 @@ def admin_users():
             flash(str(exc), "error")
         return redirect(url_for("admin_users"))
     return render_template("users.html", users=users.list_users(), roles=users.ROLES)
+
+
+# Feature routes (settings, schedules, git/Bitbucket, shift-left, e-mail, API) live in routes_extra.py
+from . import routes_extra  # noqa: E402,F401

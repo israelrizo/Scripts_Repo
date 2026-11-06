@@ -3,7 +3,7 @@
 {% block content %}
 <div class="login-wrap">
   <div class="login">
-    <div class="brand"><span class="logo">JM</span> JMeter Control Center</div>
+    <picture><source srcset="{{ url_for('static', filename='brand/logo-dark.svg') }}" media="(prefers-color-scheme: dark)"><img class="login-logo" src="{{ url_for('static', filename='brand/logo.svg') }}" alt="JMeter Control Center"></picture>
     {% if no_users %}
       <div class="panel">
         <h2>No users configured</h2>

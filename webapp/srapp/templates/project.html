@@ -17,7 +17,7 @@
 </div>
 
 <nav class="tabs">
-  {% for key, label in [('tags','Tags'),('scripts','Scripts'),('data','Data files'),('results','Reports'),('runs','Executions'),('monitor','Live monitor')] %}
+  {% for key, label in [('tags','Tags'),('scripts','Scripts'),('data','Data files'),('results','Reports'),('runs','Executions'),('monitor','Live monitor'),('settings','Settings')] %}
   <a href="{{ url_for('project', name=name, tab=key) }}" class="{{ 'active' if tab == key }}">{{ label }}{% if key == 'tags' %} <span class="chip">{{ tags|length }}</span>{% endif %}</a>
   {% endfor %}
 </nav>
@@ -40,7 +40,11 @@
         <td><div class="actions">
           {% if can('operator') %}
           <button class="btn sm primary" {{ 'disabled' if not t.exists }} data-run-tag="{{ t.tag }}" data-run-script="{{ t.script }}">▶ Run</button>
-          <form method="post" action="{{ url_for('delete_tag', name=name, tag=t.tag) }}" data-confirm="Remove tag {{ t.tag }} from run_by_tag.sh? (the .jmx is kept)">{{ csrf() }}<button class="btn sm danger">Remove</button></form>
+          <a class="btn sm" href="{{ url_for('schedules', project=name, tag=t.tag, _anchor='new-schedule') }}" title="Schedule this tag">⏱</a>
+          {% endif %}
+          {% if t.exists %}<button class="btn sm" data-servers-tag="{{ t.tag }}" title="Resolve and test the servers this script calls">Servers</button>{% endif %}
+          {% if can('operator') %}
+          <form method="post" action="{{ url_for('delete_tag', name=name, tag=t.tag) }}" data-confirm="Remove tag {{ t.tag }} from run_by_tag.sh? (the .jmx is kept)">{{ csrf() }}<button class="btn sm danger" title="Remove tag">✕</button></form>
           {% endif %}
         </div></td>
       </tr>
@@ -62,6 +66,14 @@
         <input type="text" name="props" placeholder="-Jthreads=50 -Jrampup=60 -JP_DNS=apibdt.q.gslb">
         <div class="hint">Only <code>-Jname=value</code> / <code>-Gname=value</code>, no spaces in values. Appended after the tag's EXTRA_ARGS, so they win.</div>
       </div>
+      <div class="row">
+        <div class="field"><label>Jira ticket (optional)</label>
+          <input type="text" name="jira" id="run-jira" placeholder="PERF-123" pattern="[A-Za-z][A-Za-z0-9_]{0,19}-[0-9]{1,9}" style="text-transform:uppercase">
+          <div class="hint" id="run-jira-info">A comment with the results is added when the run ends.</div></div>
+        <div class="field"><label>Also notify</label><input type="text" name="extra_emails" placeholder="dev.lead@bancobase.com"></div>
+      </div>
+      <div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500" placeholder="Why this run? Build / version under test"></div>
+      <label class="check field"><input type="checkbox" name="notify" value="1" checked> E-mail qaperformance{{ ' + ' ~ (project_settings(name).staff_emails|length) ~ ' staff' if project_settings(name).staff_emails }} at start and end</label>
       {% if slaves %}
       <label class="check"><input type="checkbox" name="distributed" value="1" checked> Distributed on {{ slaves|length }} slaves (<span class="mono">{{ slaves|join(', ') }}</span>)</label>
       <p class="hint">Each slave runs the full thread count of the plan. Total load = threads × {{ slaves|length }}.</p>
@@ -72,6 +84,24 @@
     <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">▶ Start execution</button></div>
   </form>
 </dialog>
+
+<dialog id="dlg-servers" style="width:min(900px, calc(100vw - 32px))">
+  <div class="dlg-head">Servers used by <code id="srv-tag"></code></div>
+  <div class="dlg-body">
+    <div class="row" style="align-items:flex-end">
+      <div class="field" style="flex:4"><label>Property overrides to resolve (optional)</label><input type="text" id="srv-props" placeholder="-JP_DNS=apibdt.sil.gslb"></div>
+      <div class="field" style="flex:1"><button type="button" class="btn primary" id="srv-run">Check again</button></div>
+    </div>
+    <p class="mono muted" id="srv-script"></p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Endpoint</th><th class="num">Samplers</th><th>DNS</th><th class="num">TCP</th><th>TLS</th><th>HTTP</th></tr></thead>
+      <tbody id="srv-body"><tr><td colspan="6" class="empty">…</td></tr></tbody>
+    </table></div>
+    <p class="hint" id="srv-note"></p>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+</dialog>
+<script id="servers-url" type="application/json">{{ url_for('servers', name=name)|tojson }}</script>
 {% endif %}
 
 {% if tab in ('tags', 'scripts') and can('operator') %}
@@ -200,7 +230,9 @@
           {% if r.has_report %}<a class="btn sm primary" href="{{ url_for('report', name=name, run_name=r.name) }}" target="_blank">HTML report</a>{% endif %}
           {% if r.summary %}<a class="btn sm" href="{{ url_for('confluence_report', name=name, run_name=r.name) }}" title="Generate the results report in Confluence">Confluence{% if published.get(r.name) %} ✓{% endif %}</a>{% endif %}
           {% if published.get(r.name) %}<a class="btn sm" href="{{ published[r.name].url }}" target="_blank" rel="noopener" title="Open the published page">↗</a>{% endif %}
-          <a class="btn sm" href="{{ url_for('monitor', result=r.name, to=(r.mtime*1000)|int) }}" title="Re-open Influx metrics for this time window">Influx</a>
+          {% if r.name in baselines.values() %}<span class="pill base" title="Baseline for this script">BASE</span>
+          {% elif can('operator') and r.has_report %}<form method="post" action="{{ url_for('set_baseline', name=name, run_name=r.name) }}">{{ csrf() }}<button class="btn sm" title="Use as baseline for this script in comparisons">☆ Base</button></form>{% endif %}
+          {% if grafana_url %}<a class="btn sm" target="_blank" rel="noopener" href="{{ grafana_links.get(r.name) }}" title="Grafana dashboard for this execution window">Grafana</a>{% endif %}
           <a class="btn sm" href="{{ url_for('download_result', name=name, run_name=r.name) }}">.tar.gz</a>
         </div></td>
       </tr>
@@ -217,6 +249,51 @@
     <thead><tr><th>Run</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Duration</th><th>User</th><th></th></tr></thead>
     <tbody>{% for r in runs %}{{ run_row(r, show_project=false) }}{% else %}<tr><td colspan="7" class="empty">No executions launched from the web app yet.</td></tr>{% endfor %}</tbody>
   </table></div>
+</div>
+{% endif %}
+
+{# ============================== SETTINGS ============================== #}
+{% if tab == 'settings' %}
+<form method="post" action="{{ url_for('project_settings', name=name) }}">
+  {{ csrf() }}
+  <div class="grid two">
+    <div class="panel">
+      <h2>Notifications</h2>
+      <div class="field"><label>Project staff e-mails</label>
+        <textarea name="staff_emails" rows="3" placeholder="dev.lead@bancobase.com, po@bancobase.com">{{ ps.staff_emails|join(', ') }}</textarea>
+        <div class="hint">Receive the start / end e-mails of every run of this project, together with qaperformance.</div></div>
+      <h2 class="mt">Grafana</h2>
+      <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>
+    </div>
+    <div class="panel">
+      <h2>Shift-left · Bitbucket</h2>
+      <div class="field"><label>Application repository</label><input type="text" name="bitbucket_repo" value="{{ ps.bitbucket_repo }}" placeholder="bancobase/baseinet">
+        <div class="hint">The repo of the application under test (not this scripts repo).</div></div>
+      <div class="row">
+        <div class="field"><label>Tag to run</label><select name="sl_tag"><option value="">—</option>{% for t in tags if t.exists %}<option {{ 'selected' if t.tag == ps.shiftleft.tag }}>{{ t.tag }}</option>{% endfor %}</select></div>
+        <div class="field"><label>Target branch</label><input type="text" name="sl_branch" value="{{ ps.shiftleft.base_branch }}" placeholder="repo main branch"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Users</label><input type="number" name="sl_threads" value="{{ ps.shiftleft.threads }}" min="1"></div>
+        <div class="field"><label>Duration (s)</label><input type="number" name="sl_duration" value="{{ ps.shiftleft.duration }}" min="10"></div>
+        <div class="field"><label>SLA p95 (ms)</label><input type="number" name="sl_p95" value="{{ ps.shiftleft.sla_p95 }}" step="any"></div>
+        <div class="field"><label>SLA error %</label><input type="number" name="sl_err" value="{{ ps.shiftleft.sla_err }}" step="any"></div>
+      </div>
+      <div class="field"><label>Runner label</label><input type="text" name="sl_runner" value="{{ ps.shiftleft.runner_label }}"></div>
+      <p class="hint">The scripts use <code>-Jthreads</code> / <code>-Jduration</code>; make sure the JMX reads them (<code>${__P(threads,1)}</code>).</p>
+    </div>
+  </div>
+  {% if can('operator') %}<button class="btn primary mt">Save project settings</button>{% endif %}
+</form>
+<div class="panel mt">
+  <div class="page-head" style="margin-bottom:8px"><h2 style="margin:0">1-click shift-left</h2>
+    <div class="actions">
+      <button class="btn" id="sl-preview" data-url="{{ url_for('shiftleft_files', name=name) }}">Preview files</button>
+      {% if can('operator') %}<form method="post" action="{{ url_for('shiftleft_pr', name=name) }}" data-confirm="Open a pull request in {{ ps.bitbucket_repo or 'the repository' }} adding the performance gate?">{{ csrf() }}<button class="btn primary" {{ 'disabled' if not (ps.bitbucket_repo and ps.shiftleft.tag) }}>⇪ Open PR in Bitbucket</button></form>{% endif %}
+    </div></div>
+  <p class="muted">Creates a branch + pull request in the application repo with <code>perf/perf-gate.sh</code>, a README and the Bitbucket Pipelines step.
+  The step runs on a self-hosted runner on the JMeter Master, launches <b>{{ ps.shiftleft.tag or 'the chosen tag' }}</b> through <code>/api/v1/runs</code> and fails the pipeline if p95 &gt; {{ ps.shiftleft.sla_p95 }} ms or errors &gt; {{ ps.shiftleft.sla_err }} %.</p>
+  <div id="sl-files"></div>
 </div>
 {% endif %}
 

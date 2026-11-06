@@ -1,0 +1,8 @@
+# Copy to ~/.jmeter-control-center.conf
+INSTANCE_ID=i-0123456789abcdef0     # JMeter Master EC2 instance id
+AWS_PROFILE=bancobase-qa            # profile with ssm:StartSession on the Master (empty = default)
+AWS_REGION=us-east-1
+# AWS_SSO_LOGIN=yes                 # run "aws sso login" automatically when the session expired
+LOCAL_PORT=8090
+FORWARD_GRAFANA=yes                 # also forward Grafana (localhost:3000)
+GRAFANA_LOCAL_PORT=3000

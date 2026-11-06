@@ -17,7 +17,7 @@ from pathlib import Path
 
 from markupsafe import Markup, escape
 
-from . import confluence, influx, projects, runner
+from . import confluence, influx, projects, runner, settings
 from .config import Config, _env
 
 IMAGE_NAMES = {
@@ -30,7 +30,6 @@ IMAGE_NAMES = {
 }
 MAX_IMAGE_BYTES = 3 * 1024 * 1024
 MAX_ATTACH_MB = int(_env("SR_CONFLUENCE_MAX_ATTACH_MB", "80"))
-GRAFANA_DASHBOARD = _env("SR_GRAFANA_DASHBOARD_PATH", "")  # e.g. /d/jmeter/jmeter?var-application={app}
 DEFAULT_KEYS = ("app_name", "scenario", "tool", "base_url", "alcance", "crit_avg", "crit_p95", "crit_err",
                 "crit_tps", "stakeholders", "link_docs", "link_docs_desc", "space_key", "parent_id")
 TEST_TYPES = [("SMOKE", "Prueba de Humo"), ("UNIT", "Prueba Unitaria"), ("DRY", "Prueba Dry Run"),
@@ -361,7 +360,7 @@ def initial_fields(project, run_name, g, user_settings):
         "alcance": d.get("alcance") or "\n".join(f"API | {x['name']} | {{GET / POST}} | {{Descripción}} | Media"
                                                  for x in g["transactions"]),
         "stakeholders": d.get("stakeholders") or "Performance QA | {Nombre} | QA | Diseño, ejecución y análisis | {correo}",
-        "link_dashboard": grafana_link(g), "link_dashboard_desc": "Dashboard JMeter en Grafana para la ventana de ejecución",
+        "link_dashboard": grafana_link(g, project), "link_dashboard_desc": "Dashboard JMeter en Grafana para la ventana de ejecución",
         "link_docs": d.get("link_docs", ""), "link_docs_desc": d.get("link_docs_desc", ""),
         "attach_report": "1", "attach_jmx": "1", "attach_log": "1" if g["meta"] else "", "attach_jtl": "",
         "space_key": d.get("space_key") or (user_settings or {}).get("space_key", ""),
@@ -372,13 +371,9 @@ def initial_fields(project, run_name, g, user_settings):
     return f
 
 
-def grafana_link(g):
-    if not influx.GRAFANA_URL:
-        return ""
-    app = g["targets"][0]["application"] if g["targets"] else ""
-    path = GRAFANA_DASHBOARD.replace("{app}", app) if GRAFANA_DASHBOARD else ""
-    sep = "&" if "?" in path else "?"
-    return f"{influx.GRAFANA_URL.rstrip('/')}{path}{sep}from={g['start']}&to={g['end']}"
+def grafana_link(g, project=None):
+    app = g["targets"][0]["application"] if g["targets"] else None
+    return settings.grafana_link(project, app, g["start"], g["end"])
 
 
 # --------------------------------------------------------------------------- rendering

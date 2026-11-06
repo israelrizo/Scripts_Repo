@@ -13,6 +13,16 @@ Web front end for the `*-jmeter-framework` projects of this repository. Runs on 
 | Live charts from InfluxDB: virtual users, hits/s, errors/s, avg & p95, requests, errored requests, error %, response-code pie, p95 per transaction | Run page · Live monitor |
 | HTML reports of every execution, `.tar.gz` download, comparison of runs vs. a baseline | Reports · Compare |
 | **Confluence results report** ("Plantilla Reporte de Resultados") pre-filled from the HTML report + InfluxDB, charts as images, zipped report/.jmx/log attached, per-user API token | Reports → Confluence |
+| **Schedules**: once / daily / weekly per tag, timezone-aware, waits if the generator is busy | Schedules |
+| **Server check**: resolves the hosts a script calls (variables + `__P()` defaults) and tests DNS → TCP → TLS → HTTP | Tags → Servers |
+| **E-mail quick report** at run start / end to qaperformance@bancobase.com + project staff (+ mock preview) | Settings → SMTP · project → Settings |
+| **Jira**: ticket per run (typed in the run dialog), results comment posted when the run ends | Run dialog · Atlassian |
+| **Bitbucket**: commit & push / pull of this repo from the UI; **1-click shift-left** PR in the app repo | Git · project → Settings |
+| **CI API** (`/api/v1/runs`, Bearer tokens) used by the shift-left performance gate | Account → API tokens |
+| Grafana deep links (project dashboard + application + run window) | Run · Reports · Monitor |
+| Comparison vs a pinned **baseline**, regression threshold, Δ% charts, trend, CSV | Reports → Compare |
+| Optional **2FA** (TOTP) per user, admin reset | Account |
+| Desktop **launcher** with icon that opens the SSM tunnels (8090 + Grafana) | `tools/launcher/` |
 | Users with roles `admin` / `operator` / `viewer` | Users |
 
 ## Quick start (local)

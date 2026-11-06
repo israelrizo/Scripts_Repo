@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% from "_macros.html" import csrf %}
-{% block title %}Confluence connection{% endblock %}
+{% block title %}Atlassian connections{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>My Confluence connection</h1>
-<p class="sub">Used only when <b>you</b> publish a report. The token is encrypted on the Master and never shown again.</p></div></div>
+<div class="page-head"><div><h1>My Atlassian connections</h1>
+<p class="sub">Confluence (reports), Jira (run comments) and Bitbucket (shift-left PRs). Used only for <b>your</b> actions; tokens are encrypted on the Master and never shown again.</p></div></div>
 <div class="grid two">
 <form class="panel" method="post">
   {{ csrf() }}
@@ -41,4 +41,35 @@
   <p class="hint">The Master needs outbound HTTPS to Confluence (NAT Gateway or <code>HTTPS_PROXY</code> in the service environment).</p>
 </div>
 </div>
+<h2 class="mt" id="jira">Jira &amp; Bitbucket</h2>
+<div class="grid two">
+<form class="panel" method="post" action="{{ url_for('atlassian_settings') }}">
+  {{ csrf() }}
+  <h2>Jira <span class="muted" style="font-weight:400">· comments on the ticket of each run</span></h2>
+  <div class="field"><label>Jira URL</label><input type="text" name="jira_url" value="{{ atl.jira_url }}" placeholder="https://bancobase.atlassian.net">
+    <div class="hint">Leave empty to use the default set by the admin.</div></div>
+  <div class="field"><label>Jira token {% if atl.has_jira_token %}<span class="chip">saved</span>{% endif %}</label>
+    <input type="password" name="jira_token" autocomplete="new-password" placeholder="Empty = reuse the Confluence token (same Atlassian account on Cloud)"></div>
+  <h2 class="mt">Bitbucket Cloud <span class="muted" style="font-weight:400">· shift-left pull requests</span></h2>
+  <div class="field"><label>Atlassian e-mail</label><input type="text" name="bb_user" value="{{ atl.bb_user or (s.account if s else '') }}" autocomplete="off"></div>
+  <div class="field"><label>Bitbucket API token {% if atl.has_bb_token %}<span class="chip">saved</span>{% endif %}</label>
+    <input type="password" name="bb_token" autocomplete="new-password" placeholder="{{ 'Leave empty to keep it' if atl.has_bb_token else 'API token with repository + pull request scopes' }}">
+    <div class="hint">id.atlassian.com → Security → <i>Create API token with scopes</i> → Bitbucket: <code>read:repository</code>, <code>write:repository</code>, <code>write:pullrequest</code>.</div></div>
+  <button class="btn primary">Save</button>
+</form>
+<div class="panel">
+  <h2>Test</h2>
+  <form method="post" action="{{ url_for('atlassian_settings') }}" class="row" style="align-items:flex-end">
+    {{ csrf() }}<input type="hidden" name="action" value="test_jira">
+    <div class="field"><label>Jira ticket</label><input type="text" name="jira_test_key" placeholder="PERF-123"></div>
+    <div class="field" style="flex:0"><button class="btn">Test Jira</button></div>
+  </form>
+  <form method="post" action="{{ url_for('atlassian_settings') }}" class="row" style="align-items:flex-end">
+    {{ csrf() }}<input type="hidden" name="action" value="test_bitbucket">
+    <div class="field"><label>Repository</label><input type="text" name="bb_test_repo" placeholder="bancobase/baseinet"></div>
+    <div class="field" style="flex:0"><button class="btn">Test Bitbucket</button></div>
+  </form>
+</div>
+</div>
+
 {% endblock %}

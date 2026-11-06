@@ -17,6 +17,9 @@
   {% if start %}<input type="hidden" name="from" value="{{ start }}">{% endif %}
   {% if end %}<input type="hidden" name="to" value="{{ end }}">{% endif %}
   <button class="btn primary">Show</button>
+  {% set gl = grafana_link(None, app_name, start, end) if app_name else '' %}
+  {% if gl %}<a class="btn" href="{{ gl }}" target="_blank" rel="noopener">Open in Grafana ↗</a>{% endif %}
+  {% if can('admin') %}<a class="btn" href="{{ url_for('admin_settings', diag=1, db=db, app=app_name, _anchor='influx') }}">Diagnostics</a>{% endif %}
 </form>
 {% if db and app_name %}
   <div class="mt"></div>

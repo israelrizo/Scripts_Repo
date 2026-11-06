@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Settings</h1><p class="sub">Global configuration (admin). Secrets are encrypted in <code>webapp/instance/</code>.</p></div></div>
+
+<div class="panel" id="influx">
+  <h2>InfluxDB diagnostics <span class="muted" style="font-weight:400">· {{ influx_url }}</span></h2>
+  <p class="hint">Runs every query the Live monitor uses, one by one, and shows the exact InfluxDB answer. Use it when the monitor shows errors.</p>
+  <form class="toolbar" method="get" action="{{ url_for('admin_settings', _anchor='influx') }}">
+    <input type="hidden" name="diag" value="1">
+    <div class="field"><label>Database</label><input type="text" name="db" value="{{ request.args.get('db','') }}" placeholder="BlackList_QA"></div>
+    <div class="field"><label>application</label><input type="text" name="app" value="{{ request.args.get('app','') }}" placeholder="BlackList_QA"></div>
+    <div class="field"><label>measurement</label><input type="text" name="measurement" value="{{ request.args.get('measurement','jmeter') }}"></div>
+    <div class="field"><label>Last minutes</label><input type="number" name="minutes" value="{{ request.args.get('minutes', 60) }}" min="5" max="10080"></div>
+    <button class="btn primary">Run diagnostics</button>
+  </form>
+  {% if diag %}
+  <div class="table-wrap mt"><table class="diag">
+    <thead><tr><th>Check</th><th>Result</th><th class="num">ms</th></tr></thead>
+    <tbody>{% for st in diag %}<tr><td class="{{ 'ok-dot' if st.ok else 'bad-dot' }}">{{ st.name }}</td><td class="mono" style="white-space:pre-wrap">{{ st.detail }}</td><td class="num">{{ st.ms }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+  <p class="hint mt">Connection settings come from the service environment: <code>SR_INFLUX_URL</code>, <code>SR_INFLUX_USER</code>/<code>SR_INFLUX_PASSWORD</code> (1.x) or <code>SR_INFLUX_TOKEN</code> (2.x).</p>
+</div>
+
+<div class="grid two mt">
+  <form class="panel" method="post" id="grafana">
+    {{ csrf() }}<input type="hidden" name="section" value="grafana">
+    <h2>Grafana links</h2>
+    <div class="field"><label>Grafana URL (as the browser reaches it)</label><input type="text" name="url" value="{{ s.grafana.url }}" placeholder="http://localhost:3000">
+      <div class="hint">Through the SSM tunnel this is usually <code>http://localhost:3000</code>.</div></div>
+    <div class="field"><label>Default dashboard</label><input type="text" name="dashboard" value="{{ s.grafana.dashboard }}" placeholder="/d/abc123/jmeter-dashboard">
+      <div class="hint">Path of the JMeter dashboard (copy it from the browser). Each project can override it in its Settings tab.</div></div>
+    <div class="row">
+      <div class="field"><label>Application variable</label><input type="text" name="app_var" value="{{ s.grafana.app_var }}" placeholder="var-application"></div>
+      <div class="field"><label>Extra parameters</label><input type="text" name="extra" value="{{ s.grafana.extra }}" placeholder="orgId=1&var-measurement_name=jmeter"></div>
+    </div>
+    <p class="hint">Example link: <code class="mono">{{ grafana_link(None, 'BlackList_QA', 1700000000000, 1700000600000) or '—' }}</code></p>
+    <button class="btn primary">Save</button>
+  </form>
+
+  <form class="panel" method="post" id="app">
+    {{ csrf() }}<input type="hidden" name="section" value="app">
+    <h2>Application</h2>
+    <div class="field"><label>Public URL used in e-mails / Jira</label><input type="text" name="public_url" value="{{ s.app.public_url }}"></div>
+    <div class="field"><label>Timezone for schedules</label><input type="text" name="timezone" value="{{ s.app.timezone or '' }}" placeholder="America/Mexico_City">
+      <div class="hint">Now: {{ tz_now }}. EC2 instances usually run in UTC; schedules use this timezone.</div></div>
+    <button class="btn primary">Save</button>
+  </form>
+
+  <form class="panel" method="post" id="smtp">
+    {{ csrf() }}<input type="hidden" name="section" value="smtp">
+    <h2>E-mail notifications (SMTP)</h2>
+    <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.smtp.enabled }}> Enabled</label>
+    <div class="row">
+      <div class="field" style="flex:3"><label>SMTP host</label><input type="text" name="host" value="{{ s.smtp.host }}" placeholder="smtp.gmail.com / email-smtp.us-east-1.amazonaws.com"></div>
+      <div class="field" style="flex:1"><label>Port</label><input type="number" name="port" value="{{ s.smtp.port }}"></div>
+      <div class="field" style="flex:1"><label>Security</label><select name="security">{% for v in ['starttls','ssl','none'] %}<option {{ 'selected' if s.smtp.security == v }}>{{ v }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>User</label><input type="text" name="user" value="{{ s.smtp.user }}" autocomplete="off"></div>
+      <div class="field"><label>Password {% if smtp_has_password %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="password" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if smtp_has_password else '' }}"></div>
+    </div>
+    <div class="field"><label>From</label><input type="text" name="from_addr" value="{{ s.smtp.from_addr }}" placeholder="jmeter-control-center@bancobase.com"></div>
+    <div class="field"><label>Always notify</label><input type="text" name="always_to" value="{{ s.smtp.always_to }}">
+      <div class="hint">Plus each project's staff (project → Settings) and the extra addresses typed when launching a run.</div></div>
+    <label class="check"><input type="checkbox" name="notify_start" value="1" {{ 'checked' if s.smtp.notify_start }}> When a run starts</label>
+    <label class="check field"><input type="checkbox" name="notify_end" value="1" {{ 'checked' if s.smtp.notify_end }}> When a run ends (quick report)</label>
+    <button class="btn primary">Save</button>
+    <a class="btn" href="{{ url_for('email_mock') }}" target="_blank">Preview quick report (mock)</a>
+  </form>
+
+  <div class="panel">
+    <form method="post" class="row" style="align-items:flex-end">
+      {{ csrf() }}<input type="hidden" name="section" value="smtp_test">
+      <div class="field"><label>Send a test quick report to</label><input type="text" name="test_to" placeholder="you@bancobase.com"></div>
+      <div class="field" style="flex:0"><button class="btn">Send test</button></div>
+    </form>
+    <form method="post" id="jira" class="mt">
+      {{ csrf() }}<input type="hidden" name="section" value="jira">
+      <h2>Jira</h2>
+      <div class="field"><label>Default Jira URL</label><input type="text" name="url" value="{{ s.jira.url }}" placeholder="https://bancobase.atlassian.net"></div>
+      <button class="btn primary">Save</button>
+    </form>
+    <form method="post" id="bitbucket" class="mt">
+      {{ csrf() }}<input type="hidden" name="section" value="bitbucket">
+      <h2>Bitbucket Cloud</h2>
+      <div class="row">
+        <div class="field"><label>API base</label><input type="text" name="api" value="{{ s.bitbucket.api }}"></div>
+        <div class="field"><label>Default workspace</label><input type="text" name="workspace" value="{{ s.bitbucket.workspace }}" placeholder="bancobase"></div>
+      </div>
+      <button class="btn primary">Save</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

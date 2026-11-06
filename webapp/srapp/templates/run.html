@@ -8,12 +8,22 @@
     <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status">{{ run.status }}</span></h1>
     <p class="sub">{{ run.script or '' }} · by {{ run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
       {% if run.remote_hosts and run.kind == 'test' %} · distributed on <span class="mono">{{ run.remote_hosts|join(', ') }}</span>{% endif %}
-      {% if run.props %} · <span class="mono">{{ run.props|join(' ') }}</span>{% endif %}</p>
+      {% if run.props %} · <span class="mono">{{ run.props|join(' ') }}</span>{% endif %}
+      {% if run.jira %} · <span class="chip">{{ run.jira }}</span>{% endif %}
+      {% if run.source and run.source != 'web' %} · <span class="chip">{{ run.source.split(':')[0] }}</span>{% endif %}</p>
+    {% if run.notes %}<p class="sub">📝 {{ run.notes }}</p>{% endif %}
   </div>
   <div class="actions" id="run-actions">
     <a class="btn primary" id="report-btn" target="_blank" style="{{ '' if run.result_dir and run.status == 'finished' else 'display:none' }}"
        href="{{ url_for('report', name=run.project, run_name=run.result_dir) if run.result_dir else '#' }}">Open HTML report</a>
     {% if run.result_dir and run.status == 'finished' %}<a class="btn" href="{{ url_for('confluence_report', name=run.project, run_name=run.result_dir) }}">Confluence report</a>{% endif %}
+    {% if run.kind == 'test' %}
+      {% set t0 = targets[0] if targets else None %}
+      {% set gl = grafana_link(run.project, t0.application if t0 else None, ((run.started or run.created) * 1000 - 5000)|int, ((run.ended * 1000 + 15000)|int) if run.ended else None) %}
+      {% if gl %}<a class="btn" href="{{ gl }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
+      <a class="btn" href="{{ url_for('run_email', run_id=run.id) }}" target="_blank" title="Preview the quick report e-mail">✉ Preview</a>
+      {% if can('operator') and run.status not in ('running','starting','stopping') %}<form method="post" action="{{ url_for('run_notify', run_id=run.id) }}" data-confirm="Send the quick report e-mail again?">{{ csrf() }}<button class="btn">✉ Send</button></form>{% endif %}
+    {% endif %}
     {% if can('operator') and run.status in ('running','stopping') %}
       <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Graceful stop: JMeter finishes current iterations and still builds the report.">{{ csrf() }}<button class="btn">■ Stop</button></form>
       <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Kill the process group now? The HTML report will NOT be generated.">{{ csrf() }}<input type="hidden" name="force" value="1"><button class="btn danger">✕ Kill</button></form>

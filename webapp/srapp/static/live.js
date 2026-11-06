@@ -54,8 +54,14 @@ window.SR = window.SR || {};
       try {
         const d = await SR.getJSON(this.url());
         this.render(d);
-        state.className = 'badge ' + (this.live ? 'running' : 'finished');
-        state.textContent = this.live ? `live · every 5 s` : 'execution window';
+        const errs = Object.entries(d.errors || {});
+        state.className = 'badge ' + (errs.length ? 'stopped' : (this.live ? 'running' : 'finished'));
+        state.textContent = (this.live ? 'live · every 5 s' : 'execution window') + (errs.length ? ` · ${errs.length} panel(s) failed` : '');
+        state.title = errs.map(([k, v]) => `${k}: ${v}`).join('\n');
+        let note = this.root.querySelector('[data-role="panel-errors"]');
+        if (!note) { note = document.createElement('div'); note.dataset.role = 'panel-errors'; note.className = 'flash warn'; state.parentElement.after(note); }
+        note.style.display = errs.length ? '' : 'none';
+        note.textContent = errs.length ? 'InfluxDB rejected: ' + errs.map(([k, v]) => `${k} → ${v}`).join(' | ') + ' (Settings → InfluxDB diagnostics)' : '';
         this.root.querySelector('[data-role="window"]').textContent =
           `${new Date(d.start).toLocaleString()} → ${new Date(d.end).toLocaleTimeString()} · bucket ${d.bucket_s}s`;
       } catch (e) {
@@ -144,20 +150,29 @@ window.SR = window.SR || {};
   SR.compareCharts = () => {
     const el = document.getElementById('cmp-data');
     if (!el || !window.Chart) return;
-    const { runs, stats } = JSON.parse(el.textContent);
-    const labels = runs.map((r) => r.replace(/^Ejecucion_/, '').slice(0, 13));
-    const tot = runs.map((r) => (stats[r] || {}).Total || {});
-    const opts = { responsive: true, maintainAspectRatio: false, animation: false,
-      plugins: { legend: { labels: { color: css('--muted') } } },
-      scales: { x: { ticks: { color: css('--muted') }, grid: { color: css('--border') } },
-        y: { beginAtZero: true, ticks: { color: css('--muted') }, grid: { color: css('--border') } } } };
-    new Chart(document.getElementById('cmp-rt'), { type: 'bar', options: opts, data: { labels, datasets: [
-      { label: 'Average (ms)', data: tot.map((t) => t.avg), backgroundColor: PALETTE[0] },
-      { label: 'p95 (ms)', data: tot.map((t) => t.p95), backgroundColor: PALETTE[3] }] } });
-    const opts2 = JSON.parse(JSON.stringify(opts));
-    opts2.scales.y1 = { position: 'right', beginAtZero: true, ticks: { color: css('--muted') }, grid: { display: false } };
-    new Chart(document.getElementById('cmp-err'), { type: 'bar', options: opts2, data: { labels, datasets: [
-      { label: 'Error %', data: tot.map((t) => t.error_pct), backgroundColor: PALETTE[1] },
-      { label: 'Throughput (req/s)', data: tot.map((t) => t.tps), backgroundColor: PALETTE[2], yAxisID: 'y1' }] } });
+    const d = JSON.parse(el.textContent);
+    const muted = css('--muted'), grid = css('--border');
+    const short = (r) => r.replace(/^Ejecucion_/, '').slice(0, 13);
+    const axes = { x: { ticks: { color: muted }, grid: { color: grid } }, y: { beginAtZero: true, ticks: { color: muted }, grid: { color: grid } } };
+    const base = { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { labels: { color: muted, boxWidth: 12 } } } };
+    const tx = d.rows.filter((r) => r.name !== 'Total');
+    const names = tx.map((r) => r.name);
+    // metric per transaction, one bar series per run
+    new Chart(document.getElementById('cmp-tx'), { type: 'bar', options: { ...base, indexAxis: 'y', scales: axes },
+      data: { labels: names, datasets: d.runs.map((r, i) => ({ label: (i ? '' : 'BASE ') + short(r), backgroundColor: i ? PALETTE[i % PALETTE.length] : '#A59F80',
+        data: tx.map((row) => (row.cells[i].s || {})[d.metric] ?? null) })) } });
+    // delta % of the last selected run vs baseline, red when worse than threshold
+    const last = d.runs.length - 1;
+    const deltas = tx.map((row) => (row.cells[last] || {}).delta);
+    new Chart(document.getElementById('cmp-delta'), { type: 'bar', options: { ...base, indexAxis: 'y', scales: axes, plugins: { legend: { display: false } } },
+      data: { labels: names, datasets: [{ label: 'Δ %', data: deltas,
+        backgroundColor: deltas.map((v) => v == null ? '#94a3b8' : v > d.thr ? css('--err') : v < -d.thr ? css('--ok') : '#94a3b8') }] } });
+    // trend of all executions of the same script
+    const tr = d.trend;
+    new Chart(document.getElementById('cmp-trend'), { type: 'line', options: { ...base, scales: { ...axes, y1: { position: 'right', beginAtZero: true, ticks: { color: muted }, grid: { display: false } } } },
+      data: { labels: tr.map((x) => short(x.run)), datasets: [
+        { label: 'Avg (ms)', data: tr.map((x) => x.avg_ms), borderColor: PALETTE[0], backgroundColor: PALETTE[0], tension: 0.2 },
+        { label: 'p95 (ms)', data: tr.map((x) => x.p95_ms), borderColor: PALETTE[3], backgroundColor: PALETTE[3], tension: 0.2 },
+        { label: 'Error %', data: tr.map((x) => x.error_pct), borderColor: PALETTE[1], backgroundColor: PALETTE[1], yAxisID: 'y1', borderDash: [5, 3], tension: 0.2 }] } });
   };
 })(window.SR);

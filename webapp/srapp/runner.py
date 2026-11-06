@@ -21,6 +21,25 @@ SHIM_DIR = WEBAPP_DIR / "bin"
 RESULT_RE = re.compile(r"(?:Resultados guardados en|Creando directorio):\s*(results/[^\s]+?)(?:/html_report)?\s*$")
 _lock = threading.Lock()
 _procs = {}
+# Callbacks registered by the web app: HOOKS["start"|"end"] = [fn(meta)], run in background threads.
+HOOKS = {"start": [], "end": []}
+ISSUE_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,19}-\d{1,9}$")
+
+
+def _fire(event, meta):
+    for fn in HOOKS.get(event, []):
+        threading.Thread(target=_safe_hook, args=(fn, dict(meta)), daemon=True).start()
+
+
+def _safe_hook(fn, meta):
+    try:
+        fn(meta)
+    except Exception as exc:  # noqa: BLE001 - hooks must never break runs
+        try:
+            with (_runs_dir() / f"{meta['id']}.log").open("a") as fh:
+                fh.write(f"### hook {getattr(fn, '__name__', fn)} failed: {exc}\n")
+        except OSError:
+            pass
 
 
 def _runs_dir():
@@ -104,6 +123,7 @@ def _spawn(meta, cmd, cwd, env):
     _save(meta)
     _procs[meta["id"]] = proc
     threading.Thread(target=_wait, args=(meta["id"], proc, log), daemon=True).start()
+    _fire("start", meta)
     return meta
 
 
@@ -124,9 +144,11 @@ def _wait(run_id, proc, log):
         if m:
             meta["result_dir"] = Path(m.group(1)).name
     _save(meta)
+    _fire("end", meta)
 
 
-def start_tag_run(project, tag, user, props_raw="", distributed=False):
+def start_tag_run(project, tag, user, props_raw="", distributed=False, jira="", notes="",
+                  extra_emails=None, notify=True, source="web"):
     base = projects.project_dir(project)
     t = projects.get_tag(project, tag)
     if not t:
@@ -134,6 +156,10 @@ def start_tag_run(project, tag, user, props_raw="", distributed=False):
     if not t["exists"]:
         raise projects.ProjectError(f"Script for tag '{tag}' does not exist: {t['script']}")
     props = projects.validate_prop_args(props_raw)
+    jira = (jira or "").strip().upper()
+    if jira and not ISSUE_RE.match(jira):
+        raise projects.ProjectError(f"Invalid Jira ticket '{jira}' (expected e.g. PERF-123)")
+    notes = (notes or "").strip()[:500]
     if distributed and not Config.REMOTE_HOSTS:
         raise projects.ProjectError("No slaves configured (SR_REMOTE_HOSTS)")
     with _lock:
@@ -147,7 +173,8 @@ def start_tag_run(project, tag, user, props_raw="", distributed=False):
         meta = {"id": uuid.uuid4().hex[:12], "kind": "test", "project": project, "tag": tag,
                 "script": t["script"], "user": user, "props": props,
                 "remote_hosts": Config.REMOTE_HOSTS if distributed else [], "status": "starting",
-                "created": time.time()}
+                "created": time.time(), "jira": jira, "notes": notes, "extra_emails": list(extra_emails or []),
+                "notify": bool(notify), "source": source}
         _save(meta)
         return _spawn(meta, ["bash", "run_by_tag.sh", tag], base, env)
 

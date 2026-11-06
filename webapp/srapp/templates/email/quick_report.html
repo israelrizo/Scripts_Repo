@@ -1,0 +1,83 @@
+{#- E-mail quick report. Inline styles + tables only (Outlook / Gmail safe). -#}
+{%- set ok = s.verdict == 'SATISFACTORIA' -%}
+{%- set badge_bg = '#1f845a' if (event == 'end' and ok) else ('#c9372c' if (event == 'end' and (s.verdict == 'INSATISFACTORIA' or s.status in ('failed','interrupted'))) else ('#1868db' if event == 'start' else '#626f86')) -%}
+{%- set badge_txt = 'EN EJECUCIÓN' if event == 'start' else (s.verdict or s.status|upper) -%}
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{{ subject }}</title></head>
+<body style="margin:0;padding:0;background:#f1f2f4;font-family:Segoe UI,Arial,Helvetica,sans-serif;color:#172b4d;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f2f4;padding:24px 0;">
+<tr><td align="center">
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #dcdfe4;">
+  <tr><td style="background:#2e3a55;padding:16px 24px;">
+    <table role="presentation" width="100%"><tr>
+      <td style="color:#ffffff;font-size:15px;font-weight:700;letter-spacing:.3px;">
+        <span style="display:inline-block;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:15px solid #ee9a3a;vertical-align:-2px;margin-right:8px;"></span>JMeter Control Center</td>
+      <td align="right" style="color:#c7cfdd;font-size:12px;">Reporte rápido de ejecución</td>
+    </tr></table>
+  </td></tr>
+  <tr><td style="padding:22px 24px 6px;">
+    <div style="font-size:12px;color:#626f86;text-transform:uppercase;letter-spacing:.6px;">{{ s.label }}</div>
+    <div style="font-size:20px;font-weight:700;margin:2px 0 10px;">{{ s.tag }}</div>
+    <span style="display:inline-block;background:{{ badge_bg }};color:#fff;font-weight:700;font-size:12px;padding:4px 10px;border-radius:4px;">{{ badge_txt }}</span>
+    {% if s.jira %}<span style="display:inline-block;margin-left:6px;background:#e9f2ff;color:#0c66e4;font-weight:700;font-size:12px;padding:4px 10px;border-radius:4px;">{{ s.jira }}</span>{% endif %}
+  </td></tr>
+  <tr><td style="padding:10px 24px;">
+    <table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="font-size:13px;border-collapse:collapse;">
+      <tr><td style="color:#626f86;width:150px;">Script</td><td style="font-family:Consolas,monospace;font-size:12px;">{{ s.script }}</td></tr>
+      <tr><td style="color:#626f86;">Ejecutado por</td><td>{{ s.user }}</td></tr>
+      <tr><td style="color:#626f86;">Inicio</td><td>{{ s.started }}{% if event == 'end' %} · fin {{ s.ended }} · duración {{ s.duration }}{% endif %}</td></tr>
+      <tr><td style="color:#626f86;">Generadores</td><td>{{ 'Master + %d slaves (%s)'|format(s.slaves|length, s.slaves|join(', ')) if s.slaves else 'Master' }}</td></tr>
+      {% if s.props %}<tr><td style="color:#626f86;">Parámetros</td><td style="font-family:Consolas,monospace;font-size:12px;">{{ s.props }}</td></tr>{% endif %}
+      {% if s.notes %}<tr><td style="color:#626f86;">Notas</td><td>{{ s.notes }}</td></tr>{% endif %}
+    </table>
+  </td></tr>
+  {% if event == 'end' and s.totals %}{% set t = s.totals %}
+  <tr><td style="padding:8px 24px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="6"><tr>
+      {% for label, value, bad in [('Peticiones', '{:,}'.format(t.samples), False), ('Error %', '%s %%'|format(t.error_pct), t.error_pct > 1),
+                                   ('Promedio', '%.0f ms'|format(t.avg or 0), False), ('p95', '%.0f ms'|format(t.p95 or 0), False), ('TPS', t.tps, False)] %}
+      <td style="background:#f7f8f9;border:1px solid #dcdfe4;border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:11px;color:#626f86;">{{ label }}</div>
+        <div style="font-size:17px;font-weight:700;color:{{ '#c9372c' if bad else '#172b4d' }};">{{ value }}</div></td>
+      {% endfor %}
+    </tr></table>
+  </td></tr>
+  {% if s.checks %}
+  <tr><td style="padding:6px 24px;">
+    <table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="font-size:13px;border-collapse:collapse;border:1px solid #dcdfe4;">
+      <tr style="background:#f1f2f4;"><th align="left">Criterio</th><th align="left">Esperado</th><th align="left">Obtenido</th><th align="left">Resultado</th></tr>
+      {% for name, expected, actual, passed in s.checks %}
+      <tr style="border-top:1px solid #dcdfe4;"><td>{{ name }}</td><td>{{ expected }}</td><td>{{ actual }}</td>
+        <td style="color:{{ '#1f845a' if passed else '#c9372c' }};font-weight:700;">{{ 'Cumple' if passed else 'No cumple' }}</td></tr>
+      {% endfor %}
+    </table>
+  </td></tr>
+  {% endif %}
+  {% if s.worst %}
+  <tr><td style="padding:10px 24px 4px;font-weight:700;font-size:13px;">Transacciones con mayor p95</td></tr>
+  <tr><td style="padding:0 24px 6px;">
+    <table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="font-size:12px;border-collapse:collapse;border:1px solid #dcdfe4;">
+      <tr style="background:#f1f2f4;"><th align="left">Transacción</th><th align="right">Peticiones</th><th align="right">Error %</th><th align="right">Prom. (ms)</th><th align="right">p95 (ms)</th></tr>
+      {% for x in s.worst %}
+      <tr style="border-top:1px solid #dcdfe4;"><td>{{ x.name }}</td><td align="right">{{ '{:,}'.format(x.samples) }}</td>
+        <td align="right" style="color:{{ '#c9372c' if x.error_pct > 1 else '#172b4d' }};">{{ x.error_pct }}</td>
+        <td align="right">{{ '%.0f'|format(x.avg or 0) }}</td><td align="right">{{ '%.0f'|format(x.p95 or 0) }}</td></tr>
+      {% endfor %}
+    </table>
+  </td></tr>
+  {% endif %}
+  {% elif event == 'end' %}
+  <tr><td style="padding:10px 24px;color:#626f86;font-size:13px;">La ejecución terminó sin reporte HTML (estado: {{ s.status }}). Revisa la consola.</td></tr>
+  {% endif %}
+  <tr><td style="padding:14px 24px 6px;">
+    {% for label, url in [('Reporte HTML', s.report_url), ('Grafana', s.grafana_url), ('Confluence', s.confluence_url), ('Jira', s.jira_url), ('Consola', s.run_url)] if url %}
+    <a href="{{ url }}" style="display:inline-block;margin:0 6px 8px 0;padding:8px 14px;background:{{ '#1868db' if loop.first else '#ffffff' }};color:{{ '#ffffff' if loop.first else '#1868db' }};border:1px solid #1868db;border-radius:5px;text-decoration:none;font-size:13px;font-weight:600;">{{ label }}</a>
+    {% endfor %}
+  </td></tr>
+  <tr><td style="padding:6px 24px 20px;font-size:11px;color:#8590a2;">
+    Los enlaces <i>localhost</i> requieren el túnel SSM al Master (lanzador «JMeter Control Center»).
+    Enviado automáticamente a qaperformance y al staff del proyecto.
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>
