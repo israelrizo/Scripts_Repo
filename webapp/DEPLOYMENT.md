@@ -42,10 +42,16 @@ git pull                                          # brings webapp/ (branch New_R
 cd webapp
 ./deploy/install_master.sh                        # venv, deps, systemd unit, /etc env file
 sudo vi /etc/jmeter-control-center.env            # SR_REMOTE_HOSTS, Influx/Grafana, Confluence hosts
-sudo -u <owner> ./.venv/bin/python manage_users.py add <you> --role admin
+stat -c %U /mnt/jmeter/JMeter_Scripts/jmeter-framework   # -> Linux owner, e.g. ubuntu
+sudo -u ubuntu ./.venv/bin/python manage_users.py add alexis --role admin   # asks for a password
 sudo systemctl enable --now jmeter-control-center
 journalctl -u jmeter-control-center -f
 ```
+
+* `ubuntu` = the **Linux user that owns the scripts folder** (output of the `stat` command); the service runs as it.
+* `alexis` = the **web app login** you are creating (any name; it is *not* an Ubuntu account and lives only in
+  `webapp/instance/users.json`). Sign in with it at `http://localhost:8090`, then add the other engineers from
+  the **Users** page.
 
 The installer:
 
