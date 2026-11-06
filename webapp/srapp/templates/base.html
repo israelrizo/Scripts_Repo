@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}JMeter Control Center{% endblock %} · Scripts_Repo</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% if me %}
+<header class="topbar">
+  <a class="brand" href="{{ url_for('dashboard') }}"><span class="logo">JM</span> Control Center</a>
+  <nav class="nav">
+    <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">Projects</a>
+    <a href="{{ url_for('runs') }}" class="{{ 'active' if request.endpoint in ('runs','run_detail') }}">Executions</a>
+    <a href="{{ url_for('monitor') }}" class="{{ 'active' if request.endpoint == 'monitor' }}">Live monitor</a>
+    {% if grafana_url %}<a href="{{ grafana_url }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
+    {% if can('admin') %}<a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint == 'admin_users' }}">Users</a>{% endif %}
+  </nav>
+  <div class="user">
+    <a href="{{ url_for('confluence_settings') }}" title="My Confluence connection">Confluence</a>
+    <a href="{{ url_for('account') }}">{{ me.username }}</a> <span class="chip">{{ me.role }}</span>
+    <form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="linkbtn">Sign out</button></form>
+  </div>
+</header>
+{% endif %}
+<main>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% if msgs %}<div class="flashes">{% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

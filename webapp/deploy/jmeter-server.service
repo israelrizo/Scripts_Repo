@@ -1,0 +1,17 @@
+# /etc/systemd/system/jmeter-server.service  (on EACH SLAVE)
+# Fixed RMI ports so the Security Group can be tight. Replace 10.0.1.11 with the slave's private IP.
+[Unit]
+Description=JMeter remote engine (slave)
+After=network-online.target
+
+[Service]
+User=jmeter
+WorkingDirectory=/opt/Scripts_Repo
+Environment=JVM_ARGS=-Xms1g -Xmx4g
+Environment=RMI_HOST_DEF=-Djava.rmi.server.hostname=10.0.1.11
+ExecStart=/opt/apache-jmeter-5.6.3/bin/jmeter-server -Dserver_port=1099 -Jserver.rmi.localport=50000 -Jserver.rmi.ssl.disable=true
+Restart=always
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+
+{% macro run_row(r, show_project=true) %}
+<tr>
+  <td><a href="{{ url_for('run_detail', run_id=r.id) }}" class="mono">{{ r.id }}</a></td>
+  {% if show_project %}<td><a href="{{ url_for('project', name=r.project) }}">{{ r.project }}</a></td>{% endif %}
+  <td><code>{{ r.tag }}</code>{% if r.remote_hosts and r.kind == 'test' %} <span class="chip" title="{{ r.remote_hosts|join(', ') }}">{{ r.remote_hosts|length }} slaves</span>{% endif %}</td>
+  <td><span class="badge {{ r.status }}">{{ r.status }}</span></td>
+  <td class="nowrap">{{ r.started|dt }}</td>
+  <td class="num mono">{{ r|duration }}</td>
+  <td>{{ r.user }}</td>
+  <td class="right">{% if r.result_dir %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result_dir) }}" target="_blank">Report</a>{% endif %}</td>
+</tr>
+{% endmacro %}
+
+{% macro summary_cells(s) %}
+  {% if s %}
+    <td class="num">{{ '{:,}'.format(s.samples or 0) }}</td>
+    <td class="num {{ 'delta-up' if s.error_pct > 1 }}">{{ s.error_pct }}%</td>
+    <td class="num">{{ s.avg_ms }} ms</td>
+    <td class="num">{{ s.p95_ms }} ms</td>
+    <td class="num">{{ s.tps }}</td>
+  {% else %}<td colspan="5" class="muted">no statistics.json</td>{% endif %}
+{% endmacro %}

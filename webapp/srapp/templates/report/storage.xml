@@ -1,0 +1,116 @@
+{#- Confluence storage-format (XHTML) body for "Plantilla Reporte de Resultados".
+    preview=True renders the same page as plain HTML (data-URI images, no ac: macros). -#}
+{%- macro image(key) -%}
+  {%- if key in images -%}
+    {%- if preview -%}<p><img src="data:image/png;base64,{{ b64(images[key]) }}" alt="{{ image_names[key] }}" style="max-width:100%"/></p>
+    {%- else -%}<p><ac:image ac:width="900" ac:alt="{{ image_names[key] }}"><ri:attachment ri:filename="{{ key }}.png"/></ac:image></p>{%- endif -%}
+  {%- else -%}<p><em>Gráfica no disponible: sin datos de InfluxDB para la ventana de ejecución.</em></p>{%- endif -%}
+{%- endmacro -%}
+{%- macro attachment(name) -%}
+  {%- if preview -%}<code>{{ name }}</code>{%- else -%}<ac:link><ri:attachment ri:filename="{{ name }}"/></ac:link>{%- endif -%}
+{%- endmacro -%}
+{%- macro status_badge() -%}
+  {%- set colour = 'Green' if status == 'SATISFACTORIA' else ('Red' if status == 'INSATISFACTORIA' else 'Grey') -%}
+  {%- if preview -%}<span style="padding:2px 8px;border-radius:3px;font-weight:700;color:#fff;background:{{ {'Green':'#1f845a','Red':'#c9372c','Grey':'#626f86'}[colour] }}">{{ status }}</span>
+  {%- else -%}<ac:structured-macro ac:name="status"><ac:parameter ac:name="colour">{{ colour }}</ac:parameter><ac:parameter ac:name="title">{{ status }}</ac:parameter></ac:structured-macro>{%- endif -%}
+{%- endmacro -%}
+<h2>{{ f.test_name }}: {{ f.app_name }} - {{ f.exec_no }}</h2>
+<table><tbody>
+<tr><th>Fecha de Prueba</th><td>{{ f.test_date }}</td></tr>
+<tr><th>Usuarios / Threads</th><td>{{ f.users }}</td></tr>
+<tr><th>Herramienta</th><td>{{ f.tool }}</td></tr>
+<tr><th>Escenario</th><td>{{ f.scenario }}</td></tr>
+<tr><th>Script utilizado</th><td>{{ f.script }}</td></tr>
+<tr><th>Ejecución</th><td>{{ f.execution }}</td></tr>
+<tr><th>Estado de la prueba</th><td>{{ status_badge() }}</td></tr>
+</tbody></table>
+
+<h2>Objetivo</h2>
+{{ paras(f.objetivo) }}
+{% if checks %}
+<table><tbody>
+<tr><th>Criterio de aceptación</th><th>Esperado</th><th>Obtenido</th><th>Resultado</th></tr>
+{% for name, expected, actual, ok in checks %}<tr><td>{{ name }}</td><td>{{ expected }}</td><td>{{ actual }}</td><td>{{ '✅ Cumple' if ok else '❌ No cumple' }}</td></tr>
+{% endfor %}</tbody></table>
+{% endif %}
+
+<h2>Alcance</h2>
+{% if f.base_url %}<h4>URL Base / Ambiente: {{ f.base_url }}</h4>{% endif %}
+<table><tbody>
+<tr><th>Tipo de alcance</th><th>Elemento incluido</th><th>Método / Acción</th><th>Descripción / criterio de inclusión</th><th>Prioridad</th></tr>
+{% for r in alcance %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>
+{% endfor %}</tbody></table>
+
+<h2>Resumen Ejecutivo</h2>
+{{ paras(f.resumen) }}
+
+<h2>Resultados Generales</h2>
+<table><tbody>
+<tr><th>Métrica</th><th>Valor</th></tr>
+<tr><td>Total de usuarios virtuales</td><td>{{ f.users }}</td></tr>
+<tr><td>Total de peticiones</td><td>{{ num(t.samples) }}</td></tr>
+<tr><td>Tasa de éxito</td><td>{{ t.success_pct }} %</td></tr>
+<tr><td>Tasa de error</td><td>{{ t.error_pct }} % ({{ num(t.errors) }} peticiones)</td></tr>
+<tr><td>Tiempo de respuesta promedio</td><td>{{ ms(t.avg) }}</td></tr>
+<tr><td>Tiempo de respuesta en el percentil 95</td><td>{{ ms(t.p95) }}</td></tr>
+<tr><td>Transacciones concurrentes por segundo</td><td>{{ num(t.tps, 2) }} req/s</td></tr>
+<tr><td>Total de datos enviados</td><td>{{ num(t.sent_mb, 2) ~ ' MB' if t.sent_mb is not none else '—' }}</td></tr>
+<tr><td>Total de datos recibidos</td><td>{{ num(t.recv_mb, 2) ~ ' MB' if t.recv_mb is not none else '—' }}</td></tr>
+</tbody></table>
+
+<h2>Usuarios Activos:</h2>
+{{ image('usuarios_activos') }}
+{{ paras(f.users_desc) }}
+
+<h2>Throughput:</h2>
+{{ image('throughput') }}
+{{ paras(f.throughput_desc) }}
+
+<h2>Errores:</h2>
+{{ image('errores') }}
+{{ image('codigos_respuesta') }}
+{% if codes %}
+<table><tbody><tr><th>Código de respuesta</th><th>Peticiones</th></tr>
+{% for c in codes %}<tr><td>{{ c.code }}</td><td>{{ num(c.count) }}</td></tr>
+{% endfor %}</tbody></table>
+{% endif %}
+{{ paras(f.errors_desc) }}
+
+<h2>Tiempos de Respuesta:</h2>
+{{ image('tiempos_respuesta') }}
+{{ image('p95_transacciones') }}
+<table><tbody>
+<tr><th>Transacción</th><th>Peticiones</th><th>Errores</th><th>Error %</th><th>Promedio (ms)</th><th>p90 (ms)</th><th>p95 (ms)</th><th>p99 (ms)</th><th>Máx (ms)</th><th>TPS</th></tr>
+{% for x in tx %}<tr><td>{{ x.name }}</td><td>{{ num(x.samples) }}</td><td>{{ num(x.errors) }}</td><td>{{ x.error_pct }}</td><td>{{ num(x.avg) }}</td><td>{{ num(x.p90) }}</td><td>{{ num(x.p95) }}</td><td>{{ num(x.p99) }}</td><td>{{ num(x.max) }}</td><td>{{ x.tps }}</td></tr>
+{% endfor %}<tr><th>Total</th><th>{{ num(t.samples) }}</th><th>{{ num(t.errors) }}</th><th>{{ t.error_pct }}</th><th>{{ num(t.avg) }}</th><th>{{ num(t.p90) }}</th><th>{{ num(t.p95) }}</th><th>{{ num(t.p99) }}</th><th>{{ num(t.max) }}</th><th>{{ t.tps }}</th></tr>
+</tbody></table>
+{{ paras(f.rt_desc) }}
+
+<h2>Recursos Servidor:</h2>
+{{ paras(f.resources_desc) }}
+
+<h2>Observaciones:</h2>
+{{ paras(f.observaciones) }}
+
+<h2>Recomendaciones:</h2>
+{{ paras(f.recomendaciones) }}
+
+<h2>Enlaces de interés:</h2>
+<table><tbody>
+<tr><th>Tipo de enlace</th><th>Descripción</th><th>URL / Referencia</th></tr>
+{% if f.link_dashboard %}<tr><td>📊 Dashboard de monitoreo</td><td>{{ f.link_dashboard_desc }}</td><td><a href="{{ f.link_dashboard }}">{{ f.link_dashboard }}</a></td></tr>{% endif %}
+{% if f.link_docs %}<tr><td>📚 Documentación relacionada</td><td>{{ f.link_docs_desc }}</td><td><a href="{{ f.link_docs }}">{{ f.link_docs }}</a></td></tr>{% endif %}
+</tbody></table>
+
+<h2>Adjuntos:</h2>
+<table><tbody>
+<tr><th>Tipo de adjunto</th><th>Descripción / propósito</th><th>Archivo adjunto</th></tr>
+{% for kind, desc, name, data, ctype in attachments %}<tr><td>{{ kind }}</td><td>{{ desc }}</td><td>{{ attachment(name) }}</td></tr>
+{% endfor %}</tbody></table>
+
+<h2>👥 Stakeholders</h2>
+<table><tbody>
+<tr><th>Rol</th><th>Nombre</th><th>Área / Equipo</th><th>Responsabilidad</th><th>Contacto</th></tr>
+{% for r in stakeholders %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>
+{% endfor %}</tbody></table>
+<p><sub>Generado por JMeter Control Center el {{ generated }} a partir de <code>{{ f.execution }}</code>.</sub></p>

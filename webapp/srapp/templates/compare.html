@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Compare reports{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><p class="sub"><a href="{{ url_for('project', name=name, tab='results') }}">{{ name }}</a> / reports</p><h1>Compare executions</h1>
+  <p class="sub">From each run's <code>html_report/statistics.json</code>. Δ is relative to the first (baseline) execution.</p></div>
+</div>
+<form class="panel toolbar" method="get">
+  <div class="field" style="flex:1"><label>Executions (baseline first, max 6)</label>
+    <select name="r" multiple size="5" style="min-width:420px">
+      {% for r in all_results %}<option value="{{ r.name }}" {{ 'selected' if r.name in selected }}>{{ r.name }}</option>{% endfor %}
+    </select></div>
+  <button class="btn primary">Compare</button>
+</form>
+
+{% if selected %}
+<div class="grid two mt">
+  <div class="panel"><h3>Average &amp; p95 response time (ms)</h3><div class="chart-box"><canvas id="cmp-rt"></canvas></div></div>
+  <div class="panel"><h3>Error % &amp; throughput (req/s)</h3><div class="chart-box"><canvas id="cmp-err"></canvas></div></div>
+</div>
+{% set base = stats[selected[0]] %}
+<div class="panel mt"><div class="table-wrap"><table>
+  <thead>
+    <tr><th rowspan="2">Transaction</th>{% for r in selected %}<th colspan="4" class="mono" style="text-align:center">{{ r.replace('Ejecucion_','') }}</th>{% endfor %}</tr>
+    <tr>{% for r in selected %}<th class="num">Samples</th><th class="num">Err %</th><th class="num">Avg</th><th class="num">p95</th>{% endfor %}</tr>
+  </thead>
+  <tbody>
+  {% for tx in ['Total'] + tx_names %}
+    <tr {% if tx == 'Total' %}style="font-weight:700"{% endif %}>
+      <td>{{ tx }}</td>
+      {% for r in selected %}{% set s = stats[r].get(tx) %}{% set b = base.get(tx) %}
+        {% if s %}
+          <td class="num">{{ '{:,}'.format(s.samples or 0) }}</td>
+          <td class="num">{{ s.error_pct }}</td>
+          <td class="num">{{ s.avg }}{% if b and loop.index > 1 and b.avg %}{% set d = ((s.avg - b.avg) / b.avg * 100)|round(0) %}<br><span class="{{ 'delta-up' if d > 0 else 'delta-down' }}">{{ '%+d'|format(d) }}%</span>{% endif %}</td>
+          <td class="num">{{ s.p95 }}{% if b and loop.index > 1 and b.p95 %}{% set d = ((s.p95 - b.p95) / b.p95 * 100)|round(0) %}<br><span class="{{ 'delta-up' if d > 0 else 'delta-down' }}">{{ '%+d'|format(d) }}%</span>{% endif %}</td>
+        {% else %}<td colspan="4" class="muted" style="text-align:center">—</td>{% endif %}
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+<script id="cmp-data" type="application/json">{{ {'runs': selected, 'stats': stats}|tojson }}</script>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='live.js') }}"></script>
+<script>SR.compareCharts();</script>
+{% endblock %}

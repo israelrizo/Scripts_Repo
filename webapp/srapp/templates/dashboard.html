@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import run_row %}
+{% block title %}Projects{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Client projects</h1>
+    <p class="sub">Every <code>*{{ cfg.PROJECT_SUFFIX }}</code> folder in <code>{{ cfg.REPO_ROOT }}</code></p>
+  </div>
+  <div class="status-strip" id="status-strip">
+    <span class="badge {{ 'up' if jmeter_ok else 'down' }}" title="{{ cfg.JMETER_BIN }}">JMeter {{ 'found' if jmeter_ok else 'not found' }}</span>
+    <span class="badge" id="influx-badge">InfluxDB …</span>
+    {% for h in cfg.REMOTE_HOSTS %}<span class="badge" data-slave="{{ h }}">Slave {{ h }} …</span>{% else %}<span class="badge">No slaves configured</span>{% endfor %}
+  </div>
+</div>
+
+{% if active %}
+<div class="panel" style="border-left:4px solid var(--accent)">
+  <h2>Running now</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Run</th><th>Project</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Elapsed</th><th>User</th><th></th></tr></thead>
+    <tbody>{% for r in active %}{{ run_row(r) }}{% endfor %}</tbody>
+  </table></div>
+</div>
+<div class="mt"></div>
+{% endif %}
+
+<div class="grid cards">
+  {% for p in projects %}
+  <a class="card" href="{{ url_for('project', name=p.name) }}">
+    <div class="title">{{ p.label|upper }}</div>
+    <div class="folder mono">{{ p.name }}</div>
+    <div class="stats">
+      <div><b>{{ p.tags }}</b>tags</div>
+      <div><b>{{ p.scripts }}</b>scripts</div>
+      <div><b>{{ p.data_files }}</b>data files</div>
+      {% if p.broken_tags %}<div style="color:var(--err)"><b>{{ p.broken_tags }}</b>broken</div>{% endif %}
+    </div>
+    <div class="last">
+      {% if p.last_result %}Last result {{ p.last_result.mtime|dt }}{% if p.last_result.summary %} · {{ p.last_result.summary.error_pct }}% err · p95 {{ p.last_result.summary.p95_ms }} ms{% endif %}
+      {% else %}No results yet{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+  {% if can('admin') %}<a class="card new" href="{{ url_for('new_project') }}">＋ New project</a>{% endif %}
+</div>
+
+{% if recent %}
+<div class="panel mt">
+  <h2>Recent executions</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Run</th><th>Project</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Duration</th><th>User</th><th></th></tr></thead>
+    <tbody>{% for r in recent %}{{ run_row(r) }}{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>SR.loadStatus();</script>{% endblock %}

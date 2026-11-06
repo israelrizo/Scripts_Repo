@@ -1,0 +1,31 @@
+{# Live metrics block. Needs: db, app, start (ms|None), end (ms|None), live (bool) #}
+<div class="live" data-db="{{ db }}" data-app="{{ app }}" data-from="{{ start or '' }}" data-to="{{ end or '' }}" data-live="{{ 1 if live else 0 }}">
+  <div class="status-strip" style="margin-bottom:12px">
+    <span class="badge" data-role="state">loading…</span>
+    <span class="muted" data-role="window"></span>
+    <span class="muted mono">db={{ db }} · application={{ app }}</span>
+  </div>
+  <div class="grid kpis">
+    <div class="kpi"><div class="label">Requests</div><div class="value" data-kpi="req">—</div></div>
+    <div class="kpi"><div class="label">Errored requests</div><div class="value" data-kpi="err">—</div></div>
+    <div class="kpi"><div class="label">Error %</div><div class="value" data-kpi="error_pct">—</div></div>
+    <div class="kpi"><div class="label">Avg response</div><div class="value" data-kpi="avg">—</div></div>
+    <div class="kpi"><div class="label">95th percentile</div><div class="value" data-kpi="p95">—</div></div>
+    <div class="kpi"><div class="label">Peak virtual users</div><div class="value" data-kpi="vu">—</div></div>
+    <div class="kpi"><div class="label">Peak hits/s</div><div class="value" data-kpi="hps">—</div></div>
+  </div>
+  <div class="grid two mt">
+    <div class="panel"><h3>Active virtual users</h3><div class="chart-box"><canvas data-chart="vusers"></canvas></div></div>
+    <div class="panel"><h3>Hits per second &amp; errors per second</h3><div class="chart-box"><canvas data-chart="hits"></canvas></div></div>
+    <div class="panel"><h3>Response time · average &amp; 95th percentile (ms)</h3><div class="chart-box"><canvas data-chart="rt"></canvas></div></div>
+    <div class="panel"><h3>Response codes distribution</h3><div class="chart-box"><canvas data-chart="codes"></canvas></div></div>
+  </div>
+  <div class="panel mt"><h3>95th percentile by transaction (top 8, ms)</h3><div class="chart-box tall"><canvas data-chart="p95tx"></canvas></div></div>
+  <div class="panel mt">
+    <h3>Transactions</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Transaction</th><th class="num">Requests</th><th class="num">Errors</th><th class="num">Error %</th><th class="num">Avg (ms)</th><th class="num">p95 (ms)</th><th class="num">Max (ms)</th></tr></thead>
+      <tbody data-role="tx"><tr><td colspan="7" class="empty">—</td></tr></tbody>
+    </table></div>
+  </div>
+</div>

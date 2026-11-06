@@ -1,0 +1,19 @@
+# /etc/systemd/system/jmeter-control-center.service  (on the MASTER)
+[Unit]
+Description=JMeter Control Center (Scripts_Repo web UI)
+After=network-online.target
+
+[Service]
+User=jmeter
+Group=jmeter
+WorkingDirectory=/opt/Scripts_Repo/webapp
+EnvironmentFile=/etc/jmeter-control-center.env
+ExecStart=/opt/Scripts_Repo/webapp/.venv/bin/python run.py
+Restart=on-failure
+# JMeter runs are children of this service: let them finish their own shutdown
+KillMode=process
+LimitNOFILE=65536
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

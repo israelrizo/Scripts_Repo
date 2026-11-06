@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Confluence connection{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>My Confluence connection</h1>
+<p class="sub">Used only when <b>you</b> publish a report. The token is encrypted on the Master and never shown again.</p></div></div>
+<div class="grid two">
+<form class="panel" method="post">
+  {{ csrf() }}
+  <div class="field"><label>Confluence URL</label>
+    <input type="text" name="base_url" required value="{{ s.base_url if s }}" placeholder="https://yourcompany.atlassian.net/wiki">
+    <div class="hint">Cloud: <code>https://&lt;site&gt;.atlassian.net/wiki</code> · Data Center: <code>https://confluence.company.com</code></div></div>
+  <div class="field"><label>Type</label>
+    <select name="auth_type">
+      <option value="cloud" {{ 'selected' if not s or s.auth_type == 'cloud' }}>Confluence Cloud — e-mail + API token</option>
+      <option value="pat" {{ 'selected' if s and s.auth_type == 'pat' }}>Server / Data Center — Personal Access Token</option>
+    </select></div>
+  <div class="field"><label>Atlassian e-mail (Cloud) / username (DC)</label>
+    <input type="text" name="account" value="{{ s.account if s }}" autocomplete="off"></div>
+  <div class="field"><label>API token {% if s and s.has_token %}<span class="chip">saved {{ s.token_hint }}</span>{% endif %}</label>
+    <input type="password" name="token" autocomplete="new-password" placeholder="{{ 'Leave empty to keep the saved token' if s and s.has_token else 'Paste your token' }}" {{ '' if s and s.has_token else 'required' }}>
+    <div class="hint">Cloud: <i>id.atlassian.com → Security → API tokens</i>. DC: <i>Profile → Personal Access Tokens</i>.</div></div>
+  <div class="row">
+    <div class="field"><label>Default space key</label><input type="text" name="space_key" value="{{ s.space_key if s }}" placeholder="QAPERF"></div>
+    <div class="field"><label>Default parent page id</label><input type="text" name="parent_id" value="{{ s.parent_id if s }}" placeholder="123456789"></div>
+  </div>
+  <div class="actions" style="justify-content:flex-start">
+    <button class="btn primary" name="action" value="save">Save</button>
+    {% if s %}<button class="btn" name="action" value="test">Test connection</button>
+    <button class="btn danger" name="action" value="delete" formnovalidate data-confirm="Remove your Confluence connection and token?">Remove</button>{% endif %}
+  </div>
+</form>
+<div class="panel">
+  <h2>How publishing works</h2>
+  <ol class="muted">
+    <li>Reports → an execution → <b>Confluence</b>.</li>
+    <li>The form is pre-filled from the JMeter HTML report (<code>statistics.json</code>) and InfluxDB for that execution window.</li>
+    <li>Charts are rendered as PNG and uploaded as page attachments together with the zipped HTML report, the .jmx and the console log.</li>
+    <li>Publishing again updates the same page (new version).</li>
+  </ol>
+  <p class="hint">The Master needs outbound HTTPS to Confluence (NAT Gateway or <code>HTTPS_PROXY</code> in the service environment).</p>
+</div>
+</div>
+{% endblock %}

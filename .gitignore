@@ -7,3 +7,9 @@
 # Sensitive user data — never commit real credentials
 # (use data/*.sample.csv as templates instead)
 data/usuarios_backend_baseinet_*.csv
+
+# JMeter Control Center (webapp) — local state, never commit
+webapp/.venv/
+webapp/instance/
+__pycache__/
+*.pyc

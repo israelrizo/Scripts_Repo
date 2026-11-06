@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Run {{ run.id }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="sub"><a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / executions</p>
+    <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status">{{ run.status }}</span></h1>
+    <p class="sub">{{ run.script or '' }} · by {{ run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
+      {% if run.remote_hosts and run.kind == 'test' %} · distributed on <span class="mono">{{ run.remote_hosts|join(', ') }}</span>{% endif %}
+      {% if run.props %} · <span class="mono">{{ run.props|join(' ') }}</span>{% endif %}</p>
+  </div>
+  <div class="actions" id="run-actions">
+    <a class="btn primary" id="report-btn" target="_blank" style="{{ '' if run.result_dir and run.status == 'finished' else 'display:none' }}"
+       href="{{ url_for('report', name=run.project, run_name=run.result_dir) if run.result_dir else '#' }}">Open HTML report</a>
+    {% if run.result_dir and run.status == 'finished' %}<a class="btn" href="{{ url_for('confluence_report', name=run.project, run_name=run.result_dir) }}">Confluence report</a>{% endif %}
+    {% if can('operator') and run.status in ('running','stopping') %}
+      <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Graceful stop: JMeter finishes current iterations and still builds the report.">{{ csrf() }}<button class="btn">■ Stop</button></form>
+      <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Kill the process group now? The HTML report will NOT be generated.">{{ csrf() }}<input type="hidden" name="force" value="1"><button class="btn danger">✕ Kill</button></form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <h3>Console</h3>
+  <div class="console" id="console" data-run="{{ run.id }}" data-project="{{ run.project }}" data-report-base="{{ url_for('report', name=run.project, run_name='__RUN__') }}"></div>
+  <label class="check mt"><input type="checkbox" id="follow" checked> Follow output</label>
+</div>
+
+{% if run.kind == 'test' %}
+  {% if targets %}
+    {% set t = targets[0] %}
+    <h2 class="mt">Live metrics <span class="muted" style="font-weight:400">· InfluxDB</span></h2>
+    {% if t.localhost and run.remote_hosts %}<div class="flash warn">This script's Backend Listener points to <code>{{ t.url }}</code>. In distributed mode the slaves send their metrics to <b>their own</b> localhost, so these charts will stay empty. Point the listener to the Master's private IP (see DEPLOYMENT.md).</div>{% endif %}
+    {% with db=t.db, app=t.application, start=((run.started or run.created) * 1000 - 5000)|int, end=((run.ended * 1000 + 15000)|int if run.ended else None), live=run.status in ('running','starting','stopping') %}
+      {% include "_live.html" %}
+    {% endwith %}
+  {% else %}
+    <div class="panel mt muted">No InfluxDB Backend Listener enabled in this script, live charts unavailable.</div>
+  {% endif %}
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='live.js') }}"></script>
+<script>SR.followRun(document.getElementById('console'));</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <div class="login">
+    <div class="brand"><span class="logo">JM</span> JMeter Control Center</div>
+    {% if no_users %}
+      <div class="panel">
+        <h2>No users configured</h2>
+        <p class="sub">Create the first administrator on the Master, then reload:</p>
+        <pre class="console" style="height:auto">cd webapp
+./.venv/bin/python manage_users.py add admin --role admin</pre>
+      </div>
+    {% else %}
+      <form class="panel" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field"><label for="u">Username</label><input id="u" type="text" name="username" autocomplete="username" required autofocus></div>
+        <div class="field"><label for="p">Password</label><input id="p" type="password" name="password" autocomplete="current-password" required></div>
+        <button class="btn primary" style="width:100%;justify-content:center">Sign in</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

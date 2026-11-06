@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Confluence report{% endblock %}
+{% macro area(name, label, rows=4, hint='') %}
+  <div class="field"><label for="{{ name }}">{{ label }}</label>
+  <textarea id="{{ name }}" name="{{ name }}" rows="{{ rows }}">{{ f[name] }}</textarea>{% if hint %}<div class="hint">{{ hint|safe }}</div>{% endif %}</div>
+{% endmacro %}
+{% macro inp(name, label, hint='', type='text') %}
+  <div class="field"><label for="{{ name }}">{{ label }}</label><input id="{{ name }}" type="{{ type }}" name="{{ name }}" value="{{ f[name] }}" {{ 'step=any' if type == 'number' }}>{% if hint %}<div class="hint">{{ hint|safe }}</div>{% endif %}</div>
+{% endmacro %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="sub"><a href="{{ url_for('project', name=name, tab='results') }}">{{ name }}</a> / reports / <span class="mono">{{ run_name }}</span></p>
+    <h1>Confluence report</h1>
+    <p class="sub">Plantilla <i>Reporte de Resultados</i>, pre-filled from <code>statistics.json</code>{{ ' + InfluxDB' if d.live }}. Review and edit, then preview or publish.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('report', name=name, run_name=run_name) }}" target="_blank">HTML report</a>
+    {% if published %}<a class="btn" href="{{ published.url }}" target="_blank" rel="noopener">Published page ↗</a>{% endif %}
+  </div>
+</div>
+
+{% if not settings %}
+<div class="flash warn">You have no Confluence connection yet. <a href="{{ url_for('confluence_settings') }}">Configure it</a> (your own e-mail + API token) to publish; preview works without it.</div>
+{% endif %}
+{% if d.live_error %}<div class="flash warn">Charts: {{ d.live_error }} The charts sections will show a "not available" note.</div>{% endif %}
+{% if published %}<div class="flash ok">Already published by {{ published.user }} on {{ published.ts|dt }} — publishing again <b>updates</b> that page (new version) unless you choose "new page".</div>{% endif %}
+
+<form method="post" id="report-form" data-totals='{{ d.totals|tojson }}'>
+  {{ csrf() }}
+  <input type="hidden" name="draft_status" value="{{ f.draft_status }}">
+  {% for key in image_names %}<input type="hidden" name="img_{{ key }}" id="img_{{ key }}">{% endfor %}
+
+  <div class="grid two">
+    <div class="panel">
+      <h2>Encabezado</h2>
+      <div class="row">{{ inp('test_name', 'Nombre de prueba') }}{{ inp('app_name', 'Aplicación bajo prueba') }}{{ inp('exec_no', '# Ejecución') }}</div>
+      <div class="row">{{ inp('test_date', 'Fecha de prueba') }}{{ inp('users', 'Usuarios / Threads', 'Pico medido en InfluxDB' if d.peak_users else '') }}</div>
+      {{ inp('tool', 'Herramienta') }}
+      {{ inp('scenario', 'Escenario') }}
+      <div class="row">{{ inp('script', 'Script utilizado') }}{{ inp('execution', 'Ejecución') }}</div>
+      <div class="field"><label>Estado de la prueba</label>
+        <select name="status" id="status">
+          <option value="auto" id="auto-opt" {{ 'selected' if f.status == 'auto' }}>Automático según criterios → {{ auto_status or 'sin criterios' }}</option>
+          <option {{ 'selected' if f.status == 'SATISFACTORIA' }}>SATISFACTORIA</option>
+          <option {{ 'selected' if f.status == 'INSATISFACTORIA' }}>INSATISFACTORIA</option>
+        </select></div>
+    </div>
+    <div class="panel">
+      <h2>Criterios de aceptación</h2>
+      <div class="row">{{ inp('crit_avg', 'Promedio máx. (ms)', '', 'number') }}{{ inp('crit_p95', 'p95 máx. (ms)', '', 'number') }}</div>
+      <div class="row">{{ inp('crit_err', 'Tasa de error máx. (%)', '', 'number') }}{{ inp('crit_tps', 'Throughput mín. (req/s)', '', 'number') }}</div>
+      <table class="mt"><thead><tr><th>Medido</th><th class="num">Valor</th></tr></thead><tbody>
+        <tr><td>Promedio</td><td class="num">{{ d.totals.avg|round(1) if d.totals.avg is not none else '—' }} ms</td></tr>
+        <tr><td>p95</td><td class="num">{{ d.totals.p95|round(1) if d.totals.p95 is not none else '—' }} ms</td></tr>
+        <tr><td>Error %</td><td class="num">{{ d.totals.error_pct }} %</td></tr>
+        <tr><td>Throughput</td><td class="num">{{ d.totals.tps }} req/s</td></tr>
+      </tbody></table>
+      <p class="hint">Criterios vacíos se ignoran. Se guardan como predeterminados del proyecto al publicar.</p>
+    </div>
+  </div>
+
+  <div class="panel mt">
+    <div class="page-head" style="margin-bottom:6px"><h2 style="margin:0">Textos del reporte</h2>
+      <button class="btn" name="action" value="regen" title="Rehace los textos con los valores y criterios actuales (sobrescribe tus ediciones)">↻ Regenerar textos</button></div>
+    {{ area('objetivo', 'Objetivo', 4) }}
+    {{ inp('base_url', 'Alcance · URL Base / Ambiente') }}
+    {{ area('alcance', 'Alcance · filas', 4, 'Una fila por línea: <code>Tipo | Elemento | Método / Acción | Descripción | Prioridad</code>') }}
+    {{ area('resumen', 'Resumen ejecutivo', 6) }}
+  </div>
+
+  <div class="panel mt">
+    <h2>Gráficas (se adjuntan como imágenes)</h2>
+    {% if d.live %}
+    <div class="grid two" id="export-charts" data-db="{{ d.targets[0].db }}" data-app="{{ d.targets[0].application }}" data-from="{{ d.start }}" data-to="{{ d.end }}">
+      {% for key, label in image_names.items() %}
+      <div><h3>{{ label }}</h3><canvas data-export="{{ key }}" width="1000" height="420" style="width:100%;height:auto;background:#fff;border-radius:8px"></canvas></div>
+      {% endfor %}
+    </div>
+    {% else %}<p class="muted">No disponibles para esta ejecución.</p>{% endif %}
+  </div>
+
+  <div class="panel mt">
+    <h2>Descripción de cada sección</h2>
+    <div class="grid two">
+      <div>{{ area('users_desc', 'Usuarios activos', 4) }}</div>
+      <div>{{ area('throughput_desc', 'Throughput', 4) }}</div>
+      <div>{{ area('errors_desc', 'Errores', 4) }}</div>
+      <div>{{ area('rt_desc', 'Tiempos de respuesta', 4) }}</div>
+    </div>
+    {{ area('resources_desc', 'Recursos servidor', 3) }}
+    <div class="grid two">
+      <div>{{ area('observaciones', 'Observaciones', 5, 'Líneas con <code>- </code> se convierten en viñetas.') }}</div>
+      <div>{{ area('recomendaciones', 'Recomendaciones', 5) }}</div>
+    </div>
+  </div>
+
+  <div class="grid two mt">
+    <div class="panel">
+      <h2>Enlaces de interés</h2>
+      {{ inp('link_dashboard', 'Dashboard de monitoreo (URL)') }}
+      {{ inp('link_dashboard_desc', 'Descripción') }}
+      {{ inp('link_docs', 'Documentación relacionada (URL)') }}
+      {{ inp('link_docs_desc', 'Descripción') }}
+    </div>
+    <div class="panel">
+      <h2>Adjuntos</h2>
+      <label class="check field"><input type="checkbox" name="attach_report" value="1" {{ 'checked' if f.attach_report }}> Reporte HTML de JMeter (.zip)</label>
+      <label class="check field"><input type="checkbox" name="attach_jmx" value="1" {{ 'checked' if f.attach_jmx }} {{ 'disabled' if not d.script }}> Script .jmx {% if d.script %}<span class="mono muted">{{ d.script }}</span>{% endif %}</label>
+      <label class="check field"><input type="checkbox" name="attach_log" value="1" {{ 'checked' if f.attach_log }} {{ 'disabled' if not d.meta }}> Consola de ejecución {% if not d.meta %}<span class="muted">(solo ejecuciones lanzadas desde la web)</span>{% endif %}</label>
+      <label class="check field"><input type="checkbox" name="attach_jtl" value="1" {{ 'checked' if f.attach_jtl }}> Resultados crudos .jtl <span class="muted">(máx. {{ max_mb }} MB)</span></label>
+      {{ area('stakeholders', 'Stakeholders', 3, 'Una fila por línea: <code>Rol | Nombre | Área | Responsabilidad | Contacto</code>') }}
+    </div>
+  </div>
+
+  <div class="panel mt">
+    <h2>Destino en Confluence</h2>
+    <div class="row">
+      {{ inp('space_key', 'Space key', 'Ej. <code>QAPERF</code>') }}
+      {{ inp('parent_id', 'Página padre (id)', 'Número en la URL de la página padre; vacío = raíz del espacio') }}
+    </div>
+    {{ inp('title', 'Título de la página', 'Debe ser único dentro del espacio.') }}
+    {% if published %}
+    <div class="field"><label class="check"><input type="radio" name="page_mode" value="update" checked> Actualizar la página publicada</label>
+      <label class="check"><input type="radio" name="page_mode" value="new"> Crear una página nueva</label></div>
+    {% endif %}
+    <div class="actions" style="justify-content:flex-start">
+      <button class="btn" name="action" value="preview" formtarget="_blank">👁 Vista previa</button>
+      {% if can('operator') %}<button class="btn primary" name="action" value="publish" {{ 'disabled' if not settings }}>⇪ Publicar en Confluence</button>{% endif %}
+      <span class="muted" id="publish-note"></span>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='report.js') }}"></script>
+{% endblock %}

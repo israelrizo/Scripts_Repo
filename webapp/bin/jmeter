@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# ------------------------------------------------------------------------------
+# jmeter shim used ONLY by the web app (prepended to PATH when it runs run_by_tag.sh).
+# It lets every existing project run distributed / with overrides WITHOUT editing
+# their run_by_tag.sh:
+#   SR_REAL_JMETER   real jmeter binary (e.g. /opt/apache-jmeter-5.6.3/bin/jmeter)
+#   SR_EXTRA_PROPS   extra -J/-G properties chosen in the UI (validated, no spaces)
+#   SR_REMOTE_HOSTS  "ip1,ip2" -> adds -R ip1,ip2 and mirrors every -Jx=y as -Gx=y,
+#                    because in distributed mode -J only reaches the Master, the
+#                    Slaves read their properties from -G (global properties).
+# ------------------------------------------------------------------------------
+REAL="${SR_REAL_JMETER:-}"
+if [ -z "$REAL" ] || [ ! -x "$REAL" ]; then
+    echo "[webapp-shim] ERROR: real jmeter not found (SR_REAL_JMETER='$REAL')" >&2
+    exit 127
+fi
+
+ARGS=("$@")
+# shellcheck disable=SC2206
+EXTRA=( $SR_EXTRA_PROPS )
+ARGS+=("${EXTRA[@]}")
+
+if [ -n "$SR_REMOTE_HOSTS" ]; then
+    GLOBALS=()
+    for a in "${ARGS[@]}"; do
+        case "$a" in
+            -J*=*) GLOBALS+=("-G${a#-J}") ;;
+        esac
+    done
+    # NOTE: no -X on purpose, it would make jmeter-server exit on the slaves after the test.
+    ARGS+=("${GLOBALS[@]}" -R "$SR_REMOTE_HOSTS")
+fi
+
+echo "[webapp-shim] $REAL ${ARGS[*]}"
+exec "$REAL" "${ARGS[@]}"

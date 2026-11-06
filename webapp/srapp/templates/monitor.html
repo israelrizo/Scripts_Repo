@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Live monitor{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Live monitor</h1><p class="sub">Reads the JMeter Backend Listener metrics directly from InfluxDB (same source as Grafana).</p></div></div>
+{% if influx_error %}<div class="flash error">{{ influx_error }}</div>{% endif %}
+<form class="panel toolbar" method="get" id="monitor-form">
+  <div class="field"><label>Database</label>
+    <select name="db" id="mon-db" required><option value="">—</option>{% for d in dbs %}<option {{ 'selected' if d == db }}>{{ d }}</option>{% endfor %}</select></div>
+  <div class="field"><label>application</label>
+    <select name="app" id="mon-app" data-selected="{{ app_name }}" required><option value="">—</option></select></div>
+  <div class="field"><label>Window</label>
+    <select name="range" id="mon-range">
+      <option value="">{{ 'Execution window' if start else 'Last 15 min (live)' }}</option>
+      <option value="300">Last 5 min (live)</option><option value="900">Last 15 min (live)</option>
+      <option value="3600">Last 1 h (live)</option><option value="10800">Last 3 h (live)</option><option value="86400">Last 24 h</option>
+    </select></div>
+  {% if start %}<input type="hidden" name="from" value="{{ start }}">{% endif %}
+  {% if end %}<input type="hidden" name="to" value="{{ end }}">{% endif %}
+  <button class="btn primary">Show</button>
+</form>
+{% if db and app_name %}
+  <div class="mt"></div>
+  {% set rng = request.args.get('range', type=int) %}
+  {% with db=db, app=app_name, start=(None if rng else start), end=(None if rng else end), live=(rng or not start) %}
+    {% include "_live.html" %}
+  {% endwith %}
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='live.js') }}"></script>
+<script>SR.monitorForm();</script>
+{% endblock %}
