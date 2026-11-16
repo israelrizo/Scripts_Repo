@@ -29,6 +29,9 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </dict></plist>
 PLIST
 touch "$APP"
-[ -f "$HOME/.jmeter-control-center.conf" ] || cp "$HERE/jmeter-control-center.conf.example" "$HOME/.jmeter-control-center.conf"
+REPO="$(cd "$HERE/../../.." && pwd)"
+if [ ! -f "$HOME/.jmeter-control-center.conf" ]; then
+  sed "s#^JMCC_HOME=.*#JMCC_HOME=$REPO#" "$HERE/jmeter-control-center.conf.example" > "$HOME/.jmeter-control-center.conf"
+fi
 echo "Created: $APP"
-echo "Edit ~/.jmeter-control-center.conf (INSTANCE_ID, AWS_PROFILE) and open the app from Finder / Launchpad."
+echo "Open 'JMeter Control Center' from Finder / Launchpad, then Settings → AWS (profile, instance ids)."

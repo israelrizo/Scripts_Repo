@@ -1,33 +1,25 @@
 #!/usr/bin/env bash
 # ------------------------------------------------------------------------------
-# JMeter Control Center launcher (engineer laptop: macOS / Linux / WSL)
-# Opens the SSM port forwards to the JMeter Master and the Control Center in the browser:
-#   localhost:8090 -> Master 127.0.0.1:8090 (Control Center)
-#   localhost:3000 -> Master 127.0.0.1:3000 (Grafana, optional)
-# Needs: AWS CLI v2 + Session Manager plugin + an AWS profile allowed to use SSM on the Master.
-# Config: ~/.jmeter-control-center.conf (see jmeter-control-center.conf.example)
+# JMeter Control Center launcher (engineer computer: macOS / Linux / WSL)
+# Starts the Control Center locally on http://localhost:8090 and opens the browser.
+# The app drives the Master and Slaves with your AWS CLI session (SSM), so keep
+# your AWS profile signed in (the app has an "AWS SSO login" button too).
+# Config: ~/.jmeter-control-center.conf  (JMCC_HOME = your clone of the scripts repo)
+# Closing this window stops the app (and its SSM tunnels). Tests already running
+# on the Master keep running; the app re-attaches to them next time.
 # ------------------------------------------------------------------------------
 set -o pipefail   # no -u: macOS bash 3.2 treats empty arrays as unbound
 CONF="${JMCC_CONF:-$HOME/.jmeter-control-center.conf}"
-[ -f "$CONF" ] || CONF="$(cd "$(dirname "$0")" && pwd)/jmeter-control-center.conf"
-if [ ! -f "$CONF" ]; then
-  echo "Missing config. Copy jmeter-control-center.conf.example to ~/.jmeter-control-center.conf and fill INSTANCE_ID."
-  read -r -p "Press Enter to close" _; exit 1
-fi
 # shellcheck disable=SC1090
-source "$CONF"
-: "${INSTANCE_ID:?Set INSTANCE_ID in $CONF}"
-LOCAL_PORT="${LOCAL_PORT:-8090}"
-REMOTE_PORT="${REMOTE_PORT:-8090}"
-GRAFANA_LOCAL_PORT="${GRAFANA_LOCAL_PORT:-3000}"
-GRAFANA_REMOTE_PORT="${GRAFANA_REMOTE_PORT:-3000}"
-FORWARD_GRAFANA="${FORWARD_GRAFANA:-yes}"
-AWS_ARGS=()
-[ -n "${AWS_PROFILE:-}" ] && AWS_ARGS+=(--profile "$AWS_PROFILE")
-[ -n "${AWS_REGION:-}" ] && AWS_ARGS+=(--region "$AWS_REGION")
-URL="http://localhost:${LOCAL_PORT}"
+[ -f "$CONF" ] && source "$CONF"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+if [ -z "${JMCC_HOME:-}" ] && [ -f "$HERE/../../run.py" ]; then JMCC_HOME="$(cd "$HERE/../../.." && pwd)"; fi
+WEBAPP="${JMCC_HOME:-}/webapp"
+PORT="${PORT:-8090}"
+URL="http://localhost:${PORT}"
 
 say() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+pause_exit() { read -r -p "Press Enter to close" _; exit "${1:-1}"; }
 port_open() { (exec 3<>"/dev/tcp/127.0.0.1/$1") 2>/dev/null && exec 3>&- ; }
 open_url() {
   if command -v open >/dev/null; then open "$1"
@@ -36,43 +28,31 @@ open_url() {
   else echo "Open $1 in your browser"; fi
 }
 
-command -v aws >/dev/null || { echo "AWS CLI v2 not found (https://aws.amazon.com/cli/)"; read -r -p "Enter to close" _; exit 1; }
-command -v session-manager-plugin >/dev/null || { echo "Session Manager plugin not found (AWS docs: install the Session Manager plugin)"; read -r -p "Enter to close" _; exit 1; }
+if [ ! -f "$WEBAPP/run.py" ]; then
+  echo "Cannot find the scripts repository. Set JMCC_HOME in $CONF to your clone, e.g.:"
+  echo "  JMCC_HOME=\$HOME/Documents/Github/Scripts_Repo"
+  pause_exit 1
+fi
+if port_open "$PORT"; then
+  say "Control Center already running, opening $URL"; open_url "$URL"; exit 0
+fi
+command -v python3 >/dev/null || { echo "python3 not found (install Python 3.9+)"; pause_exit 1; }
+command -v aws >/dev/null || echo "WARNING: AWS CLI v2 not found — servers cannot be controlled until it is installed"
+command -v session-manager-plugin >/dev/null || echo "WARNING: Session Manager plugin not found — tunnels and report download need it"
+command -v git >/dev/null || { echo "git not found"; pause_exit 1; }
 
-if port_open "$LOCAL_PORT"; then
-  say "Port $LOCAL_PORT already forwarded, opening $URL"
-  open_url "$URL"; exit 0
+cd "$WEBAPP" || pause_exit 1
+if [ ! -x .venv/bin/python ] || ! .venv/bin/python -c "import flask, waitress, qrcode, cryptography, defusedxml" 2>/dev/null; then
+  say "First start: creating the Python environment (one minute)"
+  python3 -m venv .venv && .venv/bin/pip install -q --upgrade pip && .venv/bin/pip install -q -r requirements.txt || pause_exit 1
+fi
+if ! .venv/bin/python -c "from srapp import users; import sys; sys.exit(0 if users.count() else 1)" 2>/dev/null; then
+  say "Create your Control Center login (local to this computer)"
+  read -r -p "Username: " U
+  .venv/bin/python manage_users.py add "$U" --role admin || pause_exit 1
 fi
 
-if [ -n "${AWS_SSO_LOGIN:-}" ] && ! aws sts get-caller-identity ${AWS_ARGS[@]+"${AWS_ARGS[@]}"} >/dev/null 2>&1; then
-  say "AWS session expired, running aws sso login"
-  aws sso login ${AWS_ARGS[@]+"${AWS_ARGS[@]}"} || exit 1
-fi
-
-PIDS=()
-cleanup() { say "Closing tunnels"; for p in ${PIDS[@]+"${PIDS[@]}"}; do kill "$p" 2>/dev/null; done; exit 0; }
-trap cleanup INT TERM EXIT
-
-forward() {  # local remote label
-  say "Forwarding localhost:$1 -> ${INSTANCE_ID}:$2 ($3)"
-  aws ssm start-session ${AWS_ARGS[@]+"${AWS_ARGS[@]}"} --target "$INSTANCE_ID" \
-    --document-name AWS-StartPortForwardingSession \
-    --parameters "{\"portNumber\":[\"$2\"],\"localPortNumber\":[\"$1\"]}" >/tmp/jmcc-ssm-$1.log 2>&1 &
-  PIDS+=("$!")
-}
-
-forward "$LOCAL_PORT" "$REMOTE_PORT" "Control Center"
-if [ "$FORWARD_GRAFANA" = "yes" ] && ! port_open "$GRAFANA_LOCAL_PORT"; then
-  forward "$GRAFANA_LOCAL_PORT" "$GRAFANA_REMOTE_PORT" "Grafana"
-fi
-
-for _ in $(seq 1 40); do
-  port_open "$LOCAL_PORT" && break
-  if ! kill -0 "${PIDS[0]}" 2>/dev/null; then
-    echo "SSM session failed:"; cat "/tmp/jmcc-ssm-$LOCAL_PORT.log"; read -r -p "Enter to close" _; exit 1
-  fi
-  sleep 0.5
-done
-say "Ready: $URL   (keep this window open; Ctrl+C or close it to disconnect)"
-open_url "$URL"
-wait "${PIDS[0]}"
+export SR_PORT="$PORT" SR_HOST=127.0.0.1 SR_MODE="${SR_MODE:-aws}"
+say "Starting JMeter Control Center on $URL  (keep this window open; close it to stop)"
+( for _ in $(seq 1 60); do port_open "$PORT" && { open_url "$URL"; break; }; sleep 0.5; done ) &
+exec .venv/bin/python run.py

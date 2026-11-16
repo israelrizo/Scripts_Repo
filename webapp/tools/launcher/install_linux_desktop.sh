@@ -10,11 +10,14 @@ cat > "$HOME/.local/share/applications/jmeter-control-center.desktop" <<DESK
 [Desktop Entry]
 Type=Application
 Name=JMeter Control Center
-Comment=Open the SSM tunnel to the JMeter Master and the Control Center
+Comment=Start the JMeter Control Center on this computer
 Exec=bash $HOME/.jmeter-control-center/launcher.sh
 Icon=$HOME/.local/share/icons/jmeter-control-center.png
 Terminal=true
 Categories=Development;Network;
 DESK
-[ -f "$HOME/.jmeter-control-center.conf" ] || cp "$HERE/jmeter-control-center.conf.example" "$HOME/.jmeter-control-center.conf"
-echo "Installed. Edit ~/.jmeter-control-center.conf and look for 'JMeter Control Center' in your app menu."
+REPO="$(cd "$HERE/../../.." && pwd)"
+if [ ! -f "$HOME/.jmeter-control-center.conf" ]; then
+  sed "s#^JMCC_HOME=.*#JMCC_HOME=$REPO#" "$HERE/jmeter-control-center.conf.example" > "$HOME/.jmeter-control-center.conf"
+fi
+echo "Installed. Look for 'JMeter Control Center' in your app menu, then Settings → AWS."

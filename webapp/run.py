@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Start the web app with waitress (production WSGI server) on SR_HOST:SR_PORT (127.0.0.1:8090)."""
+import signal
 import sys
 
 from waitress import serve
@@ -12,6 +13,10 @@ if __name__ == "__main__":
     if users.count() == 0:
         sys.exit("No users yet. Create the first admin:\n"
                  "  python3 manage_users.py add <username> --role admin")
+    # Closing the launcher window (SIGHUP) or stopping the service (SIGTERM) must still run the atexit
+    # cleanup that closes the SSM tunnels; Python skips atexit on those signals unless we exit explicitly.
+    for sig in (signal.SIGTERM, signal.SIGHUP):
+        signal.signal(sig, lambda *_: sys.exit(0))
     scheduler.start_background()
     from srapp import settings
     if settings.aws_mode():
