@@ -75,7 +75,7 @@
     {% if d.live %}
     <div class="grid two" id="export-charts" data-db="{{ d.targets[0].db }}" data-app="{{ d.targets[0].application }}" data-from="{{ d.start }}" data-to="{{ d.end }}">
       {% for key, label in image_names.items() %}
-      <div><h3>{{ label }}</h3><canvas data-export="{{ key }}" width="1000" height="420" style="width:100%;height:auto;background:#fff;border-radius:8px"></canvas></div>
+      <div><h3>{{ label }}</h3><canvas data-export="{{ key }}" role="img" aria-label="{{ label }}" width="1000" height="420" style="width:100%;height:auto;background:#fff;border-radius:8px"></canvas></div>
       {% endfor %}
     </div>
     {% else %}<p class="muted">No disponibles para esta ejecución.</p>{% endif %}

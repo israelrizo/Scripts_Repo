@@ -42,17 +42,40 @@
    skipped above *Download .jtl up to (MB)*; it stays on the Master — *Reports → Fetch from Master*).
 7. **Notify** — e-mail from your Gmail (report attached), Google Chat spaces, Jira comment; optionally stops the servers.
 
-## 2. Engineer computer setup (each QA)
+## 2. Engineer computer setup (each QA, macOS or Windows)
 
 Prerequisites: Python 3.9+, git, AWS CLI v2, the **Session Manager plugin**, and an AWS profile that can use SSM on
-the generators (the one you already use).
+the generators (the one you already use). JMeter 5.6.3 locally is optional (to open scripts in the GUI).
 
+**macOS**
 ```bash
 git clone -b New_Repo <repo-url> ~/Documents/Github/Scripts_Repo
-cd ~/Documents/Github/Scripts_Repo/webapp/tools/launcher
-./build_macos_app.sh          # macOS: "JMeter Control Center" in Launchpad / Dock, with icon
-./install_linux_desktop.sh    # Linux: application menu entry
+~/Documents/Github/Scripts_Repo/webapp/tools/service/install_macos.sh      # service + first login
+~/Documents/Github/Scripts_Repo/webapp/tools/launcher/build_macos_app.sh   # app icon in Launchpad / Dock
 ```
+
+**Windows** (PowerShell, no administrator rights needed)
+```powershell
+git clone -b New_Repo <repo-url> $HOME\Documents\Github\Scripts_Repo
+powershell -ExecutionPolicy Bypass -File $HOME\Documents\Github\Scripts_Repo\webapp\tools\service\install_windows.ps1
+```
+Creates the Python environment, your login, the background service (Task Scheduler task at logon) and the
+**JMeter Control Center** shortcut (Start menu + Desktop) with the icon. Use `-NoService` to only run it manually
+(`tools\launcher\jmeter-control-center.bat`). Git for Windows keeps `.sh` files with LF endings (`.gitattributes`).
+
+### Background service and scheduled runs
+
+| | macOS | Windows |
+|---|---|---|
+| Service | LaunchAgent `com.bancobase.jmeter-control-center` (starts at login, restarts after a crash) | Task Scheduler `\JMeterControlCenter\JMeter Control Center` (at logon, hidden, restarts) |
+| Keep awake while a run is close / running | `caffeinate` | `SetThreadExecutionState` |
+| Wake from sleep 5 min before each slot | `pmset schedule wake` (optional sudoers rule offered by the installer) | Task Scheduler wake timers (no admin) |
+| Logs | `~/Library/Logs/JMeterControlCenter.log`, `webapp/instance/service.log` | `webapp\instance\service.log` |
+| Remove | `tools/service/uninstall_macos.sh` | `tools\service\uninstall_windows.ps1` |
+
+Scheduled runs start the load generators themselves (and can stop them at the end). A laptop with the lid closed
+on battery may still sleep: keep night-schedule machines on the power adapter. The *Schedules* page shows whether
+this computer can fire them (service, keep-awake, wake timers, next slots).
 
 Open **JMeter Control Center**: the first time it creates its Python environment and asks for your login
 (local to your computer). Then, in the app:
@@ -145,6 +168,24 @@ The dashboard shows each slave as **up/down** by probing its RMI port.
   *AWS SSO login* (Servers page or Settings → AWS) and monitoring resumes where it was.
 * **Roles** are per computer (local users); every server action is still attributed to the engineer's AWS identity.
 * **Sizing**: JMeter `-Xmx` ≈ 50-70 % of RAM on each node, `ulimit -n 65536`, generator CPU < 80 %.
+
+## 6b. New Relic (shared account)
+
+*Settings → New Relic*: account id, region and a **User API key** (`NRAK-…`, read-only use). For each script the app
+takes the hosts and request paths of the JMX and asks New Relic which APM services received that traffic
+(`Transaction` events: `request.headers.host` / `request.uri`, last 24 h). Confirm them once per project
+(*Tags → New Relic → Pin*). At the end of every run it reads, for the run window: throughput, average and p95,
+error %, database and external time, top transactions, error classes and the CPU/memory of the linked hosts
+(`SystemSample.apmApplicationNames`). Shown on the run page and included in the e-mail, Chat, Jira comment and the
+*Recursos Servidor* section of the Confluence report. If the APM agent behind a gateway does not record
+`request.uri`, pin the services manually.
+
+## 6c. Script quality review
+
+Rules R01–R20 of the scripting guide (`docs/Guia_Scripting_JMeter_Control_Center.md`). Run on upload, in the
+*Quality* tab (feedback downloadable as Markdown), on the *Git* page before committing (errors require explicit
+confirmation) and by the GitHub workflow `.github/workflows/jmx-quality.yml` on every push / pull request that
+changes a `.jmx` (results in the job summary). CLI: `cd webapp && python -m srapp.quality [paths]`.
 
 ## 7. Notifications
 

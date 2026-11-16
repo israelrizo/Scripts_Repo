@@ -26,6 +26,21 @@
 <div class="mt"></div>
 {% endif %}
 
+{% set rt = recent_tags() %}
+{% if rt and can('operator') %}
+<section class="panel" aria-labelledby="runagain-title" style="margin-bottom:16px">
+  <div class="page-head" style="margin-bottom:8px"><h2 id="runagain-title" style="margin:0">Run again</h2>
+    <span class="hint">Or press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> anywhere to run any tag</span></div>
+  <div class="actions" style="justify-content:flex-start">
+    {% for r in rt %}
+    <a class="btn" href="{{ url_for('project', name=r.project, tab='tags', run=r.tag, props=r.props) }}"
+       aria-label="Run {{ r.tag }} of {{ r.project }} again{{ ' with ' ~ r.props if r.props }}">▶ <span class="mono">{{ r.tag }}</span>
+       <span class="muted" style="font-weight:400">· {{ r.project.replace('-jmeter-framework','') }}</span></a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 <div class="grid cards">
   {% for p in projects %}
   <a class="card" href="{{ url_for('project', name=p.name) }}">

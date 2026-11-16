@@ -23,6 +23,20 @@
     <tbody>{% for f in st.files %}<tr><td><input type="checkbox" name="paths" value="{{ f.path }}" checked></td><td class="mono">{{ f.path }}</td><td>{{ f.kind }}</td></tr>
     {% else %}<tr><td colspan="3" class="empty">Working tree clean.</td></tr>{% endfor %}</tbody>
   </table></div>
+  {% if review %}
+  <h3 class="mt">Quality review of the scripts in this commit</h3>
+  <ul class="q-list">
+  {% for r in review %}
+    <li class="{{ 'sev-error' if r.counts.error else ('sev-warn' if r.counts.warn else 'sev-ok') }}">
+      <span class="grade grade-{{ r.grade }}">{{ r.grade }}</span> <b class="mono">{{ r.script }}</b> · {{ r.score }}/100
+      {% for f in r.findings if f.severity == 'error' %}<br><span>✖ {{ f.rule }} · {{ f.title }} — <span class="hint">{{ f.fix }}</span></span>{% endfor %}
+    </li>
+  {% endfor %}
+  </ul>
+  {% if review|selectattr('counts.error')|list %}
+  <label class="check field"><input type="checkbox" name="accept_quality" value="1"> Commit anyway: I know these scripts have quality errors</label>
+  {% endif %}
+  {% endif %}
   {% if st.files and can('operator') %}
   <div class="row mt" style="align-items:flex-end">
     <div class="field" style="flex:4"><label>Commit message</label><input type="text" name="message" required minlength="5" placeholder="Baseinet: add Paquete 7 scripts and tags"></div>

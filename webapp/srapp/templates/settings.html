@@ -60,6 +60,25 @@
     <button class="btn">AWS SSO login</button> <span class="hint">Runs <code>aws sso login</code> for this profile and opens the browser; use it when the session expired.</span></form>
 </div>
 
+<div class="panel mt" id="newrelic">
+  <h2>New Relic <span class="badge {{ 'up' if s.newrelic.enabled and s.newrelic.api_key_enc else '' }}">{{ 'enabled' if s.newrelic.enabled else 'off' }}</span></h2>
+  <p class="hint">Shared account of the performance team. For each script the app looks up which <b>APM services</b> received its requests (hosts and paths of the JMX), pulls their metrics for every run window (response time, throughput, errors, DB/external time, host CPU/memory) and fills the <i>Recursos Servidor</i> section of the Confluence report.</p>
+  <form method="post" action="{{ url_for('newrelic_settings') }}">
+    {{ csrf() }}
+    <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.newrelic.enabled }}> Enabled</label>
+    <div class="row">
+      <div class="field"><label>Account ID</label><input type="text" name="account_id" value="{{ s.newrelic.account_id }}" placeholder="1234567" inputmode="numeric"></div>
+      <div class="field"><label>Region</label><select name="region"><option value="us" {{ 'selected' if s.newrelic.region != 'eu' }}>US</option><option value="eu" {{ 'selected' if s.newrelic.region == 'eu' }}>EU</option></select></div>
+      <div class="field"><label>Discovery look-back (hours)</label><input type="number" name="lookback_hours" value="{{ s.newrelic.lookback_hours }}" min="1" max="168"></div>
+    </div>
+    <div class="field"><label>User API key {% if s.newrelic.api_key_enc %}<span class="chip">saved</span>{% endif %}</label>
+      <input type="password" name="api_key" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if s.newrelic.api_key_enc else 'NRAK-…' }}">
+      <div class="hint">one.newrelic.com → your user → <i>API keys</i> → <i>Create a key</i> → type <b>User</b>. Read-only use: NRQL queries and entity search.</div></div>
+    <label class="check field"><input type="checkbox" name="auto_on_run" value="1" {{ 'checked' if s.newrelic.auto_on_run }}> Collect New Relic metrics automatically when every run ends (e-mail, Chat, Jira and report)</label>
+    <div class="actions" style="justify-content:flex-start"><button class="btn primary">Save</button><button class="btn" name="action" value="test" formnovalidate>Test connection</button></div>
+  </form>
+</div>
+
 <div class="grid two mt">
   <form class="panel" method="post" id="grafana">
     {{ csrf() }}<input type="hidden" name="section" value="grafana">
@@ -171,7 +190,7 @@
           <td><form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_default"><input type="hidden" name="id" value="{{ sp.id }}"><input type="hidden" name="value" value="{{ '0' if sp.default else '1' }}"><button class="btn sm">{{ '★ default' if sp.default else '☆ per project' }}</button></form></td>
           <td><div class="actions">
             <form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_test"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm">Test</button></form>
-            <form method="post" action="{{ url_for('google_settings') }}" data-confirm="Remove space {{ sp.name }}?">{{ csrf() }}<input type="hidden" name="action" value="space_delete"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm danger">✕</button></form>
+            <form method="post" action="{{ url_for('google_settings') }}" data-confirm="Remove space {{ sp.name }}?">{{ csrf() }}<input type="hidden" name="action" value="space_delete"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm danger" aria-label="Remove space {{ sp.name }}">✕</button></form>
           </div></td></tr>
       {% else %}<tr><td colspan="3" class="empty">No spaces yet.</td></tr>{% endfor %}
       </tbody>

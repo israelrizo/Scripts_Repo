@@ -10,6 +10,7 @@
   {% block head %}{% endblock %}
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 {% if me %}
 <header class="topbar">
   <a class="brand" href="{{ url_for('dashboard') }}">
@@ -19,7 +20,7 @@
     </picture>
     <span class="brand-text"><small>JMETER</small>Control Center</span>
   </a>
-  <nav class="nav">
+  <nav class="nav" aria-label="Main">
     {% set ep = request.endpoint %}
     <a href="{{ url_for('dashboard') }}" class="{{ 'active' if ep in ('dashboard','project','compare','confluence_report') }}">Projects</a>
     <a href="{{ url_for('runs') }}" class="{{ 'active' if ep in ('runs','run_detail') }}">Executions</a>
@@ -33,6 +34,7 @@
       <a href="{{ url_for('admin_settings') }}" class="{{ 'active' if ep == 'admin_settings' }}">Settings</a>
     {% endif %}
   </nav>
+  <button type="button" class="btn sm primary quick-btn" id="quick-open" aria-keyshortcuts="Control+K Meta+K" title="Quick run (Ctrl+K)">▶ Quick run <kbd>Ctrl K</kbd></button>
   <div class="user">
     <a href="{{ url_for('confluence_settings') }}" title="My Confluence / Jira / Bitbucket connection">Atlassian</a>
     <a href="{{ url_for('account') }}">{{ me.username }}</a> <span class="chip">{{ me.role }}</span>
@@ -40,12 +42,24 @@
   </div>
 </header>
 {% endif %}
-<main>
+<main id="main" tabindex="-1">
   {% with msgs = get_flashed_messages(with_categories=true) %}
-    {% if msgs %}<div class="flashes">{% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+    {% if msgs %}<div class="flashes">{% for cat, m in msgs %}<div class="flash {{ cat }}" role="{{ 'alert' if cat == 'error' else 'status' }}">{{ m }}</div>{% endfor %}</div>{% endif %}
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
+{% if me %}
+<dialog id="dlg-quick" aria-labelledby="quick-title" class="quick">
+  <div class="dlg-head" id="quick-title">Quick run</div>
+  <div class="dlg-body">
+    <label for="quick-q" class="sr-only">Search a tag or project</label>
+    <input type="search" id="quick-q" placeholder="Type a tag or project, e.g. login, baseinet…" autocomplete="off"
+           role="combobox" aria-expanded="true" aria-controls="quick-list" aria-autocomplete="list">
+    <ul id="quick-list" role="listbox" aria-label="Tags"></ul>
+    <p class="hint">↑ ↓ to choose · Enter opens the run dialog · Esc closes</p>
+  </div>
+</dialog>
+{% endif %}
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>

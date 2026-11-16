@@ -247,15 +247,24 @@ def account():
                 token = users.add_api_token(me, request.form.get("name", "ci"))
                 session["new_token"] = token
                 flash("API token created. Copy it now, it will not be shown again.", "ok")
+            elif action == "jmeter":
+                from . import jmeter_gui
+                path = request.form.get("jmeter_path", "")
+                if path:
+                    exe = jmeter_gui.resolve(path)
+                    flash(f"JMeter found: {exe}", "ok")
+                users.set_jmeter_path(me, path)
             elif action == "token_delete":
                 users.delete_api_token(me, request.form.get("id", ""))
                 flash("API token revoked.", "ok")
-        except ValueError as exc:
+        except Exception as exc:  # noqa: BLE001 - ValueError, GuiError
             flash(str(exc), "error")
         return redirect(url_for("account"))
     u = users.get(me) or {}
     setup = session.get("totp_setup")
+    from . import jmeter_gui
     return render_template("account.html", u=u, has_2fa=bool(u.get("totp_enc")), setup=setup,
+                           jmeter_found=jmeter_gui.detect(),
                            qr=totp.qr_svg(totp.uri(setup, me)) if setup else None,
                            new_token=session.pop("new_token", None), tokens=u.get("api_tokens", []))
 
@@ -308,6 +317,10 @@ def project(name):
         ctx.update(targets=_safe_targets(name))
     elif tab == "settings":
         ctx.update(ps=settings.project(name))
+    elif tab == "quality":
+        from . import quality
+        res = quality.review_project(projects.project_dir(name))
+        ctx.update(quality=res, q_avg=round(sum(r["score"] for r in res) / len(res)) if res else None)
     if tab == "results":
         ctx.update(baselines=cmp.baselines(name), grafana_links=_grafana_links(name, ctx["results"]))
     if tab in ("tags", "scripts"):
@@ -374,6 +387,14 @@ def upload(name):
         saved.append(rel)
         for w in warnings:
             flash(f"{rel}: {w}", "warn")
+        if kind == "script":
+            from . import quality
+            base = projects.project_dir(name)
+            q = quality.review_file(base / rel, base, quality._tagged(base))
+            errs = [f["title"] for f in q["findings"] if f["severity"] == "error"]
+            flash(f"Quality {rel.rsplit('/', 1)[-1]}: {q['score']}/100 ({q['grade']})"
+                  + (f" · errors: {'; '.join(errs[:3])}" if errs else "") + " — details in the Quality tab.",
+                  "error" if errs else ("warn" if q["counts"]["warn"] else "ok"))
     tag = request.form.get("tag", "").strip()
     if kind == "script" and tag:
         if len(saved) != 1:

@@ -215,6 +215,9 @@ def start_tag_run(project, tag, user, props_raw="", distributed=False, jira="", 
     if settings.aws_mode():
         return _start_remote(project, tag, t, user, props, distributed, jira, notes, extra_emails, notify, source,
                              auto_start, stop_after)
+    if os.name == "nt":
+        raise projects.ProjectError("Local mode runs JMeter on this machine and needs Linux/macOS. "
+                                    "Enable Settings → AWS to run on the load generators.")
     if distributed and not Config.REMOTE_HOSTS:
         raise projects.ProjectError("No slaves configured (SR_REMOTE_HOSTS)")
     with _lock:

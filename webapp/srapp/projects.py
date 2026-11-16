@@ -1,5 +1,6 @@
 """Project (client folder) discovery, run_by_tag.sh parsing/editing, uploads, results."""
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -140,12 +141,45 @@ def _backup(path: Path):
     shutil.copy2(path, bdir / f"{path.name}.{time.strftime('%Y%m%d_%H%M%S')}")
 
 
+def write_lf(path: Path, content: str):
+    """Shell scripts run on the Linux generators: always LF, also when edited from Windows."""
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(content.replace("\r\n", "\n"))
+
+
+def _bash():
+    found = shutil.which("bash")
+    if found:
+        return found
+    for cand in (r"C:\Program Files\Git\bin\bash.exe", r"C:\Program Files (x86)\Git\bin\bash.exe"):
+        if Path(cand).is_file():
+            return cand
+    return None
+
+
+def _structure_ok(text):
+    """Fallback check when bash is not installed (Windows without Git Bash)."""
+    if len(re.findall(r'^\s*case\s+"?\$TAG"?\s+in', text, re.M)) != 1 or len(re.findall(r"^\s*esac\b", text, re.M)) != 1:
+        return "case/esac block not found exactly once"
+    entries = len([l for l in text.splitlines() if CASE_ENTRY_RE.match(l)]) + len(re.findall(r"^\s*\*\)\s*$", text, re.M))
+    if text.count(";;") < entries:
+        return "a tag block is missing its ';;'"
+    if text.count('"') % 2:
+        return "unbalanced double quotes"
+    return None
+
+
 def _write_checked(path: Path, content: str, original: str):
-    path.write_text(content)
-    check = subprocess.run(["bash", "-n", str(path)], capture_output=True, text=True)
-    if check.returncode != 0:
-        path.write_text(original)
-        raise ProjectError(f"Edit aborted, bash syntax check failed: {check.stderr.strip()}")
+    write_lf(path, content)
+    bash = _bash()
+    if bash:
+        check = subprocess.run([bash, "-n", str(path)], capture_output=True, text=True)
+        error = check.stderr.strip() if check.returncode != 0 else None
+    else:
+        error = _structure_ok(content)
+    if error:
+        write_lf(path, original)
+        raise ProjectError(f"Edit aborted, syntax check failed: {error}")
 
 
 def add_tag(project, tag, script_rel, extra_args="", group=""):
@@ -163,7 +197,7 @@ def add_tag(project, tag, script_rel, extra_args="", group=""):
     group = re.sub(r"[^A-Za-z0-9 _.\-—/()]", "", group or "").strip()
 
     path = base / "run_by_tag.sh"
-    original = path.read_text()
+    original = path.read_text(encoding="utf-8")
     lines = original.splitlines()
     block = [f'    "{tag}")', f'        SCRIPT="{script_rel}"', f'        EXTRA_ARGS="{extra_args.strip()}"',
              "        ;;"]
@@ -211,7 +245,7 @@ def _end_anchor(lines):
 # --------------------------------------------------------------------------- files
 def _file_info(base: Path, f: Path):
     st = f.stat()
-    return {"path": str(f.relative_to(base)), "name": f.name, "size": st.st_size, "mtime": st.st_mtime}
+    return {"path": f.relative_to(base).as_posix(), "name": f.name, "size": st.st_size, "mtime": st.st_mtime}
 
 
 def list_scripts(project):
@@ -225,7 +259,7 @@ def list_scripts(project):
         for f in sorted(tests.rglob("*")):
             if f.is_file() and f.suffix.lower() in (".jmx", ".md", ".csv", ".txt") and not f.name.startswith("."):
                 info = _file_info(base, f)
-                info["folder"] = str(f.parent.relative_to(base))
+                info["folder"] = f.parent.relative_to(base).as_posix()
                 info["tags"] = tagged.get(info["path"], [])
                 out.append(info)
     return out
@@ -236,7 +270,7 @@ def test_subfolders(project):
     tests = base / "tests"
     if not tests.exists():
         return []
-    return sorted(str(d.relative_to(tests)) for d in tests.rglob("*") if d.is_dir() and not d.name.startswith("."))
+    return sorted(d.relative_to(tests).as_posix() for d in tests.rglob("*") if d.is_dir() and not d.name.startswith("."))
 
 
 def list_data(project):
@@ -295,7 +329,7 @@ def save_upload(project, kind, storage, subfolder="", overwrite=False):
     target_dir = _inside(base, target_dir)
     target = target_dir / filename
     if target.exists() and not overwrite:
-        raise ProjectError(f"{target.relative_to(base)} already exists (tick 'overwrite' to replace it)")
+        raise ProjectError(f"{target.relative_to(base).as_posix()} already exists (tick 'overwrite' to replace it)")
     target_dir.mkdir(parents=True, exist_ok=True)
     tmp = target_dir / f".upload_{filename}"
     storage.save(str(tmp))
@@ -309,7 +343,7 @@ def save_upload(project, kind, storage, subfolder="", overwrite=False):
     if target.exists():
         _trash(base, target)
     tmp.replace(target)
-    return str(target.relative_to(base)), warnings
+    return target.relative_to(base).as_posix(), warnings
 
 
 def _trash(base: Path, f: Path):
@@ -430,8 +464,8 @@ def create_project(slug, app_name, folders):
             text = f.read_text()
             for k, v in replacements.items():
                 text = text.replace(k, v)
-            f.write_text(text)
-        if f.suffix == ".sh":
+            write_lf(f, text) if (f.suffix == ".sh" or f.name == "Jenkinsfile") else f.write_text(text, encoding="utf-8")
+        if f.suffix == ".sh" and os.name != "nt":
             f.chmod(0o755)
     for sub in subfolders:
         (dest / "tests" / sub).mkdir(parents=True, exist_ok=True)

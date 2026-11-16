@@ -31,13 +31,21 @@ repository, launches the tests on the Master, streams the console and downloads 
 | **Repository as source of truth**: runs blocked until local changes are committed & pushed; sync / force-sync servers | Git · Servers |
 | E-mail **from your own Gmail** (OAuth, send-only) with the HTML report attached | Settings → E-mail |
 | **Google Chat** messages (start / end, same thread) to default spaces + per-project spaces | Settings → Google Chat |
+| **New Relic** (shared account): APM services behind each script found from its hosts/paths; their metrics for every run in the run page, e-mail, Chat, Jira and the Confluence report | Settings → New Relic · Tags → New Relic |
+| **Background service** on macOS (LaunchAgent) and Windows (Task Scheduler): schedules fire without opening the app, keep-awake + wake timers | `tools/service/` · Schedules |
+| **✎ JMeter**: open any script in the JMeter GUI installed on your computer (per-user path) | Tags · Scripts · Account |
+| **Script quality review** R01–R20 (score + feedback in Spanish) on upload, Quality tab, Git page and GitHub Actions | Quality · Git |
+| **Quick run** (<kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd>) and *Run again*; accessibility review in `docs/ACCESSIBILITY_REVIEW.md` | everywhere |
 | Users with roles `admin` / `operator` / `viewer` | Users |
 
 ## Quick start
 
 ```bash
-cd webapp/tools/launcher && ./build_macos_app.sh     # or ./install_linux_desktop.sh
+webapp/tools/service/install_macos.sh                                         # macOS: service + launcher
+powershell -ExecutionPolicy Bypass -File webapp\tools\service\install_windows.ps1   # Windows
 ```
+
+Scripting standards (Spanish, ready for Confluence): **[docs/Guia_Scripting_JMeter_Control_Center.md](docs/Guia_Scripting_JMeter_Control_Center.md)**.
 
 Open **JMeter Control Center** (creates the Python environment and your login the first time), then
 *Settings → AWS* (profile, region, instance ids) and *Settings → E-mail* (link your Gmail). Full guide:

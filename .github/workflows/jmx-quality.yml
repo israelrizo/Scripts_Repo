@@ -1,0 +1,31 @@
+# Revisión de calidad de scripts JMeter (.jmx) en cada push / pull request.
+# Reglas R01–R20: webapp/docs/Guia_Scripting_JMeter_Control_Center.md
+name: JMX quality review
+
+on:
+  pull_request:
+    paths: ["**/*.jmx", "**/run_by_tag.sh"]
+  push:
+    paths: ["**/*.jmx", "**/run_by_tag.sh"]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install reviewer dependencies
+        run: pip install defusedxml==0.7.1 werkzeug==3.0.3
+      - name: Review changed scripts
+        working-directory: webapp
+        env:
+          SR_REPO_ROOT: ${{ github.workspace }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then BASE="origin/${{ github.base_ref }}";
+          else BASE="${{ github.event.before }}"; fi
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then BASE="HEAD~1"; fi
+          python -m srapp.quality --changed "$BASE" --md "$GITHUB_STEP_SUMMARY"

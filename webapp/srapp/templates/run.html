@@ -5,7 +5,7 @@
 <div class="page-head">
   <div>
     <p class="sub">{% if run.kind == 'ops' %}<a href="{{ url_for('servers_page') }}">Servers</a> / jobs{% else %}<a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / executions{% endif %}</p>
-    <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status">{{ run.status }}</span></h1>
+    <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status" role="status" aria-live="polite">{{ run.status }}</span></h1>
     <p class="sub">{{ run.script or '' }} · by {{ run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
       {% if run.remote_hosts and run.kind == 'test' %} · distributed on <span class="mono">{{ run.remote_hosts|join(', ') }}</span>{% endif %}
       {% if run.props %} · <span class="mono">{{ run.props|join(' ') }}</span>{% endif %}
@@ -34,11 +34,18 @@
 
 <div class="panel">
   <h3>Console</h3>
-  <div class="console" id="console" data-run="{{ run.id }}" data-project="{{ run.project }}" data-report-base="{{ url_for('report', name=run.project, run_name='__RUN__') if run.kind != 'ops' else '' }}"></div>
+  <div class="console" id="console" role="log" aria-live="off" aria-label="Execution console" tabindex="0" data-run="{{ run.id }}" data-project="{{ run.project }}" data-report-base="{{ url_for('report', name=run.project, run_name='__RUN__') if run.kind != 'ops' else '' }}"></div>
   {% if run.mode == 'aws' and run.kind == 'test' %}<p class="hint">The test runs on the Master; this console mirrors it every few seconds through SSM. It keeps running if you close this page or the app.{% if run.stop_after %} The servers will be <b>stopped when it ends</b>.{% endif %}</p>{% endif %}
   <label class="check mt"><input type="checkbox" id="follow" checked> Follow output</label>
 </div>
 
+{% if run.kind == 'test' and nr_enabled %}
+<div class="panel mt" id="nr-panel" data-url="{{ url_for('run_newrelic', run_id=run.id) }}" data-live="{{ 1 if run.status in ('running','starting','stopping') else 0 }}">
+  <div class="page-head" style="margin-bottom:8px"><h2 style="margin:0">New Relic <span class="muted" style="font-weight:400">· APM services during this run</span></h2>
+    <button type="button" class="btn sm" id="nr-refresh">Refresh</button></div>
+  <div id="nr-body" class="muted">Loading…</div>
+</div>
+{% endif %}
 {% if run.kind == 'test' %}
   {% if targets %}
     {% set t = targets[0] %}

@@ -204,6 +204,52 @@ def tick():
             _save(items)
 
 
+def upcoming_slots(days=7):
+    """Every scheduled slot of the enabled schedules in the next `days` days (aware datetimes, sorted)."""
+    ref = now()
+    out = []
+    for s in load():
+        if not s.get("enabled"):
+            continue
+        try:
+            h, m = _parse_time(s["at"])
+        except ValueError:
+            continue
+        if s["kind"] == "once":
+            nr = next_run(s, ref)
+            if nr:
+                out.append(nr)
+            continue
+        for d in range(0, days + 1):
+            slot = (ref + timedelta(days=d)).replace(hour=h, minute=m, second=0, microsecond=0)
+            if slot > ref and (s["kind"] == "daily" or slot.weekday() in s.get("days", [])):
+                out.append(slot)
+    return sorted(out)
+
+
+_power = {"last_wake": 0, "key": None}
+
+
+def power_tick():
+    """Keep the computer awake for running / imminent tests and keep the OS wake timers up to date."""
+    from . import power
+    cfg = settings.get().get("scheduler") or {}
+    ref = now()
+    slots = upcoming_slots()
+    hours = float(cfg.get("keep_awake_hours", 3) or 0)
+    soon = [x for x in slots if (x - ref).total_seconds() <= hours * 3600]
+    if runner.active_runs():
+        power.hold("a test is running")
+    elif soon:
+        power.hold(f"scheduled run at {soon[0].strftime('%Y-%m-%d %H:%M')}")
+    else:
+        power.release()
+    key = [x.isoformat() for x in slots[:8]]
+    if cfg.get("wake_timers", True) and (key != _power["key"] or time.time() - _power["last_wake"] > 1800):
+        power.set_wake_timers(slots[:8])
+        _power.update(key=key, last_wake=time.time())
+
+
 def start_background():
     global _thread
     if _thread and _thread.is_alive():
@@ -215,6 +261,10 @@ def start_background():
                 tick()
             except Exception as exc:  # noqa: BLE001
                 print(f"[scheduler] {exc}", flush=True)
+            try:
+                power_tick()
+            except Exception as exc:  # noqa: BLE001
+                print(f"[scheduler/power] {exc}", flush=True)
             time.sleep(20)
 
     _thread = threading.Thread(target=loop, name="scheduler", daemon=True)

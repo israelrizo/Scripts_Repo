@@ -132,7 +132,7 @@ def _find_script(project, run_name, meta):
         return meta["script"]
     name = _script_name(run_name) + ".jmx"
     for f in (base / "tests").rglob(name):
-        return str(f.relative_to(base))
+        return f.relative_to(base).as_posix()
     return None
 
 
@@ -258,9 +258,24 @@ def gather(project, run_name):
             m = re.match(r"^-[JG]threads=(\d+)$", p)
             if m:
                 peak_users = int(m.group(1)) * max(1, len(meta.get("remote_hosts") or []))
+    nr, nr_error = (meta or {}).get("newrelic"), None
+    if not nr:
+        from . import newrelic
+        if newrelic.enabled():
+            try:
+                t = projects.get_tag(project, (meta or {}).get("tag", "")) or {}
+                apps, source = newrelic.apps_for(project, script, t.get("extra_args", ""))
+                if apps:
+                    nr = newrelic.window_summary(apps, start, end)
+                    nr["source"] = source
+                else:
+                    nr_error = "No APM service matched this script (pin them in project → Settings)."
+            except Exception as exc:  # noqa: BLE001
+                nr_error = f"New Relic: {exc}"
     return {"meta": meta, "script": script, "totals": _totals(raw), "transactions": _transactions(raw),
             "start": start, "end": end, "targets": targets, "live": live, "live_error": live_error,
-            "peak_users": peak_users, "exec_no": _exec_number(project, run_name)}
+            "peak_users": peak_users, "exec_no": _exec_number(project, run_name), "newrelic": nr,
+            "newrelic_error": nr_error}
 
 
 # --------------------------------------------------------------------------- drafts
@@ -317,8 +332,9 @@ def drafts(project, run_name, g, fields):
     slow = sorted(g["transactions"], key=lambda x: -(x["p95"] or 0))[:3]
     if slow:
         out["rt_desc"] += "\nTransacciones con mayor p95: " + ", ".join(f"{x['name']} ({_fmt_ms(x['p95'])})" for x in slow) + "."
-    out["resources_desc"] = ("{Describir CPU, memoria, red y base de datos de los servidores durante la prueba "
-                             "(ver dashboard de monitoreo).}")
+    from . import newrelic
+    out["resources_desc"] = newrelic.resources_text(g.get("newrelic")) or (
+        "{Describir CPU, memoria, red y base de datos de los servidores durante la prueba (ver dashboard de monitoreo).}")
     obs = []
     try:
         lim_p95 = float(fields.get("crit_p95") or 0)
@@ -403,7 +419,7 @@ def build_attachments(project, run_name, g, fields):
         with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
             for f in (d / "html_report").rglob("*"):
                 if f.is_file():
-                    zf.write(f, f"html_report/{f.relative_to(d / 'html_report')}")
+                    zf.write(f, f"html_report/{f.relative_to(d / 'html_report').as_posix()}")
         files.append(("📊 Reporte JMeter", "Dashboard HTML de JMeter (descomprimir y abrir index.html)",
                       f"{run_name}_html_report.zip", buf.getvalue(), "application/zip"))
     if fields.get("attach_jmx") and g["script"]:
@@ -435,6 +451,7 @@ def context(project, run_name, g, fields, images, attachments, preview):
         "status": status, "images": images, "image_names": IMAGE_NAMES, "attachments": attachments,
         "alcance": rows(fields.get("alcance"), 5), "stakeholders": rows(fields.get("stakeholders"), 5),
         "preview": preview, "b64": lambda b: base64.b64encode(b).decode(), "paras": paras,
+        "nr": g.get("newrelic") or {},
         "num": _num, "ms": _fmt_ms, "generated": datetime.now().strftime("%d/%m/%Y %H:%M"),
     }
 

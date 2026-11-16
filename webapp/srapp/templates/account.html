@@ -39,6 +39,17 @@
   </div>
 
   <form class="panel" method="post">
+    {{ csrf() }}<input type="hidden" name="action" value="jmeter">
+    <h2>JMeter on this computer</h2>
+    <div class="field"><label for="jmeter_path">JMeter folder or executable</label>
+      <input id="jmeter_path" type="text" name="jmeter_path" value="{{ u.jmeter_path or '' }}" list="jmeter-found" placeholder="/opt/apache-jmeter-5.6.3  ·  C:\apache-jmeter-5.6.3">
+      <datalist id="jmeter-found">{% for j in jmeter_found %}<option value="{{ j }}">{% endfor %}</datalist>
+      <div class="hint">Used by <b>✎ JMeter</b> to open a script in the GUI with its tag properties and <code>data_dir</code>.
+        {% if jmeter_found %}Detected: <code>{{ jmeter_found[0] }}</code>{% else %}Not detected automatically.{% endif %}</div></div>
+    <button class="btn">Save JMeter path</button>
+  </form>
+
+  <form class="panel" method="post">
     {{ csrf() }}<input type="hidden" name="action" value="email">
     <h2>E-mail</h2>
     <div class="field"><label>Work e-mail</label><input type="text" name="email" value="{{ u.email or '' }}" placeholder="name@bancobase.com">

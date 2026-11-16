@@ -23,7 +23,7 @@
 </div>
 
 <nav class="tabs">
-  {% for key, label in [('tags','Tags'),('scripts','Scripts'),('data','Data files'),('results','Reports'),('runs','Executions'),('monitor','Live monitor'),('settings','Settings')] %}
+  {% for key, label in [('tags','Tags'),('scripts','Scripts'),('data','Data files'),('results','Reports'),('runs','Executions'),('monitor','Live monitor'),('quality','Quality'),('settings','Settings')] %}
   <a href="{{ url_for('project', name=name, tab=key) }}" class="{{ 'active' if tab == key }}">{{ label }}{% if key == 'tags' %} <span class="chip">{{ tags|length }}</span>{% endif %}</a>
   {% endfor %}
 </nav>
@@ -46,11 +46,13 @@
         <td><div class="actions">
           {% if can('operator') %}
           <button class="btn sm primary" {{ 'disabled' if not t.exists }} data-run-tag="{{ t.tag }}" data-run-script="{{ t.script }}">▶ Run</button>
-          <a class="btn sm" href="{{ url_for('schedules', project=name, tag=t.tag, _anchor='new-schedule') }}" title="Schedule this tag">⏱</a>
+          <a class="btn sm" href="{{ url_for('schedules', project=name, tag=t.tag, _anchor='new-schedule') }}" title="Schedule this tag" aria-label="Schedule {{ t.tag }}">⏱</a>
           {% endif %}
           {% if t.exists %}<button class="btn sm" data-servers-tag="{{ t.tag }}" title="Resolve and test the servers this script calls">Servers</button>{% endif %}
+          {% if t.exists and nr_enabled %}<button class="btn sm" data-nr-tag="{{ t.tag }}" title="Find the New Relic APM services behind this script">New Relic</button>{% endif %}
+          {% if t.exists and can('operator') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}">{{ csrf() }}<input type="hidden" name="tag" value="{{ t.tag }}"><button class="btn sm" title="Open {{ t.script.rsplit('/',1)[-1] }} in JMeter GUI on this computer (with this tag's properties)" aria-label="Open {{ t.tag }} in JMeter GUI">✎ JMeter</button></form>{% endif %}
           {% if can('operator') %}
-          <form method="post" action="{{ url_for('delete_tag', name=name, tag=t.tag) }}" data-confirm="Remove tag {{ t.tag }} from run_by_tag.sh? (the .jmx is kept)">{{ csrf() }}<button class="btn sm danger" title="Remove tag">✕</button></form>
+          <form method="post" action="{{ url_for('delete_tag', name=name, tag=t.tag) }}" data-confirm="Remove tag {{ t.tag }} from run_by_tag.sh? (the .jmx is kept)">{{ csrf() }}<button class="btn sm danger" title="Remove tag" aria-label="Remove tag {{ t.tag }}">✕</button></form>
           {% endif %}
         </div></td>
       </tr>
@@ -113,6 +115,25 @@
   <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
 </dialog>
 <script id="servers-url" type="application/json">{{ url_for('servers', name=name)|tojson }}</script>
+{% if nr_enabled %}
+<dialog id="dlg-nr" style="width:min(820px, calc(100vw - 32px))">
+  <form method="post" action="{{ url_for('newrelic_pin', name=name) }}">
+    {{ csrf() }}
+    <div class="dlg-head">New Relic services behind <code id="nr-tag"></code></div>
+    <div class="dlg-body">
+      <p class="hint" id="nr-sig"></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Pin</th><th>APM service</th><th class="num">Requests</th><th>Matched by</th><th></th></tr></thead>
+        <tbody id="nr-body"><tr><td colspan="5" class="empty">…</td></tr></tbody>
+      </table></div>
+      <p class="hint" id="nr-note"></p>
+      <p class="hint">Pinned services are used for every run of this project (otherwise they are discovered for each run). Pinning replaces the current list.</p>
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button>{% if can('operator') %}<button class="btn primary">Pin selected for this project</button>{% endif %}</div>
+  </form>
+</dialog>
+<script id="nr-url" type="application/json">{{ url_for('newrelic_discover', name=name)|tojson }}</script>
+{% endif %}
 {% endif %}
 
 {% if tab in ('tags', 'scripts') and can('operator') %}
@@ -177,6 +198,7 @@
         <td class="num">{{ s.size|size }}</td>
         <td class="nowrap">{{ s.mtime|dt }}</td>
         <td><div class="actions">
+          {% if can('operator') and s.name.endswith('.jmx') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}">{{ csrf() }}<input type="hidden" name="script" value="{{ s.path }}"><button class="btn sm" aria-label="Open {{ s.name }} in JMeter GUI">✎ JMeter</button></form>{% endif %}
           <a class="btn sm" href="{{ url_for('download_file', name=name, path=s.path) }}">Download</a>
           {% if can('operator') and not s.tags %}
           <form method="post" action="{{ url_for('delete_file', name=name) }}" data-confirm="Move {{ s.path }} to trash?">{{ csrf() }}<input type="hidden" name="path" value="{{ s.path }}"><button class="btn sm danger">Remove</button></form>
@@ -241,7 +263,7 @@
         <td><div class="actions">
           {% if r.has_report %}<a class="btn sm primary" href="{{ url_for('report', name=name, run_name=r.name) }}" target="_blank">HTML report</a>{% endif %}
           {% if r.summary %}<a class="btn sm" href="{{ url_for('confluence_report', name=name, run_name=r.name) }}" title="Generate the results report in Confluence">Confluence{% if published.get(r.name) %} ✓{% endif %}</a>{% endif %}
-          {% if published.get(r.name) %}<a class="btn sm" href="{{ published[r.name].url }}" target="_blank" rel="noopener" title="Open the published page">↗</a>{% endif %}
+          {% if published.get(r.name) %}<a class="btn sm" href="{{ published[r.name].url }}" target="_blank" rel="noopener" title="Open the published page" aria-label="Open the published Confluence page">↗</a>{% endif %}
           {% if r.name in baselines.values() %}<span class="pill base" title="Baseline for this script">BASE</span>
           {% elif can('operator') and r.has_report %}<form method="post" action="{{ url_for('set_baseline', name=name, run_name=r.name) }}">{{ csrf() }}<button class="btn sm" title="Use as baseline for this script in comparisons">☆ Base</button></form>{% endif %}
           {% if grafana_url %}<a class="btn sm" target="_blank" rel="noopener" href="{{ grafana_links.get(r.name) }}" title="Grafana dashboard for this execution window">Grafana</a>{% endif %}
@@ -277,6 +299,36 @@
 </div>
 {% endif %}
 
+{# ============================== QUALITY ============================== #}
+{% if tab == 'quality' %}
+<div class="panel">
+  <div class="page-head" style="margin-bottom:8px">
+    <h2 style="margin:0">Script quality <span class="muted" style="font-weight:400">· Guía de scripting R01–R20</span></h2>
+    <div class="actions"><a class="btn" href="{{ url_for('quality_markdown', name=name) }}">⬇ Feedback (.md)</a></div>
+  </div>
+  {% if quality %}
+  <div class="grid kpis">
+    <div class="kpi {{ 'good' if q_avg >= 75 else 'bad' }}"><div class="label">Average score</div><div class="value">{{ q_avg }}</div></div>
+    {% for g in ['A','B','C','D'] %}<div class="kpi"><div class="label">Grade {{ g }}</div><div class="value">{{ quality|selectattr('grade','equalto',g)|list|length }}</div></div>{% endfor %}
+    <div class="kpi {{ 'bad' if quality|sum(attribute='counts.error') else 'good' }}"><div class="label">Scripts with errors</div><div class="value">{{ quality|selectattr('counts.error')|list|length }}</div></div>
+  </div>
+  <p class="hint mt">A ≥ 90 · B ≥ 75 · C ≥ 55 · D &lt; 55. Each distinct problem counts once: error −15, warning −5, suggestion −1. Fix in JMeter (✎), then commit &amp; push from the Git page.</p>
+  {% for r in quality|sort(attribute='score') %}
+  <details class="q-item">
+    <summary><span class="grade grade-{{ r.grade }}" aria-label="Grade {{ r.grade }}">{{ r.grade }}</span>
+      <b class="mono">{{ r.script }}</b> <span class="muted">· {{ r.score }}/100 · {{ r.counts.error }} errors · {{ r.counts.warn }} warnings · {{ r.counts.info }} suggestions</span></summary>
+    {% if can('operator') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}" style="margin:8px 0">{{ csrf() }}<input type="hidden" name="script" value="{{ r.script }}"><button class="btn sm">✎ Open in JMeter to fix</button></form>{% endif %}
+    <ul class="q-list">
+    {% for f in r.findings %}
+      <li class="sev-{{ f.severity }}"><b>{{ {'error':'Error','warn':'Advertencia','info':'Sugerencia'}[f.severity] }} {{ f.rule }} · {{ f.title }}</b>{% if f.detail %} — {{ f.detail }}{% endif %}<br><span class="hint">➜ {{ f.fix }}</span></li>
+    {% else %}<li class="sev-ok">Sin hallazgos. ✔</li>{% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+  {% else %}<p class="empty">No scripts in tests/.</p>{% endif %}
+</div>
+{% endif %}
+
 {# ============================== SETTINGS ============================== #}
 {% if tab == 'settings' %}
 <form method="post" action="{{ url_for('project_settings', name=name) }}">
@@ -291,6 +343,10 @@
       {% if all_spaces %}
       <div class="field"><label>Extra Google Chat spaces for this project</label>
         {% for sp in all_spaces %}<label class="check"><input type="checkbox" name="chat_spaces" value="{{ sp.id }}" {{ 'checked' if sp.id in ps.chat_spaces or sp.default }} {{ 'disabled' if sp.default }}> {{ sp.name }}{{ ' (default, always notified)' if sp.default }}</label>{% endfor %}</div>
+      {% endif %}
+      {% if nr_enabled %}
+      <div class="field"><label>New Relic APM services (pinned)</label>
+        <div class="mono">{{ ps.nr_apps|join(', ') if ps.nr_apps else 'none — discovered automatically for each run (Tags → New Relic to pin)' }}</div></div>
       {% endif %}
       <h2 class="mt">Grafana</h2>
       <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>

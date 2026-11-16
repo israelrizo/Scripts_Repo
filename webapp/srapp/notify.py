@@ -45,6 +45,7 @@ def run_summary(meta):
         "jira": meta.get("jira") or "", "notes": meta.get("notes") or "",
         "run_url": f"{base_url}/runs/{meta['id']}", "totals": None, "worst": [], "checks": [], "verdict": "",
         "report_url": "", "grafana_url": "", "confluence_url": "", "jira_url": "", "result_dir": meta.get("result_dir"),
+        "newrelic": _nr_rows(meta.get("newrelic")),
     }
     try:
         targets = rpt.influx.listener_targets(projects.project_dir(project) / meta["script"]) if meta.get("script") else []
@@ -72,6 +73,13 @@ def run_summary(meta):
         jira_base = settings.get()["jira"].get("url") or ""
         out["jira_url"] = f"{jira_base.rstrip('/')}/browse/{out['jira']}" if jira_base else ""
     return out
+
+
+def _nr_rows(nr):
+    if not nr or not nr.get("apps"):
+        return []
+    links = nr.get("links") or {}
+    return [{"name": n, **a, "link": links.get(n, "")} for n, a in nr["apps"].items()]
 
 
 def _safe_result(project, rd):
@@ -147,7 +155,7 @@ def report_attachment(project, result_dir):
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         for f in d.rglob("*"):
             if f.is_file():
-                zf.write(f, f"html_report/{f.relative_to(d)}")
+                zf.write(f, f"html_report/{f.relative_to(d).as_posix()}")
     data = buf.getvalue()
     if len(data) > int(cfg.get("attach_max_mb") or 15) * 1024 * 1024:
         return None
@@ -228,6 +236,11 @@ def chat_payload(event, s):
         widgets.append({"decoratedText": {"topLabel": "Resultados", "text": kpi, "wrapText": True}})
         for name, expected, actual, ok in s.get("checks", []):
             widgets.append({"decoratedText": {"topLabel": name, "text": f"{'✅' if ok else '❌'} {actual} (criterio {expected})"}})
+        for a in s.get("newrelic", [])[:5]:
+            txt = (f"{a['rpm']} rpm · prom {a['avg_ms']} ms · p95 {a['p95_ms']} ms · error {a['error_pct']} %"
+                   + (f" · CPU {a['cpu']} %" if a.get("cpu") is not None else ""))
+            lines.append(f"New Relic {a['name']}: {txt}")
+            widgets.append({"decoratedText": {"topLabel": f"New Relic · {a['name']}", "text": txt, "wrapText": True}})
     buttons = [{"text": label, "onClick": {"openLink": {"url": url}}}
                for label, url in (("Confluence", s.get("confluence_url")), ("Jira", s.get("jira_url")))
                if url and not settings.is_local_url(url)]
@@ -288,6 +301,12 @@ def on_start(meta):
 def on_end(meta):
     if meta.get("kind") != "test":
         return
+    try:
+        from . import newrelic
+        newrelic.run_hook(meta)
+        meta = runner.get(meta["id"]) or meta
+    except Exception as exc:  # noqa: BLE001 - New Relic must never block notifications
+        _log(meta, f"newrelic: lookup FAILED: {exc}")
     summary = run_summary(meta)
     cfg = settings.get()["smtp"]
     if cfg.get("enabled") and cfg.get("notify_end") and meta.get("notify", True):
@@ -326,6 +345,10 @@ def jira_comment(s):
                   f"{(t.get('p99') or 0):.0f} ms|{t['tps']}|"]
     for name, expected, actual, ok in s.get("checks", []):
         lines.append(f"* {'(/)' if ok else '(x)'} {name}: {actual} (criterio {expected})")
+    if s.get("newrelic"):
+        lines += ["", "*New Relic (APM durante la prueba)*", "||Servicio||RPM||Promedio||p95||Error %||CPU||"]
+        lines += [f"|{a['name']}|{a['rpm']}|{a['avg_ms']} ms|{a['p95_ms']} ms|{a['error_pct']} %|"
+                  f"{a['cpu'] if a.get('cpu') is not None else '—'} %|" for a in s["newrelic"]]
     links = [(n, u) for n, u in (("Reporte HTML", s["report_url"]), ("Grafana", s["grafana_url"]),
                                  ("Confluence", s["confluence_url"]), ("Ejecución", s["run_url"]))
              if u and not settings.is_local_url(u)]

@@ -1,6 +1,8 @@
 """SSM port-forward tunnels to the Master managed from the web page (Grafana 3000, InfluxDB 8086, custom)."""
 import atexit
+import os
 import re
+import subprocess
 import threading
 import time
 
@@ -74,6 +76,10 @@ def open_tunnel(name):
         except aws.AwsError as exc:
             raise TunnelError(str(exc))
         _open[name] = {"proc": proc, "local": d["local_port"], "remote": d["remote_port"], "since": time.time()}
+        try:
+            (log_dir / f"{name}.pid").write_text(str(proc.pid))
+        except OSError:
+            pass
         return d
 
 
@@ -82,14 +88,53 @@ def close_tunnel(name):
         t = _open.pop(name, None)
     if t:
         aws.terminate(t["proc"])
+    _forget(name)
+
+
+def _forget(name):
+    try:
+        (Config.INSTANCE_DIR / "tunnels" / f"{name}.pid").unlink()
+    except OSError:
+        pass
+
+
+def _is_aws_tunnel(pid):
+    try:
+        if os.name == "nt":
+            out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/FO", "CSV", "/NH"], capture_output=True,
+                                 text=True, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0)).stdout.lower()
+            return "aws.exe" in out
+        out = subprocess.run(["ps", "-p", str(pid), "-o", "command="], capture_output=True, text=True).stdout
+        return "start-session" in out
+    except OSError:
+        return False
+
+
+def cleanup_stale():
+    """Tunnels left by a previous process that was killed without cleanup (service stopped hard, crash)."""
+    d = Config.INSTANCE_DIR / "tunnels"
+    if not d.is_dir():
+        return 0
+    killed = 0
+    for f in d.glob("*.pid"):
+        try:
+            pid = int(f.read_text().strip())
+        except (OSError, ValueError):
+            pid = 0
+        if pid and pid != os.getpid() and _is_aws_tunnel(pid):
+            aws.kill_tree(pid)
+            killed += 1
+        f.unlink(missing_ok=True)
+    return killed
 
 
 def close_all():
     with _lock:
-        items = list(_open.values())
+        items = list(_open.items())
         _open.clear()
-    for t in items:
+    for name, t in items:
         aws.terminate(t["proc"])
+        _forget(name)
 
 
 def ensure(name):

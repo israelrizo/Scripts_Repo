@@ -80,8 +80,13 @@ def endpoints(project, script, extra_args="", overrides=""):
         port = port or defaults["port"] or ("443" if proto == "https" else "80")
         key = (proto, domain, port)
         e = found.setdefault(key, {"protocol": proto, "host": domain, "port": port, "samplers": 0,
-                                   "unresolved": "${" in domain or "${" in port})
+                                   "unresolved": "${" in domain or "${" in port, "paths": []})
         e["samplers"] += 1
+        if spath.lower().startswith(("http://", "https://")):
+            spath = urlparse(spath).path
+        spath = spath.split("?", 1)[0].strip()
+        if spath and spath not in e["paths"] and len(e["paths"]) < 30:
+            e["paths"].append(spath)
     return sorted(found.values(), key=lambda e: (-e["samplers"], e["host"]))
 
 

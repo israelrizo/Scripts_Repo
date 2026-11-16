@@ -77,7 +77,9 @@ def call(args, timeout=60, parse=True):
     cmd = _base_args() + list(args) + (["--output", "json"] if parse else [])
     try:
         p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, stdin=subprocess.DEVNULL,
-                           env=dict(os.environ, AWS_PAGER="", AWS_CLI_AUTO_PROMPT="off"))
+                           encoding="utf-8", errors="replace",
+                           env=dict(os.environ, AWS_PAGER="", AWS_CLI_AUTO_PROMPT="off"),
+                           creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     except FileNotFoundError:
         raise AwsError("AWS CLI not found on this computer (install AWS CLI v2)")
     except subprocess.TimeoutExpired:
@@ -273,8 +275,10 @@ def port_forward(instance_id, remote_port, local_port, log_path=None):
                           "--document-name", "AWS-StartPortForwardingSession", "--parameters", params]
     out = open(log_path, "ab") if log_path else subprocess.DEVNULL
     try:
+        extra = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW} \
+            if os.name == "nt" else {"start_new_session": True}
         proc = subprocess.Popen(cmd, stdout=out, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                                start_new_session=True, env=dict(os.environ, AWS_PAGER=""))
+                                env=dict(os.environ, AWS_PAGER=""), **extra)
     except FileNotFoundError:
         raise AwsError("AWS CLI not found on this computer")
     deadline = time.time() + 25
@@ -294,12 +298,23 @@ def port_forward(instance_id, remote_port, local_port, log_path=None):
     raise AwsError(f"Port forward to {instance_id}:{remote_port} did not open")
 
 
+def kill_tree(pid):
+    """Stop a process and its children (aws -> session-manager-plugin)."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(pid)], capture_output=True)
+        return
+    try:
+        os.killpg(pid, 15)
+    except OSError:
+        try:
+            os.kill(pid, 15)
+        except OSError:
+            pass
+
+
 def terminate(proc):
     if proc and proc.poll() is None:
-        try:
-            os.killpg(proc.pid, 15)
-        except OSError:
-            proc.terminate()
+        kill_tree(proc.pid)
         try:
             proc.wait(timeout=5)
         except subprocess.TimeoutExpired:

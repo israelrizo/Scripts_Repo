@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 
 def check(ep, timeout=5):
+    ep = {k: v for k, v in ep.items() if k != "paths"}
     res = {**ep, "dns": None, "tcp_ms": None, "tls": None, "http": None, "ok": False, "error": None}
     if ep["unresolved"] or not ep["host"]:
         res["error"] = "Host/port not resolvable from the script (pass the property in the overrides)"

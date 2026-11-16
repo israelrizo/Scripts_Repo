@@ -5,7 +5,27 @@
 <div class="page-head"><div><h1>Scheduled executions</h1>
 <p class="sub">Server time {{ tz_now }} · if the generator is busy at the scheduled time the run waits up to 30 min, then the slot is skipped.</p></div></div>
 
-<div class="panel">
+<div class="panel" id="sched-power" data-url="{{ url_for('api_scheduler') }}">
+  <div class="page-head" style="margin-bottom:6px"><h2 style="margin:0">Can this computer fire the schedules?</h2>
+    <span class="badge" id="svc-badge">checking…</span></div>
+  <div class="grid kpis">
+    <div class="kpi"><div class="label">Runs as</div><div class="value" style="font-size:15px" id="svc-mode">—</div></div>
+    <div class="kpi"><div class="label">Keep awake</div><div class="value" style="font-size:15px" id="svc-awake">—</div></div>
+    <div class="kpi"><div class="label">Wake timers</div><div class="value" style="font-size:15px" id="svc-wake">—</div></div>
+    <div class="kpi"><div class="label">Next scheduled slots</div><div class="value" style="font-size:13px" id="svc-next">—</div></div>
+  </div>
+  <p class="hint mt" id="svc-hint"></p>
+  {% if can('operator') %}
+  <form method="post" action="{{ url_for('scheduler_power_settings') }}" class="row" style="align-items:flex-end">
+    {{ csrf() }}
+    <div class="field" style="flex:0 0 220px"><label>Keep awake hours before a run</label><input type="number" name="keep_awake_hours" step="0.5" min="0" max="24" value="{{ sched_cfg.keep_awake_hours }}"></div>
+    <label class="check field"><input type="checkbox" name="wake_timers" value="1" {{ 'checked' if sched_cfg.wake_timers }}> Wake the computer from sleep 5 min before each slot</label>
+    <div class="field" style="flex:0"><button class="btn">Save</button></div>
+  </form>
+  {% endif %}
+</div>
+
+<div class="panel mt">
   <div class="table-wrap"><table>
     <thead><tr><th>Project · tag</th><th>When</th><th>Next run</th><th>Options</th><th>Last result</th><th>By</th><th class="right">Actions</th></tr></thead>
     <tbody>
@@ -63,6 +83,26 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
+<script>
+(async function () {
+  const box = document.getElementById('sched-power'); if (!box) return;
+  const set = (id, t) => { document.getElementById(id).textContent = t; };
+  try {
+    const d = await SR.getJSON(box.dataset.url), p = d.power;
+    const svc = p.service ? `background service (${p.service})` : 'opened manually';
+    set('svc-mode', `${p.os} · ${svc}`);
+    set('svc-awake', p.held ? `holding (${p.reason})` : (p.method === 'unsupported' ? 'not supported' : 'idle'));
+    set('svc-wake', p.wake.ok === null ? 'not set yet' : (p.wake.ok ? 'set' : 'not available'));
+    set('svc-next', d.next.length ? d.next.join(' · ') : 'none');
+    const b = document.getElementById('svc-badge');
+    b.className = 'badge ' + (p.service ? 'up' : 'stopped');
+    b.textContent = p.service ? 'service running' : 'only while the app is open';
+    set('svc-hint', (p.service ? '' : 'Install the background service (webapp/tools/service) so schedules fire after a reboot and without opening the app. ')
+      + (p.wake.detail ? 'Wake timers: ' + p.wake.detail + '. ' : '')
+      + 'A laptop with the lid closed on battery may still sleep: keep it on the power adapter for night runs.');
+  } catch (e) { document.getElementById('svc-hint').textContent = e.message; }
+})();
+</script>
 <script>
 (function () {
   const data = document.getElementById('sch-tags'); if (!data) return;

@@ -4,7 +4,7 @@ import secrets
 
 from flask import abort, flash, g, jsonify, redirect, render_template, request, session, url_for
 
-from . import aws, gitops, google, notify, projects, remote_run, runner, settings, tunnels
+from . import aws, gitops, google, newrelic, notify, power, projects, remote_run, runner, scheduler, settings, tunnels
 from .app import _project_or_404, app, can, login_required
 
 
@@ -251,7 +251,181 @@ def remote_results_fetch(name):
     return _op(f"Fetch {rd}", remote_run.op_fetch(name, rd))
 
 
+# --------------------------------------------------------------------------- New Relic
+# the New Relic lookup runs at the start of notify.on_end, so e-mail / chat / Jira include it
+
+
+@app.post("/admin/settings/newrelic")
+@login_required("admin")
+def newrelic_settings():
+    f = request.form
+    cfg = settings.get()
+    c = cfg["newrelic"]
+    try:
+        if f.get("action") == "test":
+            info = newrelic.test_connection()
+            flash(f"New Relic OK: account '{info['account']}' as {info['user']}.", "ok")
+        else:
+            acc = f.get("account_id", "").strip()
+            if acc and not acc.isdigit():
+                raise ValueError("Account id must be numeric")
+            c.update(enabled=bool(f.get("enabled")), region="eu" if f.get("region") == "eu" else "us",
+                     account_id=acc, lookback_hours=max(1, min(168, int(f.get("lookback_hours") or 24))),
+                     auto_on_run=bool(f.get("auto_on_run")))
+            if f.get("api_key"):
+                if not f.get("api_key").strip().startswith("NRAK-"):
+                    raise ValueError("Use a User API key (starts with NRAK-), not a license/ingest key")
+                c["api_key_enc"] = settings.encrypt(f.get("api_key").strip())
+            settings.save(cfg)
+            flash("New Relic settings saved.", "ok")
+    except (ValueError, newrelic.NewRelicError) as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin_settings", _anchor="newrelic"))
+
+
+@app.get("/p/<name>/newrelic")
+@login_required()
+def newrelic_discover(name):
+    _project_or_404(name)
+    if not newrelic.enabled():
+        return jsonify(error="New Relic is not configured (Settings → New Relic)"), 400
+    t = projects.get_tag(name, request.args.get("tag", ""))
+    if not t or not t["exists"]:
+        return jsonify(error="Unknown tag"), 404
+    try:
+        d = newrelic.discover(name, t["script"], t["extra_args"])
+    except (newrelic.NewRelicError, projects.ProjectError) as exc:
+        return jsonify(error=str(exc)), 502
+    d["pinned"] = settings.project(name).get("nr_apps") or []
+    d["links"] = newrelic.entity_links([a["name"] for a in d["apps"]])
+    return jsonify(d)
+
+
+@app.post("/p/<name>/newrelic")
+@login_required("operator")
+def newrelic_pin(name):
+    _project_or_404(name)
+    apps = [a for a in request.form.getlist("apps") if newrelic.APP_RE.match(a)][:20]
+    ps = settings.project(name)
+    ps["nr_apps"] = apps
+    settings.save_project(name, ps)
+    flash(f"New Relic services for this project: {', '.join(apps) or 'auto-discovery'}.", "ok")
+    return redirect(request.referrer or url_for("project", name=name, tab="settings"))
+
+
+@app.route("/runs/<run_id>/newrelic", methods=["GET", "POST"])
+@login_required()
+def run_newrelic(run_id):
+    meta = runner.get(run_id)
+    if not meta or meta.get("kind") != "test":
+        abort(404)
+    if request.method == "GET" and meta.get("newrelic") and meta["status"] not in ("running", "starting", "stopping"):
+        return jsonify(meta["newrelic"])
+    if not newrelic.enabled():
+        return jsonify(error="New Relic is not configured"), 400
+    try:
+        t = projects.get_tag(meta["project"], meta.get("tag", "")) or {}
+        apps, source = newrelic.apps_for(meta["project"], meta.get("script"), t.get("extra_args", ""))
+        if not apps:
+            return jsonify(error="No APM service matched this script; pin them in project → Settings"), 404
+        start = int((meta.get("started") or meta["created"]) * 1000) - 60000
+        end = int((meta.get("ended") or __import__("time").time()) * 1000) + 60000
+        summary = newrelic.window_summary(apps, start, end)
+        summary["source"] = source
+        if meta["status"] not in ("running", "starting", "stopping"):
+            runner.update(run_id, newrelic=summary)
+        return jsonify(summary)
+    except (newrelic.NewRelicError, projects.ProjectError) as exc:
+        return jsonify(error=str(exc)), 502
+
+
+# --------------------------------------------------------------------------- quick run
+def recent_tags(limit=6):
+    seen, out = set(), []
+    for m in runner.list_runs(limit=80):
+        if m.get("kind") != "test" or (m["project"], m.get("tag")) in seen:
+            continue
+        seen.add((m["project"], m.get("tag")))
+        out.append({"project": m["project"], "tag": m.get("tag"), "props": " ".join(m.get("props") or []),
+                    "status": m["status"], "when": m.get("started") or m.get("created"), "id": m["id"]})
+        if len(out) >= limit:
+            break
+    return out
+
+
+@app.get("/api/tags")
+@login_required()
+def api_tags():
+    recent = {(r["project"], r["tag"]) for r in recent_tags(10)}
+    tags = []
+    for p in projects.list_projects():
+        for t in projects.parse_tags(p["name"]):
+            tags.append({"project": p["name"], "tag": t["tag"], "script": t["script"], "exists": t["exists"],
+                         "recent": (p["name"], t["tag"]) in recent})
+    tags.sort(key=lambda t: (not t["recent"], t["project"], t["tag"]))
+    return jsonify(tags=tags)
+
+
+# --------------------------------------------------------------------------- script quality review
+@app.get("/p/<name>/quality.md")
+@login_required()
+def quality_markdown(name):
+    from . import quality
+    _project_or_404(name)
+    md = quality.to_markdown(quality.review_project(projects.project_dir(name)),
+                             f"Revisión de calidad de scripts · {name}")
+    return app.response_class(md, mimetype="text/markdown", headers={
+        "Content-Disposition": f"attachment; filename=calidad_{name}.md"})
+
+
+# --------------------------------------------------------------------------- JMeter GUI on this computer
+@app.post("/p/<name>/gui")
+@login_required("operator")
+def open_in_jmeter(name):
+    from . import jmeter_gui
+    _project_or_404(name)
+    t = projects.get_tag(name, request.form.get("tag", "")) if request.form.get("tag") else None
+    script = t["script"] if t else request.form.get("script", "")
+    try:
+        exe = jmeter_gui.open_script(g.user["username"], name, script, (t or {}).get("extra_args", ""))
+        msg = (f"Opening {script.rsplit('/', 1)[-1]} in JMeter ({exe}). After saving your changes, commit & push "
+               "them on the Git page so the servers use them.")
+        if request.headers.get("X-CSRF-Token"):
+            return jsonify(ok=True, message=msg)
+        flash(msg, "ok")
+    except (jmeter_gui.GuiError, projects.ProjectError) as exc:
+        if request.headers.get("X-CSRF-Token"):
+            return jsonify(error=str(exc)), 400
+        flash(str(exc), "error")
+    return redirect(request.referrer or url_for("project", name=name))
+
+
+# --------------------------------------------------------------------------- scheduler service / power
+@app.get("/api/scheduler")
+@login_required()
+def api_scheduler():
+    slots = scheduler.upcoming_slots()
+    return jsonify(power=power.status(), next=[x.strftime("%Y-%m-%d %H:%M") for x in slots[:5]],
+                   keep_awake_hours=settings.get()["scheduler"].get("keep_awake_hours"))
+
+
+@app.post("/schedules/power")
+@login_required("operator")
+def scheduler_power_settings():
+    cfg = settings.get()
+    try:
+        cfg["scheduler"].update(keep_awake_hours=max(0.0, min(24.0, float(request.form.get("keep_awake_hours") or 0))),
+                                wake_timers=bool(request.form.get("wake_timers")))
+        settings.save(cfg)
+        scheduler._power["key"] = None   # re-apply wake timers on the next tick
+        flash("Scheduler power settings saved.", "ok")
+    except ValueError as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("schedules"))
+
+
 @app.context_processor
 def _remote_ctx():
     return {"aws_mode": settings.aws_mode(), "slave_list": runner.slave_list,
-            "chat_spaces_all": google.spaces(), "auto_off": settings.get()["aws"].get("auto_off")}
+            "chat_spaces_all": google.spaces(), "auto_off": settings.get()["aws"].get("auto_off"),
+            "nr_enabled": newrelic.enabled(), "recent_tags": recent_tags}

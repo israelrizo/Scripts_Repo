@@ -41,10 +41,10 @@
 </div>
 
 <div class="grid two mt">
-  <div class="panel"><h3>{{ data.metric }} by transaction (ms)</h3><div class="chart-box tall"><canvas id="cmp-tx"></canvas></div></div>
-  <div class="panel"><h3>Δ {{ data.metric }} vs baseline (%)</h3><div class="chart-box tall"><canvas id="cmp-delta"></canvas></div></div>
+  <div class="panel"><h3>{{ data.metric }} by transaction (ms)</h3><div class="chart-box tall"><canvas id="cmp-tx" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
+  <div class="panel"><h3>Δ {{ data.metric }} vs baseline (%)</h3><div class="chart-box tall"><canvas id="cmp-delta" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
 </div>
-<div class="panel mt"><h3>Trend · every execution of this script</h3><div class="chart-box"><canvas id="cmp-trend"></canvas></div></div>
+<div class="panel mt"><h3>Trend · every execution of this script</h3><div class="chart-box"><canvas id="cmp-trend" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
 
 <div class="panel mt"><div class="table-wrap"><table>
   <thead>

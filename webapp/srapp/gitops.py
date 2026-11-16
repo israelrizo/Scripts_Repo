@@ -17,9 +17,12 @@ class GitError(RuntimeError):
 
 
 def _git(*args, timeout=60, check=True):
-    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GIT_ASKPASS="true", LC_ALL="C")
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never", LC_ALL="C")
+    if os.name != "nt":
+        env["GIT_ASKPASS"] = "true"
     p = subprocess.run(["git", "-C", str(Config.REPO_ROOT), *args], capture_output=True, text=True,
-                       timeout=timeout, env=env)
+                       encoding="utf-8", errors="replace", timeout=timeout, env=env,
+                       creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     if check and p.returncode != 0:
         raise GitError((p.stderr or p.stdout).strip()[:800] or f"git {args[0]} failed")
     return p.stdout
@@ -83,6 +86,10 @@ def commit_and_push(paths, message, author_name, author_email):
         if not SAFE_PATH.match(p) or p.startswith("/") or ".." in p.split("/") or p.startswith("webapp/instance"):
             raise GitError(f"Refusing path {p}")
     _git("add", "-A", "--", *paths)
+    # keep shell scripts executable for the Linux servers, also when committed from Windows
+    for p in paths:
+        if p.endswith(".sh") and (Config.REPO_ROOT / p).is_file():
+            _git("update-index", "--chmod=+x", "--", p, check=False)
     email = author_email or f"{author_name}@users.noreply.local"
     _git("-c", f"user.name={author_name}", "-c", f"user.email={email}",
          "commit", "-m", message, "--", *paths)

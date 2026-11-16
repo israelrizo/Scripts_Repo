@@ -87,6 +87,12 @@
 {{ paras(f.rt_desc) }}
 
 <h2>Recursos Servidor:</h2>
+{% if nr and nr.apps %}
+<table><tbody>
+<tr><th>Servicio (New Relic APM)</th><th>Transacciones</th><th>RPM</th><th>Promedio (ms)</th><th>p95 (ms)</th><th>Error %</th><th>BD (ms)</th><th>Externos (ms)</th><th>CPU % (máx)</th><th>Memoria %</th><th>Hosts</th></tr>
+{% for name, a in nr.apps.items() %}<tr><td>{% if nr.links and nr.links.get(name) %}<a href="{{ nr.links[name] }}">{{ name }}</a>{% else %}{{ name }}{% endif %}</td><td>{{ num(a.requests) }}</td><td>{{ a.rpm }}</td><td>{{ a.avg_ms }}</td><td>{{ a.p95_ms }}</td><td>{{ a.error_pct }}</td><td>{{ a.db_ms }}</td><td>{{ a.ext_ms }}</td><td>{{ a.cpu if a.cpu is not none else '—' }}{{ ' (' ~ a.cpu_max ~ ')' if a.cpu_max is not none }}</td><td>{{ a.mem if a.mem is not none else '—' }}</td><td>{{ a.hosts }}</td></tr>
+{% endfor %}</tbody></table>
+{% endif %}
 {{ paras(f.resources_desc) }}
 
 <h2>Observaciones:</h2>

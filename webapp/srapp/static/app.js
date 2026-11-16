@@ -223,4 +223,148 @@ window.SR = window.SR || {};
       });
     } catch (e) { body.replaceChildren(); const tr = document.createElement('tr'); tr.append(td(e.message)); body.appendChild(tr); }
   });
+
+  // ---- New Relic: discover services behind a script ----
+  document.addEventListener('click', async (ev) => {
+    const b = ev.target.closest('[data-nr-tag]'); if (!b) return;
+    const dlg = document.getElementById('dlg-nr'), body = document.getElementById('nr-body');
+    document.getElementById('nr-tag').textContent = b.dataset.nrTag;
+    document.getElementById('nr-sig').textContent = ''; document.getElementById('nr-note').textContent = '';
+    body.replaceChildren(Object.assign(document.createElement('tr'), { innerHTML: '<td colspan="5" class="empty">Querying New Relic…</td>' }));
+    dlg.showModal();
+    try {
+      const url = JSON.parse(document.getElementById('nr-url').textContent);
+      const d = await SR.getJSON(`${url}?tag=${encodeURIComponent(b.dataset.nrTag)}`);
+      document.getElementById('nr-sig').textContent = `Hosts: ${d.hosts.join(', ') || '—'} · paths: ${d.patterns.join(', ') || '—'}`;
+      document.getElementById('nr-note').textContent = d.note || '';
+      body.replaceChildren();
+      const names = new Set([...d.apps.map((a) => a.name), ...d.pinned]);
+      if (!names.size) body.appendChild(Object.assign(document.createElement('tr'), { innerHTML: '<td colspan="5" class="empty">No services found.</td>' }));
+      names.forEach((name) => {
+        const a = d.apps.find((x) => x.name === name) || { requests: '', matched_by: 'pinned' };
+        const tr = document.createElement('tr');
+        const pin = document.createElement('td'); const cb = document.createElement('input');
+        cb.type = 'checkbox'; cb.name = 'apps'; cb.value = name; cb.checked = d.pinned.includes(name) || (!d.pinned.length && d.apps.indexOf(a) < 3);
+        pin.appendChild(cb);
+        const link = document.createElement('td');
+        if (d.links[name]) { const l = document.createElement('a'); l.href = d.links[name]; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'Open ↗'; link.appendChild(l); }
+        tr.append(pin, td(name, 'mono'), td(a.requests === '' ? '' : Number(a.requests).toLocaleString(), 'num'), td(a.matched_by), link);
+        body.appendChild(tr);
+      });
+    } catch (e) { body.replaceChildren(); const tr = document.createElement('tr'); tr.append(td(e.message)); body.appendChild(tr); }
+  });
+
+  // ---- New Relic panel on the run page ----
+  const nrp = document.getElementById('nr-panel');
+  if (nrp) {
+    const box = document.getElementById('nr-body');
+    const load = async () => {
+      box.textContent = 'Loading…';
+      try {
+        const d = await SR.getJSON(nrp.dataset.url);
+        const apps = Object.entries(d.apps || {});
+        if (!apps.length) { box.textContent = 'No APM data for this window.'; return; }
+        const tbl = document.createElement('table');
+        tbl.innerHTML = '<thead><tr><th>Service</th><th class="num">Requests</th><th class="num">RPM</th><th class="num">Avg ms</th><th class="num">p95 ms</th><th class="num">Error %</th><th class="num">DB ms</th><th class="num">Ext ms</th><th class="num">CPU %</th><th class="num">Mem %</th></tr></thead>';
+        const tb = document.createElement('tbody');
+        apps.forEach(([name, a]) => {
+          const tr = document.createElement('tr');
+          const n = document.createElement('td');
+          if ((d.links || {})[name]) { const l = document.createElement('a'); l.href = d.links[name]; l.target = '_blank'; l.rel = 'noopener'; l.textContent = name + ' ↗'; n.appendChild(l); } else n.textContent = name;
+          tr.append(n, td(Number(a.requests).toLocaleString(), 'num'), td(a.rpm, 'num'), td(a.avg_ms, 'num'), td(a.p95_ms, 'num'),
+            td(a.error_pct, 'num' + (a.error_pct > 1 ? ' delta-up' : '')), td(a.db_ms, 'num'), td(a.ext_ms, 'num'),
+            td(a.cpu == null ? '—' : `${a.cpu} (${a.cpu_max})`, 'num'), td(a.mem == null ? '—' : a.mem, 'num'));
+          tb.appendChild(tr);
+          if (a.top && a.top.length) {
+            const tr2 = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 10; c.className = 'hint';
+            c.textContent = 'Top transactions: ' + a.top.map((t) => `${t.name} (${t.avg_ms} ms, ${t.error_pct} % err)`).join(' · ')
+              + (a.error_classes && a.error_classes.length ? ' · Errors: ' + a.error_classes.map((e) => `${e.class} ×${e.count}`).join(', ') : '');
+            tr2.appendChild(c); tb.appendChild(tr2);
+          }
+        });
+        tbl.appendChild(tb);
+        const wrap = document.createElement('div'); wrap.className = 'table-wrap'; wrap.appendChild(tbl);
+        const note = document.createElement('p'); note.className = 'hint';
+        note.textContent = `Services ${d.source === 'pinned' ? 'pinned for this project' : 'discovered from the script endpoints'}.` + (d.errors && d.errors.length ? ' Partial: ' + d.errors.join('; ') : '');
+        box.replaceChildren(wrap, note);
+      } catch (e) { box.textContent = e.message; }
+    };
+    document.getElementById('nr-refresh').addEventListener('click', load);
+    load();
+    if (nrp.dataset.live === '1') setInterval(load, 60000);
+  }
+
+  // ---- accessibility: label ↔ control association, names for icon-only controls, dialog names ----
+  let auto = 0;
+  document.querySelectorAll('.field').forEach((f) => {
+    const label = f.querySelector(':scope > label:not(.check)');
+    const ctl = f.querySelector(':scope > input:not([type=hidden]), :scope > select, :scope > textarea');
+    if (!label || !ctl || label.htmlFor) return;
+    if (!ctl.id) ctl.id = 'f' + (++auto) + '-' + (ctl.name || 'field');
+    label.htmlFor = ctl.id;
+  });
+  document.querySelectorAll('button[title], a[title]').forEach((el) => {
+    if (!el.getAttribute('aria-label') && (el.textContent.match(/[A-Za-z0-9]/g) || []).length < 3) el.setAttribute('aria-label', el.title);
+  });
+  document.querySelectorAll('dialog').forEach((d, i) => {
+    const head = d.querySelector('.dlg-head');
+    if (head && !d.getAttribute('aria-labelledby')) { head.id = head.id || 'dlg-title-' + i; d.setAttribute('aria-labelledby', head.id); }
+  });
+  document.querySelectorAll('input[type=file]').forEach((f) => { if (!f.getAttribute('aria-label')) f.setAttribute('aria-label', 'Choose files to upload'); });
+
+  // ---- quick run: Ctrl/⌘+K anywhere → type → Enter opens the run dialog ----
+  const qd = document.getElementById('dlg-quick');
+  if (qd) {
+    const q = document.getElementById('quick-q'), list = document.getElementById('quick-list');
+    let tags = null, sel = 0, items = [];
+    const open = async () => {
+      if (!qd.open) qd.showModal();
+      q.value = ''; q.focus();
+      if (!tags) { try { tags = (await SR.getJSON('/api/tags')).tags; } catch (e) { tags = []; } }
+      draw();
+    };
+    const score = (t, words) => words.every((w) => (t.tag + ' ' + t.project + ' ' + t.script).toLowerCase().includes(w));
+    const draw = () => {
+      const words = q.value.toLowerCase().split(/\s+/).filter(Boolean);
+      const rank = (t) => words.filter((w) => t.tag.toLowerCase().includes(w)).length * 10
+        + words.filter((w) => t.project.toLowerCase().includes(w)).length * 3 + (t.recent ? 1 : 0);
+      items = (tags || []).filter((t) => t.exists && score(t, words)).sort((x, y) => rank(y) - rank(x)).slice(0, 12);
+      if (!words.length) items = (tags || []).filter((t) => t.recent).concat((tags || []).filter((t) => !t.recent && t.exists)).slice(0, 12);
+      sel = Math.min(sel, Math.max(items.length - 1, 0));
+      list.replaceChildren();
+      if (!items.length) { const li = document.createElement('li'); li.className = 'q-empty'; li.textContent = 'No matching tag'; list.appendChild(li); }
+      items.forEach((t, i) => {
+        const li = document.createElement('li'); li.id = 'q-opt-' + i; li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', i === sel ? 'true' : 'false');
+        const a = document.createElement('span'); a.className = 'mono'; a.textContent = (t.recent ? '↻ ' : '') + t.tag;
+        const b = document.createElement('span'); b.className = 'q-proj'; b.textContent = t.project.replace('-jmeter-framework', '');
+        li.append(a, b); li.addEventListener('click', () => go(t)); list.appendChild(li);
+      });
+      q.setAttribute('aria-activedescendant', items.length ? 'q-opt-' + sel : '');
+    };
+    const go = (t) => { location.href = `/p/${encodeURIComponent(t.project)}?tab=tags&run=${encodeURIComponent(t.tag)}`; };
+    q.addEventListener('input', () => { sel = 0; draw(); });
+    q.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') { sel = Math.min(sel + 1, items.length - 1); draw(); e.preventDefault(); }
+      if (e.key === 'ArrowUp') { sel = Math.max(sel - 1, 0); draw(); e.preventDefault(); }
+      if (e.key === 'Enter' && items[sel]) { go(items[sel]); e.preventDefault(); }
+    });
+    document.getElementById('quick-open').addEventListener('click', open);
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); }
+    });
+  }
+  // ---- open the run dialog directly (quick run / run again links) ----
+  const want = new URLSearchParams(location.search).get('run');
+  if (want) {
+    const btn = [...document.querySelectorAll('[data-run-tag]')].find((b) => b.dataset.runTag === want && !b.disabled);
+    if (btn) {
+      btn.click();
+      const props = new URLSearchParams(location.search).get('props');
+      const dlg = document.getElementById('dlg-run');
+      if (props && dlg) dlg.querySelector('input[name=props]').value = props;
+      const start = dlg && dlg.querySelector('.dlg-foot .btn.primary');
+      if (start) setTimeout(() => start.focus(), 50);
+    }
+  }
 })(window.SR);

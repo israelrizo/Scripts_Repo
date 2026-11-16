@@ -197,3 +197,7 @@ def user_by_token(token):
                     _save(data)
                     return {"username": name, "role": u["role"]}
     return None
+
+
+def set_jmeter_path(username, path):
+    _update(username, lambda u: u.__setitem__("jmeter_path", (path or "").strip()[:400]))

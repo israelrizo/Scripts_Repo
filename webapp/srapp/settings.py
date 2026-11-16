@@ -56,11 +56,17 @@ DEFAULTS = {
     # E-mail from the engineer's own Gmail account (OAuth) and Google Chat webhooks
     "google": {"client_id": "", "client_secret_enc": "", "refresh_enc": "", "email": ""},
     "chat": {"enabled": False, "notify_start": True, "notify_end": True, "spaces": []},  # {id,name,url_enc,default}
+    # Shared New Relic account of the performance team (NerdGraph User API key, encrypted)
+    "newrelic": {"enabled": False, "region": "us", "account_id": "", "api_key_enc": "", "lookback_hours": 24,
+                 "auto_on_run": True},
+    # Background service: keep the computer awake for upcoming scheduled runs, OS wake timers
+    "scheduler": {"keep_awake_hours": 3, "wake_timers": True},
 }
 
 PROJECT_DEFAULTS = {
     "staff_emails": [],
     "chat_spaces": [],             # ids of extra Google Chat spaces for this project
+    "nr_apps": [],                 # New Relic APM services pinned for this project
     "grafana_dashboard": "",
     "jira_project": "",
     "bitbucket_repo": "",          # workspace/repo-slug of the application repository (shift-left)

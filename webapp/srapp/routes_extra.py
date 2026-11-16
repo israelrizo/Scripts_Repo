@@ -220,6 +220,7 @@ def schedules():
     plist = projects.list_projects()
     tags = {p["name"]: [t["tag"] for t in projects.parse_tags(p["name"]) if t["exists"]] for p in plist}
     return render_template("schedules.html", items=items, tags=tags, days=scheduler.DAYS,
+                           sched_cfg=settings.get()["scheduler"],
                            tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), slaves=runner.slave_list(),
                            preset_project=request.args.get("project", ""), preset_tag=request.args.get("tag", ""))
 
@@ -275,8 +276,13 @@ def git_page():
             if request.form.get("action") == "pull":
                 flash(gitops.pull(), "ok")
             else:
+                paths = request.form.getlist("paths")
+                errs = [r for r in _review_changed(paths) if r["counts"]["error"]]
+                if errs and not request.form.get("accept_quality"):
+                    raise gitops.GitError(f"{len(errs)} script(s) have quality errors: fix them (Open in JMeter) or tick "
+                                          "'Commit anyway' to publish with the errors listed below.")
                 me = users.get(g.user["username"]) or {}
-                sha = gitops.commit_and_push(request.form.getlist("paths"), request.form.get("message"),
+                sha = gitops.commit_and_push(paths, request.form.get("message"),
                                              g.user["username"], me.get("email", ""))
                 flash(f"Committed and pushed {sha}.", "ok")
         except Exception as exc:  # noqa: BLE001
@@ -287,7 +293,25 @@ def git_page():
     except Exception as exc:  # noqa: BLE001
         flash(str(exc), "error")
         return redirect(url_for("dashboard"))
-    return render_template("git.html", st=st)
+    review = _review_changed([f["path"] for f in st["files"]])
+    return render_template("git.html", st=st, review=review)
+
+
+def _review_changed(paths):
+    """Quality review of the .jmx files about to be committed (by path relative to the repo)."""
+    from . import quality
+    out = []
+    for p in paths:
+        if not p.endswith(".jmx"):
+            continue
+        f = Config.REPO_ROOT / p
+        if not f.is_file():
+            continue
+        proj = quality.project_of(f)
+        r = quality.review_file(f, proj, quality._tagged(proj) if proj else None)
+        r["script"] = p
+        out.append(r)
+    return out
 
 
 # --------------------------------------------------------------------------- CI API (Bearer tokens)

@@ -66,6 +66,20 @@
     </table>
   </td></tr>
   {% endif %}
+  {% if s.newrelic %}
+  <tr><td style="padding:10px 24px 4px;font-weight:700;font-size:13px;">New Relic · servicios durante la prueba</td></tr>
+  <tr><td style="padding:0 24px 6px;">
+    <table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="font-size:12px;border-collapse:collapse;border:1px solid #dcdfe4;">
+      <tr style="background:#f1f2f4;"><th align="left">Servicio</th><th align="right">RPM</th><th align="right">Prom. (ms)</th><th align="right">p95 (ms)</th><th align="right">Error %</th><th align="right">CPU %</th></tr>
+      {% for a in s.newrelic %}
+      <tr style="border-top:1px solid #dcdfe4;"><td>{% if a.link %}<a href="{{ a.link }}" style="color:#1868db;">{{ a.name }}</a>{% else %}{{ a.name }}{% endif %}</td>
+        <td align="right">{{ a.rpm }}</td><td align="right">{{ a.avg_ms }}</td><td align="right">{{ a.p95_ms }}</td>
+        <td align="right" style="color:{{ '#c9372c' if (a.error_pct or 0) > 1 else '#172b4d' }};">{{ a.error_pct }}</td>
+        <td align="right">{{ a.cpu if a.cpu is not none else '—' }}</td></tr>
+      {% endfor %}
+    </table>
+  </td></tr>
+  {% endif %}
   {% elif event == 'end' %}
   <tr><td style="padding:10px 24px;color:#626f86;font-size:13px;">La ejecución terminó sin reporte HTML (estado: {{ s.status }}). Revisa la consola.</td></tr>
   {% endif %}
