@@ -1,0 +1,8 @@
+# Scripts run on the Linux load generators: always LF, also when checked out on Windows
+*.sh text eol=lf
+webapp/bin/jmeter text eol=lf
+Jenkinsfile text eol=lf
+# Windows helpers keep CRLF
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf

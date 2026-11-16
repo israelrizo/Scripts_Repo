@@ -1,0 +1,402 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf, run_row, summary_cells %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="sub"><a href="{{ url_for('dashboard') }}">Projects</a> /</p>
+    <h1>{{ name }}</h1>
+  </div>
+  <div class="actions">
+    {% if can('operator') and slaves %}
+    {% if aws_mode %}
+    <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="git pull origin on the Master and the Slaves now?">
+      {{ csrf() }}<button class="btn" title="Bring Master and Slaves to the latest pushed commit">⇄ Sync servers</button>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="rsync data/ and tests/ of {{ name }} to {{ slaves|join(', ') }}?">
+      {{ csrf() }}<button class="btn" title="Copy data/ and tests/ to every slave (CSV files are read locally by each slave)">⇄ Sync to slaves</button>
+    </form>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<nav class="tabs">
+  {% for key, label in [('tags','Tags'),('scripts','Scripts'),('data','Data files'),('results','Reports'),('runs','Executions'),('monitor','Live monitor'),('quality','Quality'),('settings','Settings')] %}
+  <a href="{{ url_for('project', name=name, tab=key) }}" class="{{ 'active' if tab == key }}">{{ label }}{% if key == 'tags' %} <span class="chip">{{ tags|length }}</span>{% endif %}</a>
+  {% endfor %}
+</nav>
+
+{# ============================== TAGS ============================== #}
+{% if tab == 'tags' %}
+<div class="panel">
+  <div class="page-head" style="margin-bottom:10px"><h2 style="margin:0">Tags in <code>run_by_tag.sh</code></h2>
+  {% if can('operator') %}<button class="btn" onclick="document.getElementById('dlg-tag').showModal()">＋ Register tag</button>{% endif %}</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tag</th><th>Script</th><th>EXTRA_ARGS</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% set ns = namespace(group=None) %}
+    {% for t in tags %}
+      {% if t.group != ns.group %}{% set ns.group = t.group %}<tr class="group"><td colspan="4">{{ t.group }}</td></tr>{% endif %}
+      <tr>
+        <td><code>{{ t.tag }}</code>{% if t.duplicate %} <span class="badge failed" title="Same tag defined twice; bash uses the first one">duplicate</span>{% endif %}</td>
+        <td class="mono">{{ t.script }}{% if not t.exists %} <span class="badge failed">missing file</span>{% endif %}</td>
+        <td class="mono muted">{{ t.extra_args or '—' }}</td>
+        <td><div class="actions">
+          {% if can('operator') %}
+          <button class="btn sm primary" {{ 'disabled' if not t.exists }} data-run-tag="{{ t.tag }}" data-run-script="{{ t.script }}">▶ Run</button>
+          <a class="btn sm" href="{{ url_for('schedules', project=name, tag=t.tag, _anchor='new-schedule') }}" title="Schedule this tag" aria-label="Schedule {{ t.tag }}">⏱</a>
+          {% endif %}
+          {% if t.exists %}<button class="btn sm" data-servers-tag="{{ t.tag }}" title="Resolve and test the servers this script calls">Servers</button>{% endif %}
+          {% if t.exists and nr_enabled %}<button class="btn sm" data-nr-tag="{{ t.tag }}" title="Find the New Relic APM services behind this script">New Relic</button>{% endif %}
+          {% if t.exists and can('operator') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}">{{ csrf() }}<input type="hidden" name="tag" value="{{ t.tag }}"><button class="btn sm" title="Open {{ t.script.rsplit('/',1)[-1] }} in JMeter GUI on this computer (with this tag's properties)" aria-label="Open {{ t.tag }} in JMeter GUI">✎ JMeter</button></form>{% endif %}
+          {% if can('operator') %}
+          <form method="post" action="{{ url_for('delete_tag', name=name, tag=t.tag) }}" data-confirm="Remove tag {{ t.tag }} from run_by_tag.sh? (the .jmx is kept)">{{ csrf() }}<button class="btn sm danger" title="Remove tag" aria-label="Remove tag {{ t.tag }}">✕</button></form>
+          {% endif %}
+        </div></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" class="empty">No tags yet. Upload a script and register a tag.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+
+<dialog id="dlg-run">
+  <form method="post" action="{{ url_for('run', name=name) }}">
+    {{ csrf() }}<input type="hidden" name="tag" id="run-tag">
+    <div class="dlg-head">Run <code id="run-tag-label"></code></div>
+    <div class="dlg-body">
+      <p class="mono muted" id="run-script" style="margin-top:0"></p>
+      <div class="field">
+        <label>Property overrides (optional)</label>
+        <input type="text" name="props" placeholder="-Jthreads=50 -Jrampup=60 -JP_DNS=apibdt.q.gslb">
+        <div class="hint">Only <code>-Jname=value</code> / <code>-Gname=value</code>, no spaces in values. Appended after the tag's EXTRA_ARGS, so they win.</div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Jira ticket (optional)</label>
+          <input type="text" name="jira" id="run-jira" placeholder="PERF-123" pattern="[A-Za-z][A-Za-z0-9_]{0,19}-[0-9]{1,9}" style="text-transform:uppercase">
+          <div class="hint" id="run-jira-info">A comment with the results is added when the run ends.</div></div>
+        <div class="field"><label>Also notify</label><input type="text" name="extra_emails" placeholder="dev.lead@bancobase.com"></div>
+      </div>
+      <div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500" placeholder="Why this run? Build / version under test"></div>
+      <label class="check field"><input type="checkbox" name="notify" value="1" checked> E-mail qaperformance{{ ' + ' ~ (project_settings(name).staff_emails|length) ~ ' staff' if project_settings(name).staff_emails }} at start and end</label>
+      {% if aws_mode %}
+      <label class="check"><input type="checkbox" name="auto_start" value="1" checked> Start the servers if they are stopped</label>
+      <label class="check field"><input type="checkbox" name="stop_after" value="1"> Stop the servers when the run ends <span class="hint">(Grafana/Influx charts are unavailable while they are off)</span></label>
+      <p class="hint" id="run-autooff" data-url="{{ url_for('api_servers') }}"></p>
+      {% endif %}
+      {% if slaves %}
+      <label class="check"><input type="checkbox" name="distributed" value="1" checked> Distributed on {{ slaves|length }} slaves (<span class="mono">{{ slaves|join(', ') }}</span>)</label>
+      <p class="hint">Each slave runs the full thread count of the plan. Total load = threads × {{ slaves|length }}.</p>
+      {% else %}
+      <p class="hint">Runs on the Master only (no slaves configured).</p>
+      {% endif %}
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">▶ Start execution</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg-servers" style="width:min(900px, calc(100vw - 32px))">
+  <div class="dlg-head">Servers used by <code id="srv-tag"></code></div>
+  <div class="dlg-body">
+    <div class="row" style="align-items:flex-end">
+      <div class="field" style="flex:4"><label>Property overrides to resolve (optional)</label><input type="text" id="srv-props" placeholder="-JP_DNS=apibdt.sil.gslb"></div>
+      <div class="field" style="flex:1"><button type="button" class="btn primary" id="srv-run">Check again</button></div>
+    </div>
+    <p class="mono muted" id="srv-script"></p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Endpoint</th><th class="num">Samplers</th><th>DNS</th><th class="num">TCP</th><th>TLS</th><th>HTTP</th></tr></thead>
+      <tbody id="srv-body"><tr><td colspan="6" class="empty">…</td></tr></tbody>
+    </table></div>
+    <p class="hint" id="srv-note"></p>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+</dialog>
+<script id="servers-url" type="application/json">{{ url_for('servers', name=name)|tojson }}</script>
+{% if nr_enabled %}
+<dialog id="dlg-nr" style="width:min(820px, calc(100vw - 32px))">
+  <form method="post" action="{{ url_for('newrelic_pin', name=name) }}">
+    {{ csrf() }}
+    <div class="dlg-head">New Relic services behind <code id="nr-tag"></code></div>
+    <div class="dlg-body">
+      <p class="hint" id="nr-sig"></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Pin</th><th>APM service</th><th class="num">Requests</th><th>Matched by</th><th></th></tr></thead>
+        <tbody id="nr-body"><tr><td colspan="5" class="empty">…</td></tr></tbody>
+      </table></div>
+      <p class="hint" id="nr-note"></p>
+      <p class="hint">Pinned services are used for every run of this project (otherwise they are discovered for each run). Pinning replaces the current list.</p>
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button>{% if can('operator') %}<button class="btn primary">Pin selected for this project</button>{% endif %}</div>
+  </form>
+</dialog>
+<script id="nr-url" type="application/json">{{ url_for('newrelic_discover', name=name)|tojson }}</script>
+{% endif %}
+{% endif %}
+
+{% if tab in ('tags', 'scripts') and can('operator') %}
+<dialog id="dlg-tag">
+  <form method="post" action="{{ url_for('add_tag', name=name) }}">
+    {{ csrf() }}
+    <div class="dlg-head">Register a tag</div>
+    <div class="dlg-body">
+      <div class="field"><label>Tag</label><input type="text" name="tag" required pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{0,63}" placeholder="e.g. login_qa"></div>
+      <div class="field"><label>Script</label>
+        <select name="script" id="tag-script" required>{% for s in all_scripts %}<option>{{ s }}</option>{% endfor %}</select></div>
+      <div class="field"><label>EXTRA_ARGS (optional)</label><input type="text" name="extra_args" placeholder="-Jthreads=50 -Jrampup=10 -Jduration=300"></div>
+      <div class="field"><label>Group (optional)</label><input type="text" name="group" list="groups" placeholder="e.g. Optimizaciones Paquete 7">
+        <datalist id="groups">{% for g in tags|map(attribute='group')|unique %}<option>{{ g }}</option>{% endfor %}</datalist>
+        <div class="hint">Comment header in run_by_tag.sh; the tag is inserted inside that section.</div></div>
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">Save tag</button></div>
+  </form>
+</dialog>
+{% endif %}
+
+{# ============================== SCRIPTS ============================== #}
+{% if tab == 'scripts' %}
+<div class="grid two">
+  {% if can('operator') %}
+  <form class="panel" method="post" action="{{ url_for('upload', name=name) }}" enctype="multipart/form-data">
+    {{ csrf() }}<input type="hidden" name="kind" value="script">
+    <h2>Upload JMeter scripts (.jmx)</h2>
+    <div class="field"><input type="file" name="files" accept=".jmx" multiple required></div>
+    <div class="field"><label>Destination folder inside <code>tests/</code></label>
+      <input type="text" name="subfolder" list="folders" placeholder="e.g. Optimizaciones/Paquete_7">
+      <datalist id="folders">{% for f in folders %}<option>{{ f }}</option>{% endfor %}</datalist>
+      <div class="hint">Pick an existing folder or type a new one; it is created automatically.</div></div>
+    <details class="field"><summary><b>Register a tag now</b> <span class="hint">(single file only)</span></summary>
+      <div class="row mt">
+        <div class="field"><label>Tag</label><input type="text" name="tag" pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{0,63}" placeholder="e.g. opt7_login"></div>
+        <div class="field"><label>Group</label><input type="text" name="group" placeholder="optional"></div>
+      </div>
+      <div class="field"><label>EXTRA_ARGS</label><input type="text" name="extra_args" placeholder="-Jthreads=50 -Jrampup=10"></div>
+    </details>
+    <label class="check field"><input type="checkbox" name="overwrite" value="1"> Overwrite if it exists (old version goes to the trash)</label>
+    <button class="btn primary">Upload</button>
+    <p class="hint">Each JMX is validated and scanned for data-file paths that will not exist on the Linux generators (e.g. <code>C:\Users\…</code>).</p>
+  </form>
+  {% endif %}
+  <div class="panel">
+    <h2>Structure</h2>
+    <p class="muted">Folders under <code>tests/</code>:</p>
+    <ul class="mono">{% for f in folders %}<li>{{ f }}</li>{% else %}<li class="muted">none</li>{% endfor %}</ul>
+  </div>
+</div>
+<div class="panel mt">
+  <div class="table-wrap"><table>
+    <thead><tr><th>File</th><th>Tags</th><th class="num">Size</th><th>Modified</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% set ns = namespace(folder=None) %}
+    {% for s in scripts %}
+      {% if s.folder != ns.folder %}{% set ns.folder = s.folder %}<tr class="group"><td colspan="5">{{ s.folder }}</td></tr>{% endif %}
+      <tr>
+        <td class="mono">{{ s.name }}</td>
+        <td>{% for t in s.tags %}<code class="chip">{{ t }}</code> {% else %}{% if s.name.endswith('.jmx') %}<span class="muted">untagged</span>{% endif %}{% endfor %}</td>
+        <td class="num">{{ s.size|size }}</td>
+        <td class="nowrap">{{ s.mtime|dt }}</td>
+        <td><div class="actions">
+          {% if can('operator') and s.name.endswith('.jmx') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}">{{ csrf() }}<input type="hidden" name="script" value="{{ s.path }}"><button class="btn sm" aria-label="Open {{ s.name }} in JMeter GUI">✎ JMeter</button></form>{% endif %}
+          <a class="btn sm" href="{{ url_for('download_file', name=name, path=s.path) }}">Download</a>
+          {% if can('operator') and not s.tags %}
+          <form method="post" action="{{ url_for('delete_file', name=name) }}" data-confirm="Move {{ s.path }} to trash?">{{ csrf() }}<input type="hidden" name="path" value="{{ s.path }}"><button class="btn sm danger">Remove</button></form>
+          {% endif %}
+        </div></td>
+      </tr>
+    {% else %}<tr><td colspan="5" class="empty">No scripts yet.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+
+{# ============================== DATA ============================== #}
+{% if tab == 'data' %}
+{% if can('operator') %}
+<form class="panel" method="post" action="{{ url_for('upload', name=name) }}" enctype="multipart/form-data">
+  {{ csrf() }}<input type="hidden" name="kind" value="data">
+  <h2>Upload data files to <code>data/</code></h2>
+  <div class="row">
+    <div class="field" style="flex:3 1 300px"><input type="file" name="files" multiple required></div>
+    <div class="field" style="flex:1 1 200px">
+      <label class="check"><input type="checkbox" name="overwrite" value="1"> Overwrite existing</label>
+      <button class="btn primary mt">Upload</button>
+    </div>
+  </div>
+  <p class="hint">Allowed: {{ cfg.DATA_EXTENSIONS|sort|join(' ') }} · max {{ cfg.MAX_UPLOAD_MB }} MB.
+  {% if slaves %}After uploading, use <b>Sync to slaves</b>: in distributed mode every slave reads CSVs from its own disk.{% endif %}</p>
+</form>
+{% endif %}
+<div class="panel mt">
+  <div class="table-wrap"><table>
+    <thead><tr><th>File</th><th class="num">Size</th><th>Modified</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% for f in data %}
+      <tr><td class="mono">{{ f.path }}</td><td class="num">{{ f.size|size }}</td><td class="nowrap">{{ f.mtime|dt }}</td>
+      <td><div class="actions"><a class="btn sm" href="{{ url_for('download_file', name=name, path=f.path) }}">Download</a>
+        {% if can('operator') %}<form method="post" action="{{ url_for('delete_file', name=name) }}" data-confirm="Move {{ f.path }} to trash?">{{ csrf() }}<input type="hidden" name="path" value="{{ f.path }}"><button class="btn sm danger">Remove</button></form>{% endif %}
+      </div></td></tr>
+    {% else %}<tr><td colspan="4" class="empty">No data files.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+
+{# ============================== REPORTS ============================== #}
+{% if tab == 'results' %}
+<form class="panel" method="get" action="{{ url_for('compare', name=name) }}">
+  <div class="page-head" style="margin-bottom:10px">
+    <h2 style="margin:0">Execution reports <span class="muted" style="font-weight:400">· <code>results/Ejecucion_*</code></span></h2>
+    <div class="actions">{% if aws_mode %}<button type="button" class="btn" id="remote-results-btn" data-url="{{ url_for('remote_results', name=name) }}">⇣ Fetch from Master</button>{% endif %}
+    <button class="btn primary">Compare selected</button></div>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th></th><th>Execution</th><th>Date</th><th class="num">Samples</th><th class="num">Error %</th><th class="num">Avg</th><th class="num">p95</th><th class="num">TPS</th><th class="right">Actions</th></tr></thead>
+    <tbody>
+    {% for r in results %}
+      <tr>
+        <td>{% if r.has_report %}<input type="checkbox" name="r" value="{{ r.name }}">{% endif %}</td>
+        <td class="mono">{{ r.name }}</td>
+        <td class="nowrap">{{ r.mtime|dt }}</td>
+        {{ summary_cells(r.summary) }}
+        <td><div class="actions">
+          {% if r.has_report %}<a class="btn sm primary" href="{{ url_for('report', name=name, run_name=r.name) }}" target="_blank">HTML report</a>{% endif %}
+          {% if r.summary %}<a class="btn sm" href="{{ url_for('confluence_report', name=name, run_name=r.name) }}" title="Generate the results report in Confluence">Confluence{% if published.get(r.name) %} ✓{% endif %}</a>{% endif %}
+          {% if published.get(r.name) %}<a class="btn sm" href="{{ published[r.name].url }}" target="_blank" rel="noopener" title="Open the published page" aria-label="Open the published Confluence page">↗</a>{% endif %}
+          {% if r.name in baselines.values() %}<span class="pill base" title="Baseline for this script">BASE</span>
+          {% elif can('operator') and r.has_report %}<form method="post" action="{{ url_for('set_baseline', name=name, run_name=r.name) }}">{{ csrf() }}<button class="btn sm" title="Use as baseline for this script in comparisons">☆ Base</button></form>{% endif %}
+          {% if grafana_url %}<a class="btn sm" target="_blank" rel="noopener" href="{{ grafana_links.get(r.name) }}" title="Grafana dashboard for this execution window">Grafana</a>{% endif %}
+          <a class="btn sm" href="{{ url_for('download_result', name=name, run_name=r.name) }}">.tar.gz</a>
+        </div></td>
+      </tr>
+    {% else %}<tr><td colspan="9" class="empty">No executions yet.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</form>
+{% endif %}
+
+{% if tab == 'results' and aws_mode %}
+<dialog id="dlg-remote" style="width:min(760px, calc(100vw - 32px))">
+  <div class="dlg-head">Reports stored on the Master</div>
+  <div class="dlg-body">
+    <p class="hint">Runs launched by other engineers (or whose download failed) stay on the Master. Fetching copies the report to this computer.</p>
+    <div class="table-wrap"><table><thead><tr><th>Execution</th><th class="num">Size</th><th></th></tr></thead>
+      <tbody id="remote-body"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody></table></div>
+    <form method="post" action="{{ url_for('remote_results_fetch', name=name) }}" id="remote-form">{{ csrf() }}<input type="hidden" name="result" id="remote-result"></form>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+</dialog>
+{% endif %}
+
+{# ============================== RUNS ============================== #}
+{% if tab == 'runs' %}
+<div class="panel">
+  <div class="table-wrap"><table>
+    <thead><tr><th>Run</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Duration</th><th>User</th><th></th></tr></thead>
+    <tbody>{% for r in runs %}{{ run_row(r, show_project=false) }}{% else %}<tr><td colspan="7" class="empty">No executions launched from the web app yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endif %}
+
+{# ============================== QUALITY ============================== #}
+{% if tab == 'quality' %}
+<div class="panel">
+  <div class="page-head" style="margin-bottom:8px">
+    <h2 style="margin:0">Script quality <span class="muted" style="font-weight:400">· Guía de scripting R01–R20</span></h2>
+    <div class="actions"><a class="btn" href="{{ url_for('quality_markdown', name=name) }}">⬇ Feedback (.md)</a></div>
+  </div>
+  {% if quality %}
+  <div class="grid kpis">
+    <div class="kpi {{ 'good' if q_avg >= 75 else 'bad' }}"><div class="label">Average score</div><div class="value">{{ q_avg }}</div></div>
+    {% for g in ['A','B','C','D'] %}<div class="kpi"><div class="label">Grade {{ g }}</div><div class="value">{{ quality|selectattr('grade','equalto',g)|list|length }}</div></div>{% endfor %}
+    <div class="kpi {{ 'bad' if quality|sum(attribute='counts.error') else 'good' }}"><div class="label">Scripts with errors</div><div class="value">{{ quality|selectattr('counts.error')|list|length }}</div></div>
+  </div>
+  <p class="hint mt">A ≥ 90 · B ≥ 75 · C ≥ 55 · D &lt; 55. Each distinct problem counts once: error −15, warning −5, suggestion −1. Fix in JMeter (✎), then commit &amp; push from the Git page.</p>
+  {% for r in quality|sort(attribute='score') %}
+  <details class="q-item">
+    <summary><span class="grade grade-{{ r.grade }}" aria-label="Grade {{ r.grade }}">{{ r.grade }}</span>
+      <b class="mono">{{ r.script }}</b> <span class="muted">· {{ r.score }}/100 · {{ r.counts.error }} errors · {{ r.counts.warn }} warnings · {{ r.counts.info }} suggestions</span></summary>
+    {% if can('operator') %}<form method="post" action="{{ url_for('open_in_jmeter', name=name) }}" style="margin:8px 0">{{ csrf() }}<input type="hidden" name="script" value="{{ r.script }}"><button class="btn sm">✎ Open in JMeter to fix</button></form>{% endif %}
+    <ul class="q-list">
+    {% for f in r.findings %}
+      <li class="sev-{{ f.severity }}"><b>{{ {'error':'Error','warn':'Advertencia','info':'Sugerencia'}[f.severity] }} {{ f.rule }} · {{ f.title }}</b>{% if f.detail %} — {{ f.detail }}{% endif %}<br><span class="hint">➜ {{ f.fix }}</span></li>
+    {% else %}<li class="sev-ok">Sin hallazgos. ✔</li>{% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+  {% else %}<p class="empty">No scripts in tests/.</p>{% endif %}
+</div>
+{% endif %}
+
+{# ============================== SETTINGS ============================== #}
+{% if tab == 'settings' %}
+<form method="post" action="{{ url_for('project_settings', name=name) }}">
+  {{ csrf() }}
+  <div class="grid two">
+    <div class="panel">
+      <h2>Notifications</h2>
+      <div class="field"><label>Project staff e-mails</label>
+        <textarea name="staff_emails" rows="3" placeholder="dev.lead@bancobase.com, po@bancobase.com">{{ ps.staff_emails|join(', ') }}</textarea>
+        <div class="hint">Receive the start / end e-mails of every run of this project, together with qaperformance.</div></div>
+      {% set all_spaces = chat_spaces_all %}
+      {% if all_spaces %}
+      <div class="field"><label>Extra Google Chat spaces for this project</label>
+        {% for sp in all_spaces %}<label class="check"><input type="checkbox" name="chat_spaces" value="{{ sp.id }}" {{ 'checked' if sp.id in ps.chat_spaces or sp.default }} {{ 'disabled' if sp.default }}> {{ sp.name }}{{ ' (default, always notified)' if sp.default }}</label>{% endfor %}</div>
+      {% endif %}
+      {% if nr_enabled %}
+      <div class="field"><label>New Relic APM services (pinned)</label>
+        <div class="mono">{{ ps.nr_apps|join(', ') if ps.nr_apps else 'none — discovered automatically for each run (Tags → New Relic to pin)' }}</div></div>
+      {% endif %}
+      <h2 class="mt">Grafana</h2>
+      <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>
+    </div>
+    <div class="panel">
+      <h2>Shift-left · Bitbucket</h2>
+      <div class="field"><label>Application repository</label><input type="text" name="bitbucket_repo" value="{{ ps.bitbucket_repo }}" placeholder="bancobase/baseinet">
+        <div class="hint">The repo of the application under test (not this scripts repo).</div></div>
+      <div class="row">
+        <div class="field"><label>Tag to run</label><select name="sl_tag"><option value="">—</option>{% for t in tags if t.exists %}<option {{ 'selected' if t.tag == ps.shiftleft.tag }}>{{ t.tag }}</option>{% endfor %}</select></div>
+        <div class="field"><label>Target branch</label><input type="text" name="sl_branch" value="{{ ps.shiftleft.base_branch }}" placeholder="repo main branch"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Users</label><input type="number" name="sl_threads" value="{{ ps.shiftleft.threads }}" min="1"></div>
+        <div class="field"><label>Duration (s)</label><input type="number" name="sl_duration" value="{{ ps.shiftleft.duration }}" min="10"></div>
+        <div class="field"><label>SLA p95 (ms)</label><input type="number" name="sl_p95" value="{{ ps.shiftleft.sla_p95 }}" step="any"></div>
+        <div class="field"><label>SLA error %</label><input type="number" name="sl_err" value="{{ ps.shiftleft.sla_err }}" step="any"></div>
+      </div>
+      <div class="field"><label>Runner label</label><input type="text" name="sl_runner" value="{{ ps.shiftleft.runner_label }}"></div>
+      <p class="hint">The scripts use <code>-Jthreads</code> / <code>-Jduration</code>; make sure the JMX reads them (<code>${__P(threads,1)}</code>).</p>
+    </div>
+  </div>
+  {% if can('operator') %}<button class="btn primary mt">Save project settings</button>{% endif %}
+</form>
+<div class="panel mt">
+  <div class="page-head" style="margin-bottom:8px"><h2 style="margin:0">1-click shift-left</h2>
+    <div class="actions">
+      <button class="btn" id="sl-preview" data-url="{{ url_for('shiftleft_files', name=name) }}">Preview files</button>
+      {% if can('operator') %}<form method="post" action="{{ url_for('shiftleft_pr', name=name) }}" data-confirm="Open a pull request in {{ ps.bitbucket_repo or 'the repository' }} adding the performance gate?">{{ csrf() }}<button class="btn primary" {{ 'disabled' if not (ps.bitbucket_repo and ps.shiftleft.tag) }}>⇪ Open PR in Bitbucket</button></form>{% endif %}
+    </div></div>
+  <p class="muted">Creates a branch + pull request in the application repo with <code>perf/perf-gate.sh</code>, a README and the Bitbucket Pipelines step.
+  The step runs on a self-hosted runner on the JMeter Master, launches <b>{{ ps.shiftleft.tag or 'the chosen tag' }}</b> through <code>/api/v1/runs</code> and fails the pipeline if p95 &gt; {{ ps.shiftleft.sla_p95 }} ms or errors &gt; {{ ps.shiftleft.sla_err }} %.</p>
+  <div id="sl-files"></div>
+</div>
+{% endif %}
+
+{# ============================== MONITOR ============================== #}
+{% if tab == 'monitor' %}
+<div class="panel">
+  <h2>InfluxDB targets found in this project's Backend Listeners</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Database</th><th>application</th><th>influxdbUrl</th><th></th></tr></thead>
+    <tbody>
+    {% for t in targets %}
+      <tr><td class="mono">{{ t.db }}</td><td class="mono">{{ t.application }}</td>
+        <td class="mono muted">{{ t.url }}{% if t.localhost and slaves %} <span class="badge stopped" title="In distributed mode the slaves would write to their own localhost">localhost</span>{% endif %}</td>
+        <td class="right"><a class="btn sm primary" href="{{ url_for('monitor', db=t.db, app=t.application) }}">Open live monitor</a></td></tr>
+    {% else %}<tr><td colspan="4" class="empty">No enabled InfluxDB Backend Listener found in the tagged scripts.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
+{% endblock %}

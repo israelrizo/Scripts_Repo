@@ -1,0 +1,4 @@
+# Copy to ~/.jmeter-control-center.conf (the installers do it for you)
+JMCC_HOME=$HOME/Documents/Github/Scripts_Repo   # your clone of the scripts repository
+PORT=8090
+# AWS profile, region, instance ids, Gmail, Chat... are configured inside the app: Settings → AWS

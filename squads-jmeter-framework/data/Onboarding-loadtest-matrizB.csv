@@ -1,0 +1,2 @@
+clientId,contentId,documentType,taxId,teardown,estadoFinalEsperado,binarioAlFinal,notas
+6100009,068VB00000JpdQzYAJ,ine,LTQA800110F09,8a DELETE binary,BOW_REVIEW,404 (descarte automatico),Volumen principal. Omitir pasos 6 y 7 (depositan en OnBase).

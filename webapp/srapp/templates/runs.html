@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "_macros.html" import run_row %}
+{% block title %}Executions{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Executions</h1><p class="sub">Every run launched from the web app (logs in <code>webapp/instance/runs</code>).</p></div></div>
+<div class="panel"><div class="table-wrap"><table>
+  <thead><tr><th>Run</th><th>Project</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Duration</th><th>User</th><th></th></tr></thead>
+  <tbody>{% for r in runs %}{{ run_row(r) }}{% else %}<tr><td colspan="8" class="empty">Nothing yet.</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

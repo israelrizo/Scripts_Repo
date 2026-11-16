@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Compare reports{% endblock %}
+{% macro fmt(v, d=0) %}{{ '—' if v is none else ('{:,.%df}'|format(d)).format(v) }}{% endmacro %}
+{% block content %}
+<div class="page-head">
+  <div><p class="sub"><a href="{{ url_for('project', name=name, tab='results') }}">{{ name }}</a> / reports</p><h1>Compare executions</h1>
+  <p class="sub">From each run's <code>html_report/statistics.json</code>. A transaction <b class="verdict-regressed">regresses</b> when the metric is worse than the baseline by more than the threshold or its error rate rises more than 1 point.</p></div>
+  {% if data %}<a class="btn" href="{{ request.full_path }}&format=csv">⬇ CSV</a>{% endif %}
+</div>
+
+<form class="panel toolbar" method="get">
+  <div class="field" style="flex:2;min-width:260px"><label>Baseline</label>
+    <select name="base">{% for r in all_results %}<option value="{{ r.name }}" {{ 'selected' if data and r.name == data.base }}>{{ r.name.replace('Ejecucion_','') }}{{ ' ★' if r.name in baselines.values() }}</option>{% endfor %}</select></div>
+  <div class="field" style="flex:3;min-width:260px"><label>Compare with (Ctrl/⌘ for several)</label>
+    <select name="r" multiple size="4">{% for r in all_results %}<option value="{{ r.name }}" {{ 'selected' if data and r.name in data.runs[1:] }}>{{ r.name.replace('Ejecucion_','') }}</option>{% endfor %}</select></div>
+  <div class="field"><label>Metric</label><select name="metric">{% for m in ['p95','avg','p90','p99'] %}<option {{ 'selected' if data and data.metric == m }}>{{ m }}</option>{% endfor %}</select></div>
+  <div class="field" style="min-width:120px"><label>Threshold %</label><input type="number" name="thr" value="{{ data.threshold|int if data else 10 }}" min="1" max="200"></div>
+  <button class="btn primary">Compare</button>
+</form>
+
+{% if not data %}
+<div class="panel mt empty">No executions with an HTML report yet.</div>
+{% else %}
+{% set base_total = data.stats[data.base].get('Total', {}) if data.base else {} %}
+<div class="grid kpis mt">
+  {% for r in data.runs[1:] %}{% set t = data.stats[r].get('Total', {}) %}{% set c = data.counts[r] %}
+  <div class="kpi {{ 'bad' if c.regressed else 'good' }}">
+    <div class="label mono">{{ r.replace('Ejecucion_','')[:22] }}</div>
+    <div class="value">{{ c.regressed }} <span style="font-size:13px;font-weight:500">regressed</span></div>
+    <div class="hint">{{ c.improved }} improved · {{ c.same }} unchanged</div>
+  </div>
+  {% for key, label, unit in [('avg','Avg','ms'), ('p95','p95','ms'), ('error_pct','Error','%'), ('tps','TPS','')] %}
+  {% set nv, bv = t.get(key), base_total.get(key) %}
+  <div class="kpi"><div class="label">{{ label }} vs baseline</div>
+    <div class="value">{{ fmt(nv, 1 if key in ('error_pct','tps') else 0) }}<span style="font-size:12px"> {{ unit }}</span></div>
+    {% if nv is not none and bv %}{% set d = ((nv - bv) / bv * 100)|round(1) %}{% set worse = (d > 0) if key != 'tps' else (d < 0) %}
+      <div class="{{ 'delta-up' if worse else 'delta-down' }}">{{ '%+.1f'|format(d) }} % (base {{ fmt(bv, 1 if key in ('error_pct','tps') else 0) }})</div>{% endif %}
+  </div>
+  {% endfor %}
+  {% endfor %}
+</div>
+
+<div class="grid two mt">
+  <div class="panel"><h3>{{ data.metric }} by transaction (ms)</h3><div class="chart-box tall"><canvas id="cmp-tx" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
+  <div class="panel"><h3>Δ {{ data.metric }} vs baseline (%)</h3><div class="chart-box tall"><canvas id="cmp-delta" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
+</div>
+<div class="panel mt"><h3>Trend · every execution of this script</h3><div class="chart-box"><canvas id="cmp-trend" role="img" aria-label="Comparison chart (values in the table below)"></canvas></div></div>
+
+<div class="panel mt"><div class="table-wrap"><table>
+  <thead>
+    <tr><th rowspan="2">Transaction</th>{% for r in data.runs %}<th colspan="{{ 3 if loop.first else 4 }}" style="text-align:center" class="mono">{% if loop.first %}<span class="pill base">BASE</span> {% endif %}{{ r.replace('Ejecucion_','')[:22] }}</th>{% endfor %}</tr>
+    <tr>{% for r in data.runs %}<th class="num">Samples</th><th class="num">Err %</th><th class="num">{{ data.metric }}</th>{% if not loop.first %}<th class="num">Δ</th>{% endif %}{% endfor %}</tr>
+  </thead>
+  <tbody>
+  {% for row in data.rows %}
+    <tr {% if row.name == 'Total' %}style="font-weight:700"{% endif %}>
+      <td>{{ row.name }}</td>
+      {% for c in row.cells %}
+        {% if c.s %}
+          <td class="num">{{ fmt(c.s.samples) }}</td>
+          <td class="num {{ 'delta-up' if c.err_delta and c.err_delta > 1 }}">{{ c.s.error_pct }}</td>
+          <td class="num {{ 'cell-' ~ c.verdict }}">{{ fmt(c.s[data.metric]) }}</td>
+          {% if not loop.first %}<td class="num verdict-{{ c.verdict }}">{% if c.delta is not none %}{{ '%+.1f'|format(c.delta) }}%{% else %}{{ c.verdict }}{% endif %}</td>{% endif %}
+        {% else %}<td colspan="{{ 3 if loop.first else 4 }}" class="muted" style="text-align:center">—</td>{% endif %}
+      {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+<script id="cmp-data" type="application/json">{{ {'runs': data.runs, 'rows': data.rows, 'metric': data.metric, 'trend': data.trend, 'thr': data.threshold}|tojson }}</script>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='live.js') }}"></script>
+<script>SR.compareCharts();</script>
+{% endblock %}

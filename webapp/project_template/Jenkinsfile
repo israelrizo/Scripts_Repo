@@ -1,0 +1,26 @@
+pipeline {
+    // Etiqueta del nodo Jenkins que actúa como inyector de carga (Master JMeter)
+    agent { label 'generador-jmeter' }
+
+    parameters {
+        string(name: 'TAG', defaultValue: '', description: 'Tag de run_by_tag.sh ({{APP_NAME}}). Ejecuta ./run_by_tag.sh sin argumentos para listarlos.')
+        string(name: 'EXTRA_PROPS', defaultValue: '', description: 'Overrides opcionales, ej. -Jthreads=50 -Jduration=600')
+    }
+
+    stages {
+        stage('Preparacion') {
+            steps { dir('{{PROJECT_FOLDER}}') { sh 'chmod +x run_by_tag.sh' } }
+        }
+        stage('Ejecutar Prueba en Generador') {
+            steps { dir('{{PROJECT_FOLDER}}') { sh "./run_by_tag.sh ${params.TAG} ${params.EXTRA_PROPS}" } }
+        }
+    }
+
+    post {
+        always {
+            dir('{{PROJECT_FOLDER}}') {
+                archiveArtifacts artifacts: 'results/*.tar.gz', allowEmptyArchive: true
+            }
+        }
+    }
+}

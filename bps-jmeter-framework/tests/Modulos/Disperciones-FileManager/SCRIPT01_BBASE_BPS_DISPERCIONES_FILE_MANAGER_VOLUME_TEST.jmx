@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="SMOKE_TEST - SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER">
+      <stringProp name="TestPlan.comments">http://kongproxy-qa.bancobase.net/ /v2/oauth/token 10.48.45.10 /esb/api/funddispersionApi/payments/</stringProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="P_BaseURL" elementType="Argument">
+            <stringProp name="Argument.name">P_BaseURL</stringProp>
+            <stringProp name="Argument.value">kongproxy-qa.bancobase.net</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_PathPrefix" elementType="Argument">
+            <stringProp name="Argument.name">P_PathPrefix</stringProp>
+            <stringProp name="Argument.value">/atrx/payments/</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_tt" elementType="Argument">
+            <stringProp name="Argument.name">P_tt</stringProp>
+            <stringProp name="Argument.value">4000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_Timeout" elementType="Argument">
+            <stringProp name="Argument.name">P_Timeout</stringProp>
+            <stringProp name="Argument.value">350000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_PathPrefix2" elementType="Argument">
+            <stringProp name="Argument.name">P_PathPrefix2</stringProp>
+            <stringProp name="Argument.value">/v2/oauth/token</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <longProp name="ThreadGroup.duration">940</longProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">17</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="P_Username" elementType="Argument">
+              <stringProp name="Argument.name">P_Username</stringProp>
+              <stringProp name="Argument.value">founddisp</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="P_Machine_Name" elementType="Argument">
+              <stringProp name="Argument.name">P_Machine_Name</stringProp>
+              <stringProp name="Argument.value">founddisp</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+          <stringProp name="CounterConfig.start">200</stringProp>
+          <stringProp name="CounterConfig.end">10000</stringProp>
+          <stringProp name="CounterConfig.incr">200</stringProp>
+          <stringProp name="CounterConfig.name">P_LotSize</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller">
+          <stringProp name="IfController.condition">${__groovy(vars.get(&apos;C_Auth_Token&apos;) == null || (System.currentTimeMillis() / 1000) &gt;= (vars.get(&apos;C_Token_Expiry&apos;) as Long) - 240)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER_T00_OAUTHAPI ${__P(ClientID)} ${__P(ClientS)}" enabled="true">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${P_PathPrefix2}" enabled="true">
+              <stringProp name="HTTPSampler.domain">${P_BaseURL}</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">${P_PathPrefix2}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="client_id" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                    <stringProp name="Argument.value">gfb-client-qaperf1</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">client_id</stringProp>
+                    <stringProp name="HTTPArgument.content_type">text/plain</stringProp>
+                  </elementProp>
+                  <elementProp name="client_secret" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                    <stringProp name="Argument.value">M9w6OuXXKUPjNuHd</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">client_secret</stringProp>
+                  </elementProp>
+                  <elementProp name="grant_type" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                    <stringProp name="Argument.value">client_credentials</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">grant_type</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="C_Auth_Token Extractor" enabled="true">
+              <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+              <stringProp name="BoundaryExtractor.refname">C_Auth_Token</stringProp>
+              <stringProp name="BoundaryExtractor.lboundary">{&quot;scope&quot;:[&quot;payments:write&quot;,&quot;payments:read&quot;],&quot;access_token&quot;:&quot;</stringProp>
+              <stringProp name="BoundaryExtractor.rboundary">&quot;,&quot;token_type&quot;:&quot;bearer&quot;</stringProp>
+              <stringProp name="BoundaryExtractor.default">NOTFOUND</stringProp>
+              <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+              <stringProp name="BoundaryExtractor.match_number"></stringProp>
+            </BoundaryExtractor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="C_Token_Expiry PostProcessor" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">// Get current time in seconds
+long currentTimeInSeconds = System.currentTimeMillis() / 1000;
+
+// Token lasts 600s, but we use a 590s buffer to prevent edge-case expiration mid-flight
+long expiryTime = currentTimeInSeconds + 590; 
+
+// Save the expiry timestamp to a variable
+vars.put(&apos;C_Token_Expiry&apos;, String.valueOf(expiryTime));
+
+</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think_Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER_T01_CreateBatch_POST">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Username</stringProp>
+                <stringProp name="Header.value">${P_Username}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Machine-Name</stringProp>
+                <stringProp name="Header.value">${P_Machine_Name}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_Auth_Token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import groovy.json.JsonOutput
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Random
+
+// =========================================================================
+// 1. CÁLCULO DINÁMICO DE P_LotSize
+// - Iteraciones 0 a 15: Crecimiento progresivo acumulando 20,000 transacciones.
+// - Iteración 16 en adelante: 5,000 bloques = 10,000 transacciones en el último envío.
+// - Total acumulado al final de 17 iteraciones = 30,000 transacciones exactas.
+// =========================================================================
+int currentIteration = 0
+try {
+    currentIteration = ctx.getVariables().getIteration() - 1
+} catch (Exception e) {
+    currentIteration = 0
+}
+
+int calculatedLotSize = 0
+
+if (currentIteration &lt; 16) {
+    // Incrementa 75 bloques (150 txs) por iteración: 75, 150, 225, ..., 1200
+    // Suma de bloques (0 a 15) = 10,000 bloques * 2 tipos de tx = 20,000 transacciones
+    calculatedLotSize = 75 + (currentIteration * 75)
+} else {
+    // Última iteración (o superior): 5,000 bloques * 2 tipos de tx = 10,000 transacciones
+    calculatedLotSize = 5000
+}
+
+vars.put(&quot;P_LotSize&quot;, String.valueOf(calculatedLotSize))
+
+
+// =========================================================================
+// 2. FECHA PROGRAMADA (+1 día y +10 minutos desde el momento actual)
+// =========================================================================
+LocalDateTime futureDateTime = LocalDateTime.now()
+    .plusDays(3)
+    .withHour(10)
+    .withMinute(30)
+    .withSecond(0)
+    .withNano(0)
+
+String combinedDateTime = futureDateTime.format(DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm&quot;))
+vars.put(&quot;P_Scheduled_Date&quot;, combinedDateTime)
+
+
+// =========================================================================
+// 3. NOMBRE DE ARCHIVO BASADO EN CONCEPTO
+// =========================================================================
+String rawBody = sampler.getArguments().getArgument(0).getValue()
+String fileName = &quot;&quot;
+long timestamp = System.currentTimeMillis()
+
+if (rawBody) {
+    def matcher = rawBody =~ /&quot;operationConcept&quot;\s*:\s*&quot;([^&quot;]+)&quot;/
+    if (matcher.find()) {
+        String operationConcept = matcher[0][1]
+        String conceptLower = operationConcept.toLowerCase()
+        
+        if (conceptLower.contains(&quot;spid&quot;)) {
+            fileName = &quot;spid_&quot; + timestamp
+        } else if (conceptLower.contains(&quot;spei&quot;)) {
+            fileName = &quot;spei_&quot; + timestamp
+        } else if (conceptLower.contains(&quot;traspasos&quot;)) {
+            fileName = &quot;traspaso_&quot; + timestamp
+        } else if (conceptLower.contains(&quot;swift&quot;)) {
+            fileName = &quot;swift_&quot; + timestamp
+        } else if (conceptLower.contains(&quot;mixto&quot;)) {
+            fileName = &quot;mixto_&quot; + timestamp
+        }
+    }
+}
+
+if (fileName.isEmpty()) {
+    fileName = &quot;batch_&quot; + timestamp
+}
+vars.put(&quot;P_File_Name&quot;, fileName)
+
+
+// =========================================================================
+// 4. GENERACIÓN DE TRANSACCIONES DINÁMICAS
+// =========================================================================
+def rand = new Random()
+
+def txSPEI = [
+    &quot;sourceId&quot;: &quot;33&quot;, &quot;clientId&quot;: &quot;391400&quot;, &quot;transactionType&quot;: &quot;SPEI&quot;, &quot;payerAccountNumber&quot;: &quot;145580039140001027&quot;,
+    &quot;payerCurrencyCode&quot;: &quot;MXP&quot;, &quot;recipientAccountNumber&quot;: &quot;012580015083610648&quot;, &quot;recipientBankId&quot;: &quot;40012&quot;,
+    &quot;recipientBankName&quot;: &quot;BBVA BANCOMER&quot;, &quot;recipientName&quot;: &quot;JAIME YADIR PARAS CERECERO&quot;,
+    &quot;recipientRfc&quot;: &quot;PACJ8601043V6&quot;, &quot;recipientPersonType&quot;: &quot;Fisica&quot;, &quot;recipientEmail&quot;: &quot;&quot;,
+    &quot;recipientAddress&quot;: &quot;&quot;, &quot;recipientCountry&quot;: &quot;&quot;, &quot;amount&quot;: 1.0,
+    &quot;paymentConcept&quot;: &quot;Test SPEI desde Postman&quot;, &quot;additionalInfo&quot;: &quot;Adicional info&quot;, &quot;numericReference&quot;: &quot;1234567&quot;
+]
+
+def txOwn = [
+    &quot;sourceId&quot;: &quot;33&quot;, &quot;clientId&quot;: &quot;391400&quot;, &quot;transactionType&quot;: &quot;TRANSFER_OWN_ACCOUNTS&quot;,
+    &quot;payerAccountNumber&quot;: &quot;145580039140001027&quot;, &quot;payerCurrencyCode&quot;: &quot;MXP&quot;, &quot;recipientClientId&quot;: &quot;391400&quot;,
+    &quot;recipientAccountNumber&quot;: &quot;145580039140001988&quot;, &quot;recipientName&quot;: &quot;SANDRA MARGARITA&quot;, &quot;recipientRfc&quot;: &quot;&quot;,
+    &quot;recipientPersonType&quot;: &quot;&quot;, &quot;recipientEmail&quot;: &quot;&quot;, &quot;recipientAddress&quot;: &quot;&quot;,
+    &quot;recipientCountry&quot;: &quot;&quot;, &quot;amount&quot;: 1.0, &quot;paymentConcept&quot;: &quot;Transferencia entre cuentas propias&quot;,
+    &quot;additionalInfo&quot;: &quot;Transferencia entre cuentas propias&quot;, &quot;numericReference&quot;: &quot;1000001&quot;
+]
+
+def baseTransactions = [txSPEI, txOwn]
+def dynamicTxList = []
+
+int bloques = calculatedLotSize
+
+for (int i = 0; i &lt; bloques; i++) {
+    baseTransactions.each { baseTx -&gt;
+        def newTx = new HashMap(baseTx)
+        newTx.numericReference = String.valueOf(rand.nextInt(9000000) + 1000000)
+        newTx.paymentConcept = baseTx.paymentConcept + &quot; L200-&quot; + (i + 1)
+        dynamicTxList.add(newTx)
+    }
+}
+
+// 5. Salida plana en JSON para el sampler
+def finalString = dynamicTxList.collect { JsonOutput.toJson(it) }.join(&quot;,&quot;)
+vars.put(&quot;dynamicTransactions&quot;, finalString)</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${P_PathPrefix}/batch">
+            <stringProp name="HTTPSampler.response_timeout">${P_Timeout}</stringProp>
+            <stringProp name="HTTPSampler.domain">${P_BaseURL}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;clientId&quot;: &quot;391400&quot;,&#xd;
+    &quot;payerName&quot;: &quot;Frisa Forjados, SA de CV&quot;,&#xd;
+    &quot;sourceId&quot;: 36,&#xd;
+    &quot;fileName&quot;: &quot;${P_File_Name}&quot;,&#xd;
+    &quot;operationConcept&quot;: &quot;Lote de pagos MIXTO&quot;,&#xd;
+    &quot;scheduleDate&quot;: &quot;${P_Scheduled_Date}&quot;,&#xd;
+    &quot;configTypeId&quot;: 1,&#xd;
+    &quot;transactions&quot;: [ ${dynamicTransactions} ]&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1913991655">{&quot;createdDate&quot;:</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+          <BoundaryExtractor guiclass="BoundaryExtractorGui" testclass="BoundaryExtractor" testname="C_Batch_ID Extractor">
+            <stringProp name="BoundaryExtractor.useHeaders">false</stringProp>
+            <stringProp name="BoundaryExtractor.refname">C_Batch_ID</stringProp>
+            <stringProp name="BoundaryExtractor.lboundary">,&quot;id&quot;:</stringProp>
+            <stringProp name="BoundaryExtractor.rboundary">,&quot;consumer&quot;</stringProp>
+            <stringProp name="BoundaryExtractor.default"></stringProp>
+            <boolProp name="BoundaryExtractor.default_empty_value">false</boolProp>
+            <stringProp name="BoundaryExtractor.match_number"></stringProp>
+          </BoundaryExtractor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor - CapturaDatos">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">// 1. Obtener la variable con el nombre exacto
+String batchId = vars.get(&quot;C_Batch_ID&quot;)
+String scheduledDate = vars.get(&quot;P_Scheduled_Date&quot;)
+
+// 2. Ruta del archivo (se creará automáticamente)
+String filePath = &quot;data/batch_executions0923.txt&quot;
+
+// 3. Escribir en el archivo
+if (batchId &amp;&amp; batchId != &quot;NOT_FOUND&quot;) {
+    String line = &quot;${batchId},${scheduledDate}\n&quot;
+    
+    try {
+        java.nio.file.Files.write(
+            java.nio.file.Paths.get(filePath), 
+            line.getBytes(&quot;UTF-8&quot;), 
+            java.nio.file.StandardOpenOption.CREATE, 
+            java.nio.file.StandardOpenOption.APPEND
+        )
+    } catch (Exception e) {
+        log.error(&quot;Error al escribir en el archivo: &quot; + e.getMessage())
+    }
+}</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER_T02_PATCH">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Username</stringProp>
+                <stringProp name="Header.value">${P_Username}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Machine-Name</stringProp>
+                <stringProp name="Header.value">${P_Machine_Name}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_Auth_Token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${P_PathPrefix}/batch/batch/Auth" enabled="true">
+            <stringProp name="HTTPSampler.response_timeout">${P_Timeout}</stringProp>
+            <stringProp name="HTTPSampler.domain">${P_BaseURL}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_Batch_ID}</stringProp>
+            <stringProp name="HTTPSampler.method">PATCH</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&#xd;
+    &quot;status&quot;: &quot;AUTORIZADA&quot;&#xd;
+}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="1847768701">&quot;success&quot;:true,&quot;</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">true</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think_Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_tt}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_BBASE_BPS_DISPERCIONES_FILE_MANAGER_T03_GET" enabled="true">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Content-Type</stringProp>
+                <stringProp name="Header.value">application/json</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Username</stringProp>
+                <stringProp name="Header.value">${P_Username}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Machine-Name</stringProp>
+                <stringProp name="Header.value">${P_Machine_Name}</stringProp>
+              </elementProp>
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Bearer ${C_Auth_Token}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="${P_PathPrefix}/batch/batch/Fetch" enabled="true">
+            <stringProp name="HTTPSampler.response_timeout">${P_Timeout}</stringProp>
+            <stringProp name="HTTPSampler.domain">${P_BaseURL}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">${P_PathPrefix}/batch/${C_Batch_ID}</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="-1492206857">&quot;processStatus&quot;:</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.custom_message"></stringProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Pacing 180">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">3000</stringProp>
+        </TestAction>
+        <hashTree/>
+      </hashTree>
+      <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+        <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="influxdbMetricsSender" elementType="Argument">
+              <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+              <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="influxdbUrl" elementType="Argument">
+              <stringProp name="Argument.name">influxdbUrl</stringProp>
+              <stringProp name="Argument.value">http://localhost:8086/write?db=BPS_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="application" elementType="Argument">
+              <stringProp name="Argument.name">application</stringProp>
+              <stringProp name="Argument.value">BPS_QA</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="measurement" elementType="Argument">
+              <stringProp name="Argument.name">measurement</stringProp>
+              <stringProp name="Argument.value">jmeter</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="summaryOnly" elementType="Argument">
+              <stringProp name="Argument.name">summaryOnly</stringProp>
+              <stringProp name="Argument.value">false</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="samplersRegex" elementType="Argument">
+              <stringProp name="Argument.name">samplersRegex</stringProp>
+              <stringProp name="Argument.value">.*</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="percentiles" elementType="Argument">
+              <stringProp name="Argument.name">percentiles</stringProp>
+              <stringProp name="Argument.value">99;95;90</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="testTitle" elementType="Argument">
+              <stringProp name="Argument.name">testTitle</stringProp>
+              <stringProp name="Argument.value">DISPERCIONES_BPS_QA_LoadTest</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="eventTags" elementType="Argument">
+              <stringProp name="Argument.name">eventTags</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </elementProp>
+        <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+      </BackendListener>
+      <hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}New project{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>New client project</h1>
+<p class="sub">Creates a folder with the same structure as the existing frameworks (based on <code>blacklist-jmeter-framework</code>).</p></div></div>
+<div class="grid two">
+<form class="panel" method="post">
+  {{ csrf() }}
+  <div class="field">
+    <label for="slug">Project id</label>
+    <input id="slug" type="text" name="slug" required pattern="[a-z0-9][a-z0-9\-]{1,40}" placeholder="e.g. tesoreria" oninput="document.getElementById('pv').textContent=(this.value||'&lt;id&gt;')+'{{ suffix }}'">
+    <div class="hint">Folder: <code id="pv">&lt;id&gt;{{ suffix }}</code></div>
+  </div>
+  <div class="field">
+    <label for="app_name">Application display name</label>
+    <input id="app_name" type="text" name="app_name" placeholder="e.g. Tesoreria">
+    <div class="hint">Used in README, docs and as the Google Drive folder name.</div>
+  </div>
+  <div class="field">
+    <label for="folders">Test sub-folders</label>
+    <textarea id="folders" name="folders" rows="3">Modulos, Optimizaciones, Escenarios</textarea>
+    <div class="hint">Comma separated, nested with '/', e.g. <code>Optimizaciones/Paquete_1</code>.</div>
+  </div>
+  <button class="btn primary">Create project</button>
+</form>
+<div class="panel">
+  <h2>What gets created</h2>
+<pre class="mono muted" style="margin:0">&lt;id&gt;{{ suffix }}/
+├── README.md, COMANDOS_EJECUCION.md, EJECUCION_GENERADOR_CARGA.md
+├── GUIA_INTEGRACION_PIPELINE.md, Jenkinsfile
+├── run_by_tag.sh      # tag dictionary (edited from this UI)
+├── run_test.sh        # ad-hoc wrapper (-t -u -r -d -e)
+├── upload_reports.sh  # bulk upload to Google Drive
+├── data/              # CSV / TXT data files
+├── results/           # Ejecucion_&lt;timestamp&gt;_&lt;script&gt;/
+└── tests/&lt;your sub-folders&gt;/</pre>
+  <p class="hint">The template's <code>run_by_tag.sh</code> also forwards extra <code>-J</code> overrides and lists tags automatically in its help.</p>
+</div>
+</div>
+{% endblock %}

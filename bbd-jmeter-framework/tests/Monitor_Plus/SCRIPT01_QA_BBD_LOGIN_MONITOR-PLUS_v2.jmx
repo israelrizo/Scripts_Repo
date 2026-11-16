@@ -1,0 +1,1066 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="[Load Test] - SCRIPT01_QA_BBD_LOGIN_MONITOR-PLUS">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="P_sil_url" elementType="Argument">
+            <stringProp name="Argument.name">P_sil_url</stringProp>
+            <stringProp name="Argument.value">digitalbank-k8s-qa.bancobase.net</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_TT" elementType="Argument">
+            <stringProp name="Argument.name">P_TT</stringProp>
+            <stringProp name="Argument.value">5000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_CountryCode" elementType="Argument">
+            <stringProp name="Argument.name">P_CountryCode</stringProp>
+            <stringProp name="Argument.value">65535</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="P_mobileURL" elementType="Argument">
+            <stringProp name="Argument.name">P_mobileURL</stringProp>
+            <stringProp name="Argument.value">mobileplatform-qa.base.mx</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config - data/Usuarios_BBD_UserPassTokenDeviceID.csv">
+        <stringProp name="delimiter">,</stringProp>
+        <stringProp name="fileEncoding">UTF-8</stringProp>
+        <stringProp name="filename">data/Usuarios_BBD_UserPassTokenDeviceID.csv</stringProp>
+        <boolProp name="ignoreFirstLine">true</boolProp>
+        <boolProp name="quotedData">false</boolProp>
+        <boolProp name="recycle">true</boolProp>
+        <stringProp name="shareMode">shareMode.all</stringProp>
+        <boolProp name="stopThread">false</boolProp>
+        <stringProp name="variableNames">P_User,P_Password,P_Token,P_DeviceID</stringProp>
+      </CSVDataSet>
+      <hashTree/>
+      <CacheManager guiclass="CacheManagerGui" testclass="CacheManager" testname="HTTP Cache Manager" enabled="true">
+        <boolProp name="clearEachIteration">true</boolProp>
+        <boolProp name="useExpires">true</boolProp>
+        <boolProp name="CacheManager.controlledByThread">false</boolProp>
+      </CacheManager>
+      <hashTree/>
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+        <collectionProp name="CookieManager.cookies"/>
+        <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+        <boolProp name="CookieManager.controlledByThreadGroup">false</boolProp>
+      </CookieManager>
+      <hashTree/>
+      <kg.apc.jmeter.threads.SteppingThreadGroup guiclass="kg.apc.jmeter.threads.SteppingThreadGroupGui" testclass="kg.apc.jmeter.threads.SteppingThreadGroup" testname="SCRIPT01_QA_BBD_LOGIN_MONITOR-PLUS">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="ThreadGroup.num_threads">120</stringProp>
+        <stringProp name="Threads initial delay">0</stringProp>
+        <stringProp name="Start users count">20</stringProp>
+        <stringProp name="Start users count burst">0</stringProp>
+        <stringProp name="Start users period">180</stringProp>
+        <stringProp name="Stop users count">2</stringProp>
+        <stringProp name="Stop users period">1</stringProp>
+        <stringProp name="flighttime">2520</stringProp>
+        <stringProp name="rampUp">20</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </kg.apc.jmeter.threads.SteppingThreadGroup>
+      <hashTree>
+        <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="OnceOnly Controller - T01"/>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="security/v1/auth/login/:user_name" enabled="false">
+            <stringProp name="HTTPSampler.domain">${P_sil_url}</stringProp>
+            <stringProp name="HTTPSampler.port">443</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">security/v1/auth/login/${P_User}</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_User_ID" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">C_User_ID</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.user_id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_User_Name" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">C_User_Name</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.user_name</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_FullName" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">C_FullName</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.full_name</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_Email" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">C_Email</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.email</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_Track" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">C_Track</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.track</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="api-key" elementType="Header">
+                <stringProp name="Header.name">api-key</stringProp>
+                <stringProp name="Header.value">64f7bdbcda821a743458df60</stringProp>
+              </elementProp>
+              <elementProp name="channel" elementType="Header">
+                <stringProp name="Header.name">channel</stringProp>
+                <stringProp name="Header.value">64343eed91b9323e49d433c1</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_BBD_LOGIN_MONITOR-PLUS_T01_ValidarUsuario" enabled="true">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="security/v1/auth/login/:user_name" enabled="true">
+              <stringProp name="HTTPSampler.domain">${P_sil_url}</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">security/v1/auth/login/${P_User}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_User_ID" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_User_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.user_id</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_User_Name" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_User_Name</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.user_name</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_FullName" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_FullName</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.full_name</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_Email" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_Email</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.email</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_Track" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">C_Track</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.track</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <ThroughputController guiclass="ThroughputControllerGui" testclass="ThroughputController" testname="Throughput Controller 50 / 50">
+          <intProp name="ThroughputController.style">1</intProp>
+          <boolProp name="ThroughputController.perThread">false</boolProp>
+          <intProp name="ThroughputController.maxThroughput">1</intProp>
+          <FloatProperty>
+            <name>ThroughputController.percentThroughput</name>
+            <value>50.0</value>
+            <savedValue>0.0</savedValue>
+          </FloatProperty>
+        </ThroughputController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_BBD_LOGIN_MONITOR-PLUS_T02_Login_con_MonitorPlus-WEB">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="api-key" elementType="Header">
+                  <stringProp name="Header.name">api-key</stringProp>
+                  <stringProp name="Header.value">64f7bdbcda821a743458df60</stringProp>
+                </elementProp>
+                <elementProp name="channel" elementType="Header">
+                  <stringProp name="Header.name">channel</stringProp>
+                  <stringProp name="Header.value">64343eed91b9323e49d433c1</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="security/mp/v1/auth/login - Web">
+              <stringProp name="HTTPSampler.domain">${P_sil_url}</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">security/mp/v1/auth/login</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;user_id&quot;: &quot;${C_User_ID}&quot;,&#xd;
+  &quot;password&quot;: &quot;${P_Password}&quot;,&#xd;
+  &quot;token&quot;: &quot;${P_Token}&quot;,&#xd;
+  &quot;tracker&quot;: {&#xd;
+    &quot;Header&quot;: {&#xd;
+      &quot;rtind&quot;: &quot;S&quot;,&#xd;
+      &quot;date&quot;: &quot;${__time(ddMMyyyy,)}&quot;,&#xd;
+      &quot;time&quot;: &quot;${__time(HHmm,)}&quot;,&#xd;
+      &quot;event&quot;: &quot;1308&quot;,&#xd;
+      &quot;user&quot;: &quot;${C_user_id}&quot;,&#xd;
+      &quot;nicknamenode&quot;: &quot;BCB&quot;,&#xd;
+      &quot;nicknamemodule&quot;: &quot;DBF&quot;&#xd;
+    },&#xd;
+    &quot;Fields&quot;: {&#xd;
+      &quot;CodigoEntidad&quot;: &quot;0001&quot;,&#xd;
+      &quot;IdCliente&quot;: &quot;${C_Track}&quot;,&#xd;
+      &quot;UsuarioBancaDigital&quot;: &quot;${C_User_Name}&quot;,&#xd;
+      &quot;CodigoCliente&quot;: &quot;&quot;,&#xd;
+      &quot;TipoPersona&quot;: &quot;N&quot;,&#xd;
+      &quot;CorreoElectronico&quot;: &quot;${C_Email}&quot;,&#xd;
+      &quot;DominioEmail&quot;: &quot;***.com&quot;,&#xd;
+      &quot;OrigenDeTransaccion&quot;: &quot;WEB&quot;,&#xd;
+      &quot;AccionDentroSesion&quot;: &quot;WEB&quot;,&#xd;
+      &quot;CodigoTransaccion&quot;: &quot;91&quot;,&#xd;
+      &quot;CodigoRespuestaHost&quot;: &quot;&quot;,&#xd;
+      &quot;FechaTrx&quot;: &quot;${__time(yyyyMMdd,)}&quot;,&#xd;
+      &quot;HoraTrx&quot;: &quot;${__time(HHmmss,)}&quot;,&#xd;
+      &quot;DatosRetoMFA&quot;: &quot;N&quot;,&#xd;
+      &quot;EnviaPreguntaReto&quot;: &quot;N&quot;,&#xd;
+      &quot;RespuestasCorrectas&quot;: &quot;N&quot;,&#xd;
+      &quot;MFARetoSolicitado&quot;: &quot;0&quot;,&#xd;
+      &quot;MFATipoReto&quot;: &quot;0&quot;,&#xd;
+      &quot;MFAAprobado&quot;: &quot;0&quot;,&#xd;
+      &quot;IPConexion&quot;: &quot;189.153.218.155&quot;,&#xd;
+      &quot;Correlativo&quot;: &quot;0&quot;,&#xd;
+      &quot;SesionID&quot;: &quot;&quot;,&#xd;
+      &quot;IndicadorRealTime&quot;: &quot;1&quot;,&#xd;
+      &quot;TokenEntrada&quot;: &quot;&quot;,&#xd;
+      &quot;TipoUsuarioPlataforma&quot;: &quot;user&quot;,&#xd;
+      &quot;CanalOrigen&quot;: &quot;BBD&quot;,&#xd;
+      &quot;MetodoAuthCanal&quot;: &quot;1&quot;,&#xd;
+      &quot;JsonLibreriaFingerPrintDevice&quot;: {&#xd;
+        &quot;Browser&quot;: {&#xd;
+          &quot;userAgent&quot;: &quot;Mozilla/5.0+(Macintosh;+Intel+Mac+OS+X+10_15_7)+AppleWebKit/537.36+(KHTML,+like+Gecko)+Chrome/148.0.0.0+Safari/537.36&quot;,&#xd;
+          &quot;browserName&quot;: &quot;Chrome&quot;,&#xd;
+          &quot;browserVersion&quot;: &quot;148.0.0.0&quot;,&#xd;
+          &quot;browserMajor&quot;: &quot;148&quot;,&#xd;
+          &quot;browserEngineName&quot;: &quot;Blink&quot;,&#xd;
+          &quot;browserEngineVersion&quot;: &quot;148.0.0.0&quot;,&#xd;
+          &quot;osName&quot;: &quot;macOS&quot;,&#xd;
+          &quot;osVersion&quot;: &quot;15.7.3&quot;,&#xd;
+          &quot;deviceVendor&quot;: &quot;Apple&quot;,&#xd;
+          &quot;deviceModel&quot;: &quot;Macintosh&quot;,&#xd;
+          &quot;deviceType&quot;: &quot;&quot;,&#xd;
+          &quot;cpuArchitecture&quot;: &quot;&quot;,&#xd;
+          &quot;isPrivateMode&quot;: &quot;0&quot;&#xd;
+        },&#xd;
+        &quot;General&quot;: {&#xd;
+          &quot;fingerprintVersion&quot;: &quot;3.1.4&quot;,&#xd;
+          &quot;language&quot;: &quot;es-419&quot;,&#xd;
+          &quot;colorDepth&quot;: &quot;24&quot;,&#xd;
+          &quot;deviceMemory&quot;: &quot;16&quot;,&#xd;
+          &quot;hardwareConcurrency&quot;: &quot;10&quot;,&#xd;
+          &quot;resolution&quot;: &quot;2560x1440&quot;,&#xd;
+          &quot;availableResolution&quot;: &quot;2560x1410&quot;,&#xd;
+          &quot;timezoneOffset&quot;: &quot;360&quot;,&#xd;
+          &quot;sessionStorage&quot;: &quot;0&quot;,&#xd;
+          &quot;cookieEnabled&quot;: &quot;1&quot;,&#xd;
+          &quot;localStorage&quot;: &quot;1&quot;,&#xd;
+          &quot;indexedDb&quot;: &quot;0&quot;,&#xd;
+          &quot;cpuClass&quot;: &quot;&quot;,&#xd;
+          &quot;openDatabase&quot;: &quot;0&quot;,&#xd;
+          &quot;navigatorPlatform&quot;: &quot;MacIntel&quot;,&#xd;
+          &quot;vendorWebGL&quot;: &quot;1&quot;,&#xd;
+          &quot;rendererVideo&quot;: &quot;ANGLE+(Apple,+ANGLE+Metal+Renderer:+Apple+M5,+Unspecified+Version)&quot;,&#xd;
+          &quot;timeZone&quot;: &quot;GMT-0600+(hora+estándar+central)&quot;,&#xd;
+          &quot;zone&quot;: &quot;America/Monterrey&quot;,&#xd;
+          &quot;UTC&quot;: -6,&#xd;
+          &quot;ram&quot;: &quot;16&quot;,&#xd;
+          &quot;processorCount&quot;: &quot;10&quot;,&#xd;
+          &quot;videoInput&quot;: &quot;1&quot;,&#xd;
+          &quot;audio&quot;: &quot;124.04049900953396&quot;,&#xd;
+          &quot;canvas&quot;: -618356357&#xd;
+        },&#xd;
+        &quot;Personalization&quot;: {&#xd;
+          &quot;numberPlugins&quot;: &quot;5&quot;,&#xd;
+          &quot;numberFonts&quot;: &quot;27&quot;&#xd;
+        },&#xd;
+        &quot;Alterations&quot;: {&#xd;
+          &quot;adblock&quot;: &quot;0&quot;,&#xd;
+          &quot;hasLiedLanguages&quot;: &quot;0&quot;,&#xd;
+          &quot;hasLiedResolution&quot;: &quot;0&quot;,&#xd;
+          &quot;hasLiedOs&quot;: &quot;0&quot;,&#xd;
+          &quot;hasLiedBrowser&quot;: &quot;0&quot;,&#xd;
+          &quot;touchSupport&quot;: &quot;0&quot;&#xd;
+        },&#xd;
+        &quot;Network&quot;: {&#xd;
+          &quot;publicIp&quot;: &quot;&quot;,&#xd;
+          &quot;localIp&quot;: &quot;&quot;&#xd;
+        },&#xd;
+        &quot;Site&quot;: {&#xd;
+          &quot;host&quot;: &quot;localhost:3002&quot;,&#xd;
+          &quot;hostName&quot;: &quot;localhost&quot;,&#xd;
+          &quot;href&quot;: &quot;http://localhost:3002/web/login&quot;,&#xd;
+          &quot;origin&quot;: &quot;http://localhost:3002/web/dashboard&quot;,&#xd;
+          &quot;pathname&quot;: &quot;/web/login&quot;,&#xd;
+          &quot;port&quot;: &quot;3002&quot;,&#xd;
+          &quot;protocol&quot;: &quot;http:&quot;&#xd;
+        },&#xd;
+        &quot;Identifiers&quot;: {&#xd;
+          &quot;cookie&quot;: &quot;b0ac9a1b1ec83bde193db3334fdba3d6&quot;,&#xd;
+          &quot;localStorageValue&quot;: &quot;afddf528987264c27dd5c2255e340c33&quot;,&#xd;
+          &quot;unanimity1&quot;: &quot;e0cb73ec77219a3362af177b9306c65a0158cdb93437d13bcf11c57d800aaa34&quot;,&#xd;
+          &quot;unanimity2&quot;: &quot;be64bfdf13c3e622ef7a4d30757ae43cb6593ae100f7d308a00690ea33af9140&quot;,&#xd;
+          &quot;unanimity3&quot;: &quot;ab820bae74f6c32fff937188f87ad5bce7634bda46db55c76360e8c6a3ccf6be&quot;,&#xd;
+          &quot;unanimity4&quot;: &quot;69af1417d27c4dc2a1a57d16dd00823ac7b9e20901968261923c985e9d326632&quot;,&#xd;
+          &quot;unanimity5&quot;: &quot;e4fe4040e62f5add0aa49d52810ce85b3e03240d58c7991e0ad16a80d3ac76bf&quot;,&#xd;
+          &quot;hash&quot;: &quot;FC95CE176603E9E1.FE69A63FBC3879ED.53&quot;&#xd;
+        },&#xd;
+        &quot;Geoip&quot;: {&#xd;
+          &quot;as&quot;: &quot;AS8151+UNINET&quot;,&#xd;
+          &quot;asname&quot;: &quot;UNINET&quot;,&#xd;
+          &quot;callingCode&quot;: &quot;52&quot;,&#xd;
+          &quot;city&quot;: &quot;General+Escobedo&quot;,&#xd;
+          &quot;continent&quot;: &quot;North+America&quot;,&#xd;
+          &quot;continentCode&quot;: &quot;NA&quot;,&#xd;
+          &quot;country&quot;: &quot;Mexico&quot;,&#xd;
+          &quot;countryCode&quot;: &quot;MX&quot;,&#xd;
+          &quot;countryCode3&quot;: &quot;MEX&quot;,&#xd;
+          &quot;currency&quot;: &quot;MXN&quot;,&#xd;
+          &quot;currentTime&quot;: &quot;${__time(yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX,)}&quot;,&#xd;
+          &quot;district&quot;: &quot;&quot;,&#xd;
+          &quot;hosting&quot;: false,&#xd;
+          &quot;isp&quot;: &quot;UNINET&quot;,&#xd;
+          &quot;lat&quot;: 25.7986,&#xd;
+          &quot;lon&quot;: -100.3393,&#xd;
+          &quot;mobile&quot;: false,&#xd;
+          &quot;offset&quot;: -18000,&#xd;
+          &quot;org&quot;: &quot;Gestión+de+direccionamiento+UniNet&quot;,&#xd;
+          &quot;proxy&quot;: false,&#xd;
+          &quot;query&quot;: &quot;189.153.218.155&quot;,&#xd;
+          &quot;region&quot;: &quot;NLE&quot;,&#xd;
+          &quot;regionName&quot;: &quot;Nuevo+León&quot;,&#xd;
+          &quot;reverse&quot;: &quot;dsl-155-218-153-189-dynamic.prod-infinitum.com.mx&quot;,&#xd;
+          &quot;status&quot;: &quot;success&quot;,&#xd;
+          &quot;timezone&quot;: &quot;America/Monterrey&quot;,&#xd;
+          &quot;zip&quot;: &quot;66072&quot;&#xd;
+        }&#xd;
+      }&#xd;
+    }&#xd;
+  }&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="ip" elementType="Header">
+                    <stringProp name="Header.name">ip</stringProp>
+                    <stringProp name="Header.value">127.0.0.1</stringProp>
+                  </elementProp>
+                  <elementProp name="latitude-longitude" elementType="Header">
+                    <stringProp name="Header.name">latitude-longitude</stringProp>
+                    <stringProp name="Header.value">25.723839943010564, -100.2634884827271</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">import java.io.File
+import java.io.FileWriter
+import java.io.BufferedWriter
+
+// 1. Obtener los valores almacenados en las variables de JMeter
+String pUsername = vars.get(&quot;P_User&quot;) ?: &quot;&quot;
+String pPassword = vars.get(&quot;P_Password&quot;) ?: &quot;&quot;
+String cUser_ID = vars.get(&quot;C_User_ID&quot;) ?: &quot;&quot;
+
+// 2. Determinar si fue autorizada según el código de respuesta HTTP
+String responseCode = prev.getResponseCode()
+boolean esAutorizada = (responseCode == &quot;200&quot;)
+
+// 3. Definir las rutas para ambos archivos
+String basePath = &quot;data/&quot;
+String filePath = esAutorizada ? 
+    &quot;${basePath}resultado_Usuario_Autorizado.csv&quot; : 
+    &quot;${basePath}resultado_Usuario_NoAutorizado.csv&quot;
+
+File csvFile = new File(filePath)
+
+// 4. Escribir datos (seguro para ejecución multihilo)
+synchronized(this.class) {
+    try {
+        boolean fileExists = csvFile.exists() &amp;&amp; csvFile.length() &gt; 0
+        
+        FileWriter fw = new FileWriter(csvFile, true)
+        BufferedWriter bw = new BufferedWriter(fw)
+        
+        // Escribe la cabecera solo si el archivo es nuevo o está vacío
+        if (!fileExists) {
+            bw.write(&quot;P_User,P_Password,C_User_ID,ResponseCode&quot;)
+            bw.newLine()
+        }
+        
+        // Escribe el registro en el archivo correspondiente
+        bw.write(&quot;${pUsername},${pPassword},${cUser_ID},${responseCode}&quot;)
+        bw.newLine()
+        
+        // Limpiar y cerrar flujos
+        bw.flush()
+        bw.close()
+        fw.close()
+    } catch (Exception e) {
+        log.error(&quot;Error al escribir el archivo CSV: &quot; + e.getMessage())
+    }
+}</stringProp>
+              </JSR223PostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_AccessToken" enabled="false">
+                <stringProp name="JSONPostProcessor.referenceNames">C_AccessToken</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.access_token</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="SCRIPT01_QA_BBD_LOGIN_MONITOR-PLUS_T02_Login_con_MonitorPlus-APP">
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="pre Login ${P_mobileURL}/middleware/api/gateway/security/mp/v1/auth/login">
+              <stringProp name="HTTPSampler.domain">${P_mobileURL}</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">middleware/api/gateway/security/mp/v1/auth/login</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;user_id&quot;: &quot;${C_User_ID}&quot;,&#xd;
+  &quot;password&quot;: &quot;${P_Password}&quot;,&#xd;
+  &quot;token&quot;: &quot;${P_Token}&quot;,&#xd;
+  &quot;tracker&quot;: {&#xd;
+    &quot;Header&quot;: {&#xd;
+      &quot;nicknamenode&quot;: &quot;BCB&quot;,&#xd;
+      &quot;nicknamemodule&quot;: &quot;DBF&quot;,&#xd;
+      &quot;rtind&quot;: &quot;S&quot;,&#xd;
+      &quot;date&quot;: &quot;${__time(ddMMyyyy,)}&quot;,&#xd;
+      &quot;time&quot;: &quot;${__time(HHmmss,)}&quot;,&#xd;
+      &quot;event&quot;: &quot;1307&quot;,&#xd;
+      &quot;user&quot;: &quot;${C_User_Name}&quot;&#xd;
+    },&#xd;
+    &quot;Fields&quot;: {&#xd;
+      &quot;CodigoEntidad&quot;: &quot;0001&quot;,&#xd;
+      &quot;CanalOrigen&quot;: &quot;BBD&quot;,&#xd;
+      &quot;Correlativo&quot;: 0,&#xd;
+      &quot;EnviaPreguntaReto&quot;: &quot;N&quot;,&#xd;
+      &quot;RespuestasCorrectas&quot;: &quot;N&quot;,&#xd;
+      &quot;DatosRetoMFA&quot;: &quot;&quot;,&#xd;
+      &quot;MFARetoSolicitado&quot;: &quot;0&quot;,&#xd;
+      &quot;MFAAprobado&quot;: &quot;0&quot;,&#xd;
+      &quot;IndicadorRealTime&quot;: &quot;1&quot;,&#xd;
+      &quot;FechaTrx&quot;: &quot;${__time(yyyyMMdd,)}&quot;,&#xd;
+      &quot;HoraTrx&quot;: &quot;${__time(HHmmss,)}&quot;,&#xd;
+      &quot;JsonLibreriaFingerPrintDevice&quot;: {&#xd;
+        &quot;Sensors&quot;: {&#xd;
+          &quot;gyroscope&quot;: &quot;1&quot;,&#xd;
+          &quot;devicePosition&quot;: &quot;Portrait&quot;,&#xd;
+          &quot;devicePressure&quot;: &quot;&quot;,&#xd;
+          &quot;accelerometer&quot;: &quot;1&quot;,&#xd;
+          &quot;nfc&quot;: &quot;1&quot;,&#xd;
+          &quot;stepCounter&quot;: &quot;&quot;,&#xd;
+          &quot;devicePressureByPoint&quot;: &quot;&quot;,&#xd;
+          &quot;deviceMotion&quot;: &quot;0&quot;,&#xd;
+          &quot;bluetooth&quot;: &quot;0&quot;,&#xd;
+          &quot;deviceOrientation&quot;: &quot;Portrait&quot;&#xd;
+        },&#xd;
+        &quot;Network&quot;: {&#xd;
+          &quot;isoCountryCode&quot;: &quot;--&quot;,&#xd;
+          &quot;detectNetwork&quot;: &quot;mobile&quot;,&#xd;
+          &quot;countryCode&quot;: &quot;${P_CountryCode}&quot;,&#xd;
+          &quot;mcc&quot;: &quot;&quot;,&#xd;
+          &quot;networkCode&quot;: &quot;${P_CountryCode}&quot;,&#xd;
+          &quot;mnc&quot;: &quot;&quot;,&#xd;
+          &quot;allowIp&quot;: &quot;1&quot;,&#xd;
+          &quot;CarrierName&quot;: &quot;--&quot;,&#xd;
+          &quot;macAddress&quot;: &quot;&quot;,&#xd;
+          &quot;celId&quot;: &quot;&quot;,&#xd;
+          &quot;privateIp&quot;: &quot;&quot;&#xd;
+        },&#xd;
+        &quot;General&quot;: {&#xd;
+          &quot;packageName&quot;: &quot;mx.base.qa&quot;,&#xd;
+          &quot;hardwareSerial&quot;: &quot;&quot;,&#xd;
+          &quot;screenResolution&quot;: &quot;828.0 * 1792.0&quot;,&#xd;
+          &quot;timezoneName&quot;: &quot;&quot;,&#xd;
+          &quot;appName&quot;: &quot;BASE Banca Digital&quot;,&#xd;
+          &quot;phoneNumber&quot;: &quot;&quot;,&#xd;
+          &quot;appAction&quot;: &quot;LOGIN&quot;,&#xd;
+          &quot;fingerprintVersion&quot;: &quot;3.2.0&quot;,&#xd;
+          &quot;processorCount&quot;: &quot;6&quot;,&#xd;
+          &quot;timezoneID&quot;: &quot;America/Mexico_City&quot;,&#xd;
+          &quot;geolocation&quot;: &quot;&quot;,&#xd;
+          &quot;language&quot;: &quot;es-MX&quot;,&#xd;
+          &quot;voiceMailerNumber&quot;: &quot;*80&quot;,&#xd;
+          &quot;appVersion&quot;: &quot;2.6.0&quot;,&#xd;
+          &quot;certificateId&quot;: &quot;&quot;,&#xd;
+          &quot;languageCountry&quot;: &quot;English&quot;,&#xd;
+          &quot;typeAuthentication&quot;: &quot;&quot;&#xd;
+        },&#xd;
+        &quot;Geolocation&quot;: {&#xd;
+          &quot;country&quot;: &quot;MX&quot;,&#xd;
+          &quot;postalCode&quot;: &quot;&quot;,&#xd;
+          &quot;latitude&quot;: &quot;20.637989821185695&quot;,&#xd;
+          &quot;city&quot;: &quot;&quot;,&#xd;
+          &quot;zipCode&quot;: &quot;&quot;,&#xd;
+          &quot;longitude&quot;: &quot;-103.27795586132474&quot;,&#xd;
+          &quot;region&quot;: &quot;&quot;,&#xd;
+          &quot;isp&quot;: &quot;--&quot;&#xd;
+        },&#xd;
+        &quot;AntiDebug&quot;: {&#xd;
+          &quot;isDeveloperModeEnabled&quot;: &quot;0&quot;,&#xd;
+          &quot;playstore&quot;: &quot;1&quot;,&#xd;
+          &quot;underDebug&quot;: &quot;0&quot;&#xd;
+        },&#xd;
+        &quot;Metadata&quot;: {&#xd;
+          &quot;v3&quot;: &quot;0&quot;,&#xd;
+          &quot;v1&quot;: &quot;0&quot;,&#xd;
+          &quot;v11&quot;: &quot;0&quot;,&#xd;
+          &quot;v10&quot;: &quot;0&quot;,&#xd;
+          &quot;v6&quot;: &quot;0&quot;,&#xd;
+          &quot;v9&quot;: &quot;JB&quot;,&#xd;
+          &quot;v12&quot;: &quot;&quot;,&#xd;
+          &quot;v7&quot;: &quot;0&quot;,&#xd;
+          &quot;v8&quot;: &quot;40&quot;,&#xd;
+          &quot;v2&quot;: &quot;&quot;,&#xd;
+          &quot;v4&quot;: &quot;1&quot;,&#xd;
+          &quot;v5&quot;: &quot;0&quot;&#xd;
+        },&#xd;
+        &quot;Identifiers&quot;: {&#xd;
+          &quot;hash&quot;: &quot;5CF4E26BD3D87DA5.7A61B53701BEFDAE.59&quot;,&#xd;
+          &quot;anonymity2&quot;: &quot;e5a826502a493779b8791a26c83b48ec741654fc895caeb5117633ea000be865&quot;,&#xd;
+          &quot;anonymity3&quot;: &quot;d2574c814ca9ddfe49d55783975aea5c65a24cbf50be8eac735978a03b9b78dc&quot;,&#xd;
+          &quot;hashServer&quot;: &quot;&quot;,&#xd;
+          &quot;userPattern&quot;: &quot;&quot;,&#xd;
+          &quot;anonymity1&quot;: &quot;59021c2d253b3def8cced383a78faeba9b0f82c03c41830739c708495c22c276&quot;&#xd;
+        },&#xd;
+        &quot;Device&quot;: {&#xd;
+          &quot;isEmulator&quot;: &quot;0&quot;,&#xd;
+          &quot;imei&quot;: &quot;&quot;,&#xd;
+          &quot;deviceModel&quot;: &quot;iPhone&quot;,&#xd;
+          &quot;hostName&quot;: &quot;iPhone&quot;,&#xd;
+          &quot;isDeviceRoot&quot;: &quot;0&quot;,&#xd;
+          &quot;deviceOs&quot;: &quot;iOS&quot;,&#xd;
+          &quot;kernel&quot;: &quot;&quot;,&#xd;
+          &quot;operativeSystem&quot;: &quot;26.7&quot;,&#xd;
+          &quot;serialNumber&quot;: &quot;&quot;,&#xd;
+          &quot;androidId&quot;: &quot;&quot;,&#xd;
+          &quot;deviceId&quot;: &quot;${P_DeviceID}&quot;,&#xd;
+          &quot;deviceBrand&quot;: &quot;Apple&quot;,&#xd;
+          &quot;imsi&quot;: &quot;&quot;&#xd;
+        },&#xd;
+        &quot;Geoip&quot;: {&#xd;
+          &quot;proxy&quot;: &quot;0&quot;,&#xd;
+          &quot;reverse&quot;: &quot;fixed-187-189-149-217.totalplay.net&quot;,&#xd;
+          &quot;lon&quot;: &quot;-99.16160000000001&quot;,&#xd;
+          &quot;callingCode&quot;: &quot;52&quot;,&#xd;
+          &quot;continent&quot;: &quot;North America&quot;,&#xd;
+          &quot;as&quot;: &quot;AS17072 TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V.&quot;,&#xd;
+          &quot;lat&quot;: &quot;19.3692&quot;,&#xd;
+          &quot;offset&quot;: &quot;-18000&quot;,&#xd;
+          &quot;zip&quot;: &quot;03300&quot;,&#xd;
+          &quot;timezone&quot;: &quot;America/Mexico_City&quot;,&#xd;
+          &quot;region&quot;: &quot;CMX&quot;,&#xd;
+          &quot;district&quot;: &quot;&quot;,&#xd;
+          &quot;continentCode&quot;: &quot;NA&quot;,&#xd;
+          &quot;country&quot;: &quot;Mexico&quot;,&#xd;
+          &quot;org&quot;: &quot;TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V&quot;,&#xd;
+          &quot;hosting&quot;: &quot;0&quot;,&#xd;
+          &quot;query&quot;: &quot;187.189.149.217&quot;,&#xd;
+          &quot;countryCode&quot;: &quot;MX&quot;,&#xd;
+          &quot;regionName&quot;: &quot;Mexico City&quot;,&#xd;
+          &quot;isp&quot;: &quot;Total Play Telecomunicaciones SA De CV&quot;,&#xd;
+          &quot;countryCode3&quot;: &quot;MEX&quot;,&#xd;
+          &quot;city&quot;: &quot;Benito Juarez&quot;,&#xd;
+          &quot;mobile&quot;: &quot;0&quot;,&#xd;
+          &quot;currency&quot;: &quot;MXN&quot;,&#xd;
+          &quot;currentTime&quot;: &quot;${__time(yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX,)}&quot;,&#xd;
+          &quot;asname&quot;: &quot;TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V.&quot;,&#xd;
+          &quot;status&quot;: &quot;success&quot;&#xd;
+        },&#xd;
+        &quot;Sim&quot;: {&#xd;
+          &quot;simStatus&quot;: &quot;&quot;,&#xd;
+          &quot;isAirPlanModeOn&quot;: &quot;&quot;,&#xd;
+          &quot;lineNumber&quot;: &quot;&quot;&#xd;
+        },&#xd;
+        &quot;Reverse&quot;: {&#xd;
+          &quot;sslkiller&quot;: &quot;0&quot;,&#xd;
+          &quot;xposed&quot;: &quot;0&quot;,&#xd;
+          &quot;justrustme&quot;: &quot;0&quot;,&#xd;
+          &quot;superUser&quot;: &quot;0&quot;,&#xd;
+          &quot;screnAttack&quot;: &quot;0&quot;,&#xd;
+          &quot;antiDetect&quot;: &quot;0&quot;,&#xd;
+          &quot;droidmon&quot;: &quot;0&quot;,&#xd;
+          &quot;friday&quot;: &quot;0&quot;&#xd;
+        }&#xd;
+      },&#xd;
+      &quot;MetodoAuthCanal&quot;: &quot;0&quot;,&#xd;
+      &quot;IdCliente&quot;: &quot;${C_Track}&quot;,&#xd;
+      &quot;UsuarioBancaDigital&quot;: &quot;${C_User_Name}&quot;,&#xd;
+      &quot;CodigoCliente&quot;: &quot;${C_User_ID}&quot;,&#xd;
+      &quot;IPConexion&quot;: &quot;187.189.149.217&quot;,&#xd;
+      &quot;TokenEntrada&quot;: &quot;${P_Token}&quot;,&#xd;
+      &quot;CorreoElectronico&quot;: &quot;&quot;,&#xd;
+      &quot;DominioEmail&quot;: &quot;&quot;,&#xd;
+      &quot;OrigenDeTransaccion&quot;: &quot;APP-SDK&quot;,&#xd;
+      &quot;AccionDentroSesion&quot;: &quot;login&quot;,&#xd;
+      &quot;CodigoTransaccion&quot;: &quot;AUTLGN&quot;,&#xd;
+      &quot;MFATipoReto&quot;: &quot;0&quot;&#xd;
+    }&#xd;
+  }&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="ip" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="ip" elementType="Header">
+                    <stringProp name="Header.name">ip</stringProp>
+                    <stringProp name="Header.value">192.168.100.8</stringProp>
+                  </elementProp>
+                  <elementProp name="&quot;device-info&quot;" elementType="Header">
+                    <stringProp name="Header.name">device-info</stringProp>
+                    <stringProp name="Header.value">Bran:Apple, SystemVersion:26.7, Build:23H24, MacAddress:02:00:00:00:00:00, Unique-Id:${P_DeviceID}, IP: 192.168.100.8</stringProp>
+                  </elementProp>
+                  <elementProp name="&quot;latitude-longitude&quot;" elementType="Header">
+                    <stringProp name="Header.name">latitude-longitude</stringProp>
+                    <stringProp name="Header.value">20.637989821185695,-103.27795586132473</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="C_AccessToken">
+                <stringProp name="JSONPostProcessor.referenceNames">C_AccessToken</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.access_token</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="post Login ${P_mobileURL}/middleware/api/gateway/mplus/v1/api ">
+              <stringProp name="HTTPSampler.domain">${P_mobileURL}</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">middleware/api/gateway/mplus/v1/api/transaction/post</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&#xd;
+  &quot;Header&quot;: {&#xd;
+    &quot;nicknamenode&quot;: &quot;BCB&quot;,&#xd;
+    &quot;nicknamemodule&quot;: &quot;DBF&quot;,&#xd;
+    &quot;rtind&quot;: &quot;N&quot;,&#xd;
+    &quot;date&quot;: &quot;${__time(ddMMyyyy,)}&quot;,&#xd;
+    &quot;time&quot;: &quot;${__time(HHmmss,)}&quot;,&#xd;
+    &quot;event&quot;: &quot;1309&quot;,&#xd;
+    &quot;user&quot;: &quot;${C_User_Name}&quot;&#xd;
+  },&#xd;
+  &quot;Fields&quot;: {&#xd;
+    &quot;CodigoEntidad&quot;: &quot;0001&quot;,&#xd;
+    &quot;CanalOrigen&quot;: &quot;BBD&quot;,&#xd;
+    &quot;Correlativo&quot;: 0,&#xd;
+    &quot;EnviaPreguntaReto&quot;: &quot;N&quot;,&#xd;
+    &quot;RespuestasCorrectas&quot;: &quot;N&quot;,&#xd;
+    &quot;DatosRetoMFA&quot;: &quot;&quot;,&#xd;
+    &quot;MFARetoSolicitado&quot;: &quot;0&quot;,&#xd;
+    &quot;MFAAprobado&quot;: &quot;0&quot;,&#xd;
+    &quot;IndicadorRealTime&quot;: &quot;0&quot;,&#xd;
+    &quot;FechaTrx&quot;: &quot;${__time(yyyyMMdd,)}&quot;,&#xd;
+    &quot;HoraTrx&quot;: &quot;${__time(HHmmss,)}&quot;,&#xd;
+    &quot;JsonLibreriaFingerPrintDevice&quot;: {&#xd;
+      &quot;Sensors&quot;: {&#xd;
+        &quot;gyroscope&quot;: &quot;1&quot;,&#xd;
+        &quot;devicePosition&quot;: &quot;Portrait&quot;,&#xd;
+        &quot;devicePressure&quot;: &quot;&quot;,&#xd;
+        &quot;accelerometer&quot;: &quot;1&quot;,&#xd;
+        &quot;nfc&quot;: &quot;1&quot;,&#xd;
+        &quot;stepCounter&quot;: &quot;&quot;,&#xd;
+        &quot;devicePressureByPoint&quot;: &quot;&quot;,&#xd;
+        &quot;deviceMotion&quot;: &quot;0&quot;,&#xd;
+        &quot;bluetooth&quot;: &quot;0&quot;,&#xd;
+        &quot;deviceOrientation&quot;: &quot;Portrait&quot;&#xd;
+      },&#xd;
+      &quot;Network&quot;: {&#xd;
+        &quot;isoCountryCode&quot;: &quot;--&quot;,&#xd;
+        &quot;detectNetwork&quot;: &quot;mobile&quot;,&#xd;
+        &quot;countryCode&quot;: &quot;${P_CountryCode}&quot;,&#xd;
+        &quot;mcc&quot;: &quot;&quot;,&#xd;
+        &quot;networkCode&quot;: &quot;${P_CountryCode}&quot;,&#xd;
+        &quot;mnc&quot;: &quot;&quot;,&#xd;
+        &quot;allowIp&quot;: &quot;1&quot;,&#xd;
+        &quot;CarrierName&quot;: &quot;--&quot;,&#xd;
+        &quot;macAddress&quot;: &quot;&quot;,&#xd;
+        &quot;celId&quot;: &quot;&quot;,&#xd;
+        &quot;privateIp&quot;: &quot;&quot;&#xd;
+      },&#xd;
+      &quot;General&quot;: {&#xd;
+        &quot;packageName&quot;: &quot;mx.base.qa&quot;,&#xd;
+        &quot;hardwareSerial&quot;: &quot;&quot;,&#xd;
+        &quot;screenResolution&quot;: &quot;828.0 * 1792.0&quot;,&#xd;
+        &quot;timezoneName&quot;: &quot;&quot;,&#xd;
+        &quot;appName&quot;: &quot;BASE Banca Digital&quot;,&#xd;
+        &quot;phoneNumber&quot;: &quot;&quot;,&#xd;
+        &quot;appAction&quot;: &quot;LOGIN&quot;,&#xd;
+        &quot;fingerprintVersion&quot;: &quot;3.2.0&quot;,&#xd;
+        &quot;processorCount&quot;: &quot;6&quot;,&#xd;
+        &quot;timezoneID&quot;: &quot;America/Mexico_City&quot;,&#xd;
+        &quot;geolocation&quot;: &quot;&quot;,&#xd;
+        &quot;language&quot;: &quot;es-MX&quot;,&#xd;
+        &quot;voiceMailerNumber&quot;: &quot;*80&quot;,&#xd;
+        &quot;appVersion&quot;: &quot;2.6.0&quot;,&#xd;
+        &quot;certificateId&quot;: &quot;&quot;,&#xd;
+        &quot;languageCountry&quot;: &quot;English&quot;,&#xd;
+        &quot;typeAuthentication&quot;: &quot;&quot;&#xd;
+      },&#xd;
+      &quot;Geolocation&quot;: {&#xd;
+        &quot;country&quot;: &quot;MX&quot;,&#xd;
+        &quot;postalCode&quot;: &quot;&quot;,&#xd;
+        &quot;latitude&quot;: &quot;20.637989821185695&quot;,&#xd;
+        &quot;city&quot;: &quot;&quot;,&#xd;
+        &quot;zipCode&quot;: &quot;&quot;,&#xd;
+        &quot;longitude&quot;: &quot;-103.27795586132474&quot;,&#xd;
+        &quot;region&quot;: &quot;&quot;,&#xd;
+        &quot;isp&quot;: &quot;--&quot;&#xd;
+      },&#xd;
+      &quot;AntiDebug&quot;: {&#xd;
+        &quot;isDeveloperModeEnabled&quot;: &quot;0&quot;,&#xd;
+        &quot;playstore&quot;: &quot;1&quot;,&#xd;
+        &quot;underDebug&quot;: &quot;0&quot;&#xd;
+      },&#xd;
+      &quot;Metadata&quot;: {&#xd;
+        &quot;v3&quot;: &quot;0&quot;,&#xd;
+        &quot;v1&quot;: &quot;0&quot;,&#xd;
+        &quot;v11&quot;: &quot;0&quot;,&#xd;
+        &quot;v10&quot;: &quot;0&quot;,&#xd;
+        &quot;v6&quot;: &quot;0&quot;,&#xd;
+        &quot;v9&quot;: &quot;JB&quot;,&#xd;
+        &quot;v12&quot;: &quot;&quot;,&#xd;
+        &quot;v7&quot;: &quot;0&quot;,&#xd;
+        &quot;v8&quot;: &quot;40&quot;,&#xd;
+        &quot;v2&quot;: &quot;&quot;,&#xd;
+        &quot;v4&quot;: &quot;1&quot;,&#xd;
+        &quot;v5&quot;: &quot;0&quot;&#xd;
+      },&#xd;
+      &quot;Identifiers&quot;: {&#xd;
+        &quot;hash&quot;: &quot;5CF4E26BD3D87DA5.7A61B53701BEFDAE.59&quot;,&#xd;
+        &quot;anonymity2&quot;: &quot;e5a826502a493779b8791a26c83b48ec741654fc895caeb5117633ea000be865&quot;,&#xd;
+        &quot;anonymity3&quot;: &quot;d2574c814ca9ddfe49d55783975aea5c65a24cbf50be8eac735978a03b9b78dc&quot;,&#xd;
+        &quot;hashServer&quot;: &quot;&quot;,&#xd;
+        &quot;userPattern&quot;: &quot;&quot;,&#xd;
+        &quot;anonymity1&quot;: &quot;59021c2d253b3def8cced383a78faeba9b0f82c03c41830739c708495c22c276&quot;&#xd;
+      },&#xd;
+      &quot;Device&quot;: {&#xd;
+        &quot;isEmulator&quot;: &quot;0&quot;,&#xd;
+        &quot;imei&quot;: &quot;&quot;,&#xd;
+        &quot;deviceModel&quot;: &quot;iPhone&quot;,&#xd;
+        &quot;hostName&quot;: &quot;iPhone&quot;,&#xd;
+        &quot;isDeviceRoot&quot;: &quot;0&quot;,&#xd;
+        &quot;deviceOs&quot;: &quot;iOS&quot;,&#xd;
+        &quot;kernel&quot;: &quot;&quot;,&#xd;
+        &quot;operativeSystem&quot;: &quot;26.7&quot;,&#xd;
+        &quot;serialNumber&quot;: &quot;&quot;,&#xd;
+        &quot;androidId&quot;: &quot;&quot;,&#xd;
+        &quot;deviceId&quot;: &quot;${P_DeviceID}&quot;,&#xd;
+        &quot;deviceBrand&quot;: &quot;Apple&quot;,&#xd;
+        &quot;imsi&quot;: &quot;&quot;&#xd;
+      },&#xd;
+      &quot;Geoip&quot;: {&#xd;
+        &quot;proxy&quot;: &quot;0&quot;,&#xd;
+        &quot;reverse&quot;: &quot;fixed-187-189-149-217.totalplay.net&quot;,&#xd;
+        &quot;lon&quot;: &quot;-99.16160000000001&quot;,&#xd;
+        &quot;callingCode&quot;: &quot;52&quot;,&#xd;
+        &quot;continent&quot;: &quot;North America&quot;,&#xd;
+        &quot;as&quot;: &quot;AS17072 TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V.&quot;,&#xd;
+        &quot;lat&quot;: &quot;19.3692&quot;,&#xd;
+        &quot;offset&quot;: &quot;-18000&quot;,&#xd;
+        &quot;zip&quot;: &quot;03300&quot;,&#xd;
+        &quot;timezone&quot;: &quot;America/Mexico_City&quot;,&#xd;
+        &quot;region&quot;: &quot;CMX&quot;,&#xd;
+        &quot;district&quot;: &quot;&quot;,&#xd;
+        &quot;continentCode&quot;: &quot;NA&quot;,&#xd;
+        &quot;country&quot;: &quot;Mexico&quot;,&#xd;
+        &quot;org&quot;: &quot;TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V&quot;,&#xd;
+        &quot;hosting&quot;: &quot;0&quot;,&#xd;
+        &quot;query&quot;: &quot;187.189.149.217&quot;,&#xd;
+        &quot;countryCode&quot;: &quot;MX&quot;,&#xd;
+        &quot;regionName&quot;: &quot;Mexico City&quot;,&#xd;
+        &quot;isp&quot;: &quot;Total Play Telecomunicaciones SA De CV&quot;,&#xd;
+        &quot;countryCode3&quot;: &quot;MEX&quot;,&#xd;
+        &quot;city&quot;: &quot;Benito Juarez&quot;,&#xd;
+        &quot;mobile&quot;: &quot;0&quot;,&#xd;
+        &quot;currency&quot;: &quot;MXN&quot;,&#xd;
+        &quot;currentTime&quot;: &quot;${__time(yyyy-MM-dd&apos;T&apos;HH:mm:ssXXX,)}&quot;,&#xd;
+        &quot;asname&quot;: &quot;TOTAL PLAY TELECOMUNICACIONES, S.A.P.I. DE C.V.&quot;,&#xd;
+        &quot;status&quot;: &quot;success&quot;&#xd;
+      },&#xd;
+      &quot;Sim&quot;: {&#xd;
+        &quot;simStatus&quot;: &quot;&quot;,&#xd;
+        &quot;isAirPlanModeOn&quot;: &quot;&quot;,&#xd;
+        &quot;lineNumber&quot;: &quot;&quot;&#xd;
+      },&#xd;
+      &quot;Reverse&quot;: {&#xd;
+        &quot;sslkiller&quot;: &quot;0&quot;,&#xd;
+        &quot;xposed&quot;: &quot;0&quot;,&#xd;
+        &quot;justrustme&quot;: &quot;0&quot;,&#xd;
+        &quot;superUser&quot;: &quot;0&quot;,&#xd;
+        &quot;screnAttack&quot;: &quot;0&quot;,&#xd;
+        &quot;antiDetect&quot;: &quot;0&quot;,&#xd;
+        &quot;droidmon&quot;: &quot;0&quot;,&#xd;
+        &quot;friday&quot;: &quot;0&quot;&#xd;
+      }&#xd;
+    },&#xd;
+    &quot;MetodoAuthCanal&quot;: &quot;0&quot;,&#xd;
+    &quot;IdCliente&quot;: &quot;${C_Track}&quot;,&#xd;
+    &quot;UsuarioBancaDigital&quot;: &quot;${C_User_Name}&quot;,&#xd;
+    &quot;CodigoCliente&quot;: &quot;${C_User_ID}&quot;,&#xd;
+    &quot;IPConexion&quot;: &quot;187.189.149.217&quot;,&#xd;
+    &quot;CorreoElectronico&quot;: &quot;${C_Email}&quot;,&#xd;
+    &quot;DominioEmail&quot;: &quot;bancobase.com&quot;,&#xd;
+    &quot;OrigenDeTransaccion&quot;: &quot;APP-SDK&quot;,&#xd;
+    &quot;AccionDentroSesion&quot;: &quot;login&quot;,&#xd;
+    &quot;CodigoTransaccion&quot;: &quot;AUTLGN&quot;,&#xd;
+    &quot;MFATipoReto&quot;: &quot;&quot;,&#xd;
+    &quot;SesionID&quot;: &quot;${C_User_ID}&quot;,&#xd;
+    &quot;TipoUsuarioPlataforma&quot;: &quot;ADM&quot;,&#xd;
+    &quot;TipoPersona&quot;: &quot;M&quot;,&#xd;
+    &quot;CodigoRespuestaHost&quot;: &quot;200&quot;&#xd;
+  }&#xd;
+}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="ip" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="ip" elementType="Header">
+                    <stringProp name="Header.name">ip</stringProp>
+                    <stringProp name="Header.value">192.168.100.8</stringProp>
+                  </elementProp>
+                  <elementProp name="&quot;device-info&quot;" elementType="Header">
+                    <stringProp name="Header.name">device-info</stringProp>
+                    <stringProp name="Header.value">Bran:Apple, SystemVersion:26.7, Build:23H24, MacAddress:02:00:00:00:00:00, Unique-Id:${P_DeviceID}, IP: 192.168.100.8</stringProp>
+                  </elementProp>
+                  <elementProp name="&quot;Authorization&quot;" elementType="Header">
+                    <stringProp name="Header.name">Authorization</stringProp>
+                    <stringProp name="Header.value">Bearer ${C_AccessToken}</stringProp>
+                  </elementProp>
+                  <elementProp name="&quot;latitude-longitude&quot;" elementType="Header">
+                    <stringProp name="Header.name">latitude-longitude</stringProp>
+                    <stringProp name="Header.value">20.637989821185695,-103.27795586132473</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer">
+                <stringProp name="ConstantTimer.delay">1000</stringProp>
+                <stringProp name="RandomTimer.range">250</stringProp>
+              </GaussianRandomTimer>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Think Time">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+            <stringProp name="RandomTimer.range">${P_TT}</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="influxdbMetricsSender" elementType="Argument">
+                <stringProp name="Argument.name">influxdbMetricsSender</stringProp>
+                <stringProp name="Argument.value">org.apache.jmeter.visualizers.backend.influxdb.HttpMetricsSender</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="influxdbUrl" elementType="Argument">
+                <stringProp name="Argument.name">influxdbUrl</stringProp>
+                <stringProp name="Argument.value">http://localhost:8086/write?db=BBD_QA</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="application" elementType="Argument">
+                <stringProp name="Argument.name">application</stringProp>
+                <stringProp name="Argument.value">BBD_MonitorPlus_QA</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="measurement" elementType="Argument">
+                <stringProp name="Argument.name">measurement</stringProp>
+                <stringProp name="Argument.value">jmeter</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="summaryOnly" elementType="Argument">
+                <stringProp name="Argument.name">summaryOnly</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="samplersRegex" elementType="Argument">
+                <stringProp name="Argument.name">samplersRegex</stringProp>
+                <stringProp name="Argument.value">.*</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="percentiles" elementType="Argument">
+                <stringProp name="Argument.name">percentiles</stringProp>
+                <stringProp name="Argument.value">99;95;90</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="testTitle" elementType="Argument">
+                <stringProp name="Argument.name">testTitle</stringProp>
+                <stringProp name="Argument.value">BBD_MonitorPlus_QA</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="eventTags" elementType="Argument">
+                <stringProp name="Argument.name">eventTags</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">org.apache.jmeter.visualizers.backend.influxdb.InfluxdbBackendListenerClient</stringProp>
+        </BackendListener>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

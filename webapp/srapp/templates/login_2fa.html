@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Verification code{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <div class="login">
+    <picture><source srcset="{{ url_for('static', filename='brand/logo-dark.svg') }}" media="(prefers-color-scheme: dark)"><img class="login-logo" src="{{ url_for('static', filename='brand/logo.svg') }}" alt="JMeter Control Center"></picture>
+    <form class="panel" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <h2>Two-factor authentication</h2>
+      <p class="sub">Enter the 6-digit code from your authenticator app for <b>{{ username }}</b>.</p>
+      <div class="field mt"><input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus style="font-size:22px;letter-spacing:.3em;text-align:center"></div>
+      <button class="btn primary" style="width:100%;justify-content:center">Verify</button>
+      <p class="hint mt"><a href="{{ url_for('login') }}">Use another account</a></p>
+    </form>
+  </div>
+</div>
+{% endblock %}

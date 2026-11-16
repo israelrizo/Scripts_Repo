@@ -1,0 +1,47 @@
+pipeline {
+    // AQUI SE DEFINE EL GENERADOR.
+    // Sustituir 'generador-jmeter' por la etiqueta real del nodo en Jenkins que actúa como inyector de carga.
+    agent { label 'generador-jmeter' }
+
+    parameters {
+        choice(name: 'TAG', choices: ['login_qa', 'login_sil', 'dispersiones_qa', 'edo_cuenta', 'drp_flujo_critico', 'opt1_metodos_general', 'opt1_autorizar_traspaso', 'opt1_get_cuentas', 'opt1_get_cuentas_traspasos', 'opt1_get_destinatarios', 'opt1_get_estado_cuenta_pdf', 'opt1_get_movimientos', 'opt1_get_traspasos_comprobantes', 'opt1_load_archivo_lote', 'opt1_validate_cuenta', 'opt2_metodos_general', 'opt2_add_destinatario', 'opt2_capturar_traspaso', 'opt2_get_estado_cuenta_pdf', 'opt2_get_traspasos_comprobantes'], description: 'Tag del script a ejecutar')
+    }
+
+    stages {
+        stage('Preparacion') {
+            steps {
+                sh 'chmod +x run_by_tag.sh'
+            }
+        }
+        
+        stage('Ejecutar Prueba en Generador') {
+            steps {
+                script {
+                    echo "Iniciando prueba de carga por Tag..."
+                    sh """
+                    ./run_by_tag.sh ${params.TAG}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                // Recuperar el archivo generado y guardarlo en Jenkins como artefacto
+                def tarFile = sh(script: "ls results/*.tar.gz", returnStdout: true).trim()
+                if (tarFile) {
+                    archiveArtifacts artifacts: "${tarFile}", allowEmptyArchive: false
+                    echo "Resultados capturados y disponibles en el build: ${tarFile}"
+                }
+            }
+        }
+        success {
+            echo "La prueba se ejecuto y guardo correctamente."
+        }
+        failure {
+            echo "Hubo un problema ejecutando la prueba de rendimiento."
+        }
+    }
+}
