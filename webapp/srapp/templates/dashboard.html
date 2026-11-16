@@ -8,9 +8,10 @@
     <p class="sub">Every <code>*{{ cfg.PROJECT_SUFFIX }}</code> folder in <code>{{ cfg.REPO_ROOT }}</code></p>
   </div>
   <div class="status-strip" id="status-strip">
-    <span class="badge {{ 'up' if jmeter_ok else 'down' }}" title="{{ cfg.JMETER_BIN }}">JMeter {{ 'found' if jmeter_ok else 'not found' }}</span>
+    {% if not aws_mode %}<span class="badge {{ 'up' if jmeter_ok else 'down' }}" title="{{ cfg.JMETER_BIN }}">JMeter {{ 'found' if jmeter_ok else 'not found' }}</span>{% endif %}
     <span class="badge" id="influx-badge">InfluxDB …</span>
-    {% for h in cfg.REMOTE_HOSTS %}<span class="badge" data-slave="{{ h }}">Slave {{ h }} …</span>{% else %}<span class="badge">No slaves configured</span>{% endfor %}
+    {% if aws_mode %}<a class="badge" id="servers-badge" href="{{ url_for('servers_page') }}">Servers …</a>
+    {% else %}{% for h in cfg.REMOTE_HOSTS %}<span class="badge" data-slave="{{ h }}">Slave {{ h }} …</span>{% else %}<span class="badge">No slaves configured</span>{% endfor %}{% endif %}
   </div>
 </div>
 

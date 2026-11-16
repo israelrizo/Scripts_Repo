@@ -70,13 +70,13 @@
   <tr><td style="padding:10px 24px;color:#626f86;font-size:13px;">La ejecución terminó sin reporte HTML (estado: {{ s.status }}). Revisa la consola.</td></tr>
   {% endif %}
   <tr><td style="padding:14px 24px 6px;">
-    {% for label, url in [('Reporte HTML', s.report_url), ('Grafana', s.grafana_url), ('Confluence', s.confluence_url), ('Jira', s.jira_url), ('Consola', s.run_url)] if url %}
+    {% for label, url in [('Reporte HTML', s.report_url), ('Grafana', s.grafana_url), ('Confluence', s.confluence_url), ('Jira', s.jira_url), ('Consola', s.run_url)] if url and 'localhost' not in url and '127.0.0.1' not in url %}
     <a href="{{ url }}" style="display:inline-block;margin:0 6px 8px 0;padding:8px 14px;background:{{ '#1868db' if loop.first else '#ffffff' }};color:{{ '#ffffff' if loop.first else '#1868db' }};border:1px solid #1868db;border-radius:5px;text-decoration:none;font-size:13px;font-weight:600;">{{ label }}</a>
     {% endfor %}
   </td></tr>
   <tr><td style="padding:6px 24px 20px;font-size:11px;color:#8590a2;">
-    Los enlaces <i>localhost</i> requieren el túnel SSM al Master (lanzador «JMeter Control Center»).
-    Enviado automáticamente a qaperformance y al staff del proyecto.
+    {% if event == 'end' and s.report_url %}El reporte HTML completo de JMeter va adjunto (.zip): descomprimir y abrir <i>index.html</i>.{% endif %}
+    Enviado automáticamente por el ingeniero de performance a qaperformance y al staff del proyecto.
   </td></tr>
 </table>
 </td></tr></table>

@@ -39,6 +39,18 @@ window.SR = window.SR || {};
       const s = await SR.getJSON('/api/status');
       const ib = document.getElementById('influx-badge');
       if (ib) { ib.className = 'badge ' + (s.influx.ok ? 'up' : 'down'); ib.textContent = 'InfluxDB ' + (s.influx.ok ? 'up' : 'down'); ib.title = s.influx.detail; }
+      const sb = document.getElementById('servers-badge');
+      if (sb) {
+        try {
+          const a = await SR.getJSON('/api/servers');
+          if (a.error) { sb.className = 'badge down'; sb.textContent = a.auth ? 'AWS session expired' : 'AWS error'; sb.title = a.error; }
+          else {
+            const up = a.instances.filter((i) => i.state === 'running' && i.ssm).length;
+            sb.className = 'badge ' + (up === a.instances.length ? 'up' : (up ? 'stopped' : 'down'));
+            sb.textContent = `Servers ${up}/${a.instances.length} on` + (up && a.auto_off ? ` · auto-off ${a.auto_off}` : '');
+          }
+        } catch (e) { sb.className = 'badge down'; sb.textContent = 'Servers ?'; }
+      }
       s.slaves.forEach((sl) => {
         const el = document.querySelector(`[data-slave="${CSS.escape(sl.host)}"]`);
         if (el) { el.className = 'badge ' + (sl.up ? 'up' : 'down'); el.textContent = `Slave ${sl.host} ${sl.up ? 'up · ' + sl.ms + ' ms' : 'down'}`; el.title = sl.error || 'jmeter-server RMI port reachable'; }
@@ -80,8 +92,10 @@ window.SR = window.SR || {};
           done = true;
           if (d.result_dir && d.status === 'finished') {
             const rb = document.getElementById('report-btn');
-            rb.href = el.dataset.reportBase.replace('__RUN__', encodeURIComponent(d.result_dir));
-            rb.style.display = '';
+            if (rb && el.dataset.reportBase) {
+              rb.href = el.dataset.reportBase.replace('__RUN__', encodeURIComponent(d.result_dir));
+              rb.style.display = '';
+            }
           }
           document.querySelectorAll('#run-actions form').forEach((f) => f.remove());
           SR.liveStop && SR.liveStop();
@@ -156,5 +170,57 @@ window.SR = window.SR || {};
         box.append(h, pre);
       });
     } catch (e) { box.textContent = e.message; }
+  });
+
+  // ---- servers page: who holds the Master ----
+  SR.masterLock = async () => {
+    const box = document.getElementById('master-lock'); if (!box) return;
+    const t = document.getElementById('lock-text');
+    try {
+      const d = await SR.getJSON(box.dataset.url);
+      if (d.error) t.textContent = 'AWS: ' + d.error;
+      else if (d.active) t.textContent = `🔒 ${d.active.user} is running ${d.active.tag} (run ${d.active.run}). New runs wait until it ends.`;
+      else if (d.active_error) t.textContent = d.active_error;
+      else if (d.instances.some((i) => i.role === 'master' && i.state === 'running' && i.ssm)) t.textContent = '✓ The Master is free: no test is running.';
+      else t.textContent = 'The Master is not running.';
+    } catch (e) { t.textContent = e.message; }
+  };
+
+  // ---- run dialog: auto-off notice ----
+  const ao = document.getElementById('run-autooff');
+  if (ao) SR.getJSON(ao.dataset.url).then((d) => {
+    if (d.error) { ao.textContent = '⚠ AWS: ' + d.error; return; }
+    const up = d.instances.filter((i) => i.state === 'running' && i.ssm).length;
+    let msg = `Servers: ${up}/${d.instances.length} running.`;
+    if (d.auto_off && d.auto_off_min != null) {
+      const h = Math.floor(d.auto_off_min / 60), m = Math.round(d.auto_off_min % 60);
+      msg += ` Automatic shutdown at ${d.auto_off} (in ${h} h ${m} min)` + (d.auto_off_min < 90 ? ' — ⚠ a long test will be cut.' : '.');
+    }
+    ao.textContent = msg;
+  }).catch(() => {});
+
+  // ---- reports stored on the Master ----
+  const rrb = document.getElementById('remote-results-btn');
+  if (rrb) rrb.addEventListener('click', async () => {
+    const dlg = document.getElementById('dlg-remote'), body = document.getElementById('remote-body');
+    body.replaceChildren(Object.assign(document.createElement('tr'), { innerHTML: '<td colspan="3" class="empty">Asking the Master…</td>' }));
+    dlg.showModal();
+    try {
+      const d = await SR.getJSON(rrb.dataset.url);
+      body.replaceChildren();
+      if (!d.results.length) body.appendChild(Object.assign(document.createElement('tr'), { innerHTML: '<td colspan="3" class="empty">No results on the Master for this project.</td>' }));
+      d.results.forEach((r) => {
+        const tr = document.createElement('tr');
+        const act = document.createElement('td'); act.className = 'right';
+        if (r.local) act.textContent = '✓ on this computer';
+        else {
+          const b = document.createElement('button'); b.type = 'button'; b.className = 'btn sm primary'; b.textContent = 'Fetch';
+          b.addEventListener('click', () => { document.getElementById('remote-result').value = r.name; document.getElementById('remote-form').submit(); });
+          act.appendChild(b);
+        }
+        tr.append(td(r.name, 'mono'), td(r.mb + ' MB', 'num'), act);
+        body.appendChild(tr);
+      });
+    } catch (e) { body.replaceChildren(); const tr = document.createElement('tr'); tr.append(td(e.message)); body.appendChild(tr); }
   });
 })(window.SR);

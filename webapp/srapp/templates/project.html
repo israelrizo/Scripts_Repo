@@ -9,9 +9,15 @@
   </div>
   <div class="actions">
     {% if can('operator') and slaves %}
+    {% if aws_mode %}
+    <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="git pull origin on the Master and the Slaves now?">
+      {{ csrf() }}<button class="btn" title="Bring Master and Slaves to the latest pushed commit">⇄ Sync servers</button>
+    </form>
+    {% else %}
     <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="rsync data/ and tests/ of {{ name }} to {{ slaves|join(', ') }}?">
       {{ csrf() }}<button class="btn" title="Copy data/ and tests/ to every slave (CSV files are read locally by each slave)">⇄ Sync to slaves</button>
     </form>
+    {% endif %}
     {% endif %}
   </div>
 </div>
@@ -74,11 +80,16 @@
       </div>
       <div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500" placeholder="Why this run? Build / version under test"></div>
       <label class="check field"><input type="checkbox" name="notify" value="1" checked> E-mail qaperformance{{ ' + ' ~ (project_settings(name).staff_emails|length) ~ ' staff' if project_settings(name).staff_emails }} at start and end</label>
+      {% if aws_mode %}
+      <label class="check"><input type="checkbox" name="auto_start" value="1" checked> Start the servers if they are stopped</label>
+      <label class="check field"><input type="checkbox" name="stop_after" value="1"> Stop the servers when the run ends <span class="hint">(Grafana/Influx charts are unavailable while they are off)</span></label>
+      <p class="hint" id="run-autooff" data-url="{{ url_for('api_servers') }}"></p>
+      {% endif %}
       {% if slaves %}
       <label class="check"><input type="checkbox" name="distributed" value="1" checked> Distributed on {{ slaves|length }} slaves (<span class="mono">{{ slaves|join(', ') }}</span>)</label>
       <p class="hint">Each slave runs the full thread count of the plan. Total load = threads × {{ slaves|length }}.</p>
       {% else %}
-      <p class="hint">Runs on the Master only (no <code>SR_REMOTE_HOSTS</code> configured).</p>
+      <p class="hint">Runs on the Master only (no slaves configured).</p>
       {% endif %}
     </div>
     <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">▶ Start execution</button></div>
@@ -215,7 +226,8 @@
 <form class="panel" method="get" action="{{ url_for('compare', name=name) }}">
   <div class="page-head" style="margin-bottom:10px">
     <h2 style="margin:0">Execution reports <span class="muted" style="font-weight:400">· <code>results/Ejecucion_*</code></span></h2>
-    <button class="btn primary">Compare selected</button>
+    <div class="actions">{% if aws_mode %}<button type="button" class="btn" id="remote-results-btn" data-url="{{ url_for('remote_results', name=name) }}">⇣ Fetch from Master</button>{% endif %}
+    <button class="btn primary">Compare selected</button></div>
   </div>
   <div class="table-wrap"><table>
     <thead><tr><th></th><th>Execution</th><th>Date</th><th class="num">Samples</th><th class="num">Error %</th><th class="num">Avg</th><th class="num">p95</th><th class="num">TPS</th><th class="right">Actions</th></tr></thead>
@@ -242,6 +254,19 @@
 </form>
 {% endif %}
 
+{% if tab == 'results' and aws_mode %}
+<dialog id="dlg-remote" style="width:min(760px, calc(100vw - 32px))">
+  <div class="dlg-head">Reports stored on the Master</div>
+  <div class="dlg-body">
+    <p class="hint">Runs launched by other engineers (or whose download failed) stay on the Master. Fetching copies the report to this computer.</p>
+    <div class="table-wrap"><table><thead><tr><th>Execution</th><th class="num">Size</th><th></th></tr></thead>
+      <tbody id="remote-body"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody></table></div>
+    <form method="post" action="{{ url_for('remote_results_fetch', name=name) }}" id="remote-form">{{ csrf() }}<input type="hidden" name="result" id="remote-result"></form>
+  </div>
+  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+</dialog>
+{% endif %}
+
 {# ============================== RUNS ============================== #}
 {% if tab == 'runs' %}
 <div class="panel">
@@ -262,6 +287,11 @@
       <div class="field"><label>Project staff e-mails</label>
         <textarea name="staff_emails" rows="3" placeholder="dev.lead@bancobase.com, po@bancobase.com">{{ ps.staff_emails|join(', ') }}</textarea>
         <div class="hint">Receive the start / end e-mails of every run of this project, together with qaperformance.</div></div>
+      {% set all_spaces = chat_spaces_all %}
+      {% if all_spaces %}
+      <div class="field"><label>Extra Google Chat spaces for this project</label>
+        {% for sp in all_spaces %}<label class="check"><input type="checkbox" name="chat_spaces" value="{{ sp.id }}" {{ 'checked' if sp.id in ps.chat_spaces or sp.default }} {{ 'disabled' if sp.default }}> {{ sp.name }}{{ ' (default, always notified)' if sp.default }}</label>{% endfor %}</div>
+      {% endif %}
       <h2 class="mt">Grafana</h2>
       <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>
     </div>

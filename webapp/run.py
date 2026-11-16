@@ -13,5 +13,9 @@ if __name__ == "__main__":
         sys.exit("No users yet. Create the first admin:\n"
                  "  python3 manage_users.py add <username> --role admin")
     scheduler.start_background()
+    from srapp import settings
+    if settings.aws_mode():
+        from srapp import remote_run
+        remote_run.resume_all()   # re-attach to tests still running on the Master
     print(f"JMeter Control Center on http://{Config.HOST}:{Config.PORT}  repo={Config.REPO_ROOT}")
     serve(app, host=Config.HOST, port=Config.PORT, threads=8, max_request_body_size=app.config["MAX_CONTENT_LENGTH"])

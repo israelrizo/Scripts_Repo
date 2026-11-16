@@ -106,7 +106,7 @@ def describe(s):
 
 
 def create(user, project, tag, kind, at, date="", days=None, props="", distributed=False, jira="",
-           notes="", extra_emails=None):
+           notes="", extra_emails=None, stop_after=False):
     projects.project_dir(project)
     t = projects.get_tag(project, tag)
     if not t or not t["exists"]:
@@ -131,6 +131,7 @@ def create(user, project, tag, kind, at, date="", days=None, props="", distribut
     item = {"id": uuid.uuid4().hex[:10], "project": project, "tag": tag, "kind": kind, "at": at, "date": date,
             "days": days, "props": props.strip(), "distributed": bool(distributed), "jira": jira.strip().upper(),
             "notes": notes.strip()[:500], "extra_emails": list(extra_emails or []), "enabled": True,
+            "stop_after": bool(stop_after),
             "created_by": user, "created": time.time(), "last_fired": None, "history": []}
     with _lock:
         items = load()
@@ -190,11 +191,12 @@ def tick():
                 meta = runner.start_tag_run(
                     s["project"], s["tag"], s["created_by"], s.get("props", ""), s.get("distributed", False),
                     jira=s.get("jira", ""), notes=s.get("notes") or f"Ejecución programada ({describe(s)})",
-                    extra_emails=s.get("extra_emails"), source=f"schedule:{s['id']}")
+                    extra_emails=s.get("extra_emails"), source=f"schedule:{s['id']}",
+                    auto_start=True, stop_after=s.get("stop_after", False))
                 _record(s, slot, f"run {meta['id']}")
                 changed = True
             except projects.ProjectError as exc:
-                if "Another test is running" in str(exc):
+                if "Another test is running" in str(exc) or "already have a test running" in str(exc):
                     continue  # retry on next tick
                 _record(s, slot, f"error: {exc}")
                 changed = True

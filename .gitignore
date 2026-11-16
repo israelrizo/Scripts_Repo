@@ -13,3 +13,8 @@ webapp/.venv/
 webapp/instance/
 __pycache__/
 *.pyc
+
+# Results are produced on the Master and downloaded by the Control Center; never part of the repo sync
+.jmcc/
+*/results/Ejecucion_*/
+*/results/*.tar.gz

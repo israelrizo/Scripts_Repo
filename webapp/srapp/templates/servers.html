@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Servers{% endblock %}
+{% macro action(name, label, cls='', confirm='') %}
+<form method="post" action="{{ url_for('servers_action') }}" {% if confirm %}data-confirm="{{ confirm }}"{% endif %}>{{ csrf() }}<input type="hidden" name="action" value="{{ name }}"><button class="btn {{ cls }}">{{ label }}</button></form>
+{% endmacro %}
+{% block content %}
+{% set running = inst|selectattr('state', 'equalto', 'running')|list %}
+<div class="page-head">
+  <div><h1>Servers</h1>
+    <p class="sub">Master and Slaves are driven from this computer with the AWS CLI (profile <b>{{ c.profile or 'default' }}</b>{% if c.region %} · {{ c.region }}{% endif %}) through SSM. No inbound ports, no SSH.</p></div>
+  {% if can('operator') %}
+  <div class="actions">
+    {{ action('start', '▶ Start servers', 'primary' if inst and running|length < inst|length else '') }}
+    {{ action('stop', '■ Stop servers', '', 'Stop the Master and the Slaves now?') }}
+    {{ action('health', 'Health check') }}
+  </div>
+  {% endif %}
+</div>
+
+{% if error %}
+<div class="flash error">AWS: {{ error }}
+  {% if auth_error and can('operator') %}<form method="post" action="{{ url_for('servers_action') }}" style="display:inline;margin-left:10px">{{ csrf() }}<input type="hidden" name="action" value="sso"><button class="btn sm primary">AWS SSO login</button></form>{% endif %}
+  {% if can('admin') %}<a class="btn sm" href="{{ url_for('admin_settings', _anchor='aws') }}">AWS settings</a>{% endif %}
+</div>
+{% endif %}
+
+{% if c.auto_off %}
+<div class="flash {{ 'warn' if running and auto_off_left is not none and auto_off_left < 90 else '' }}">
+  ⏱ The servers shut down automatically every day at <b>{{ c.auto_off }}</b>
+  {%- if auto_off_left is not none %} — in <b>{{ (auto_off_left // 60)|int }} h {{ (auto_off_left % 60)|int }} min</b>{% endif %}.
+  {% if running %}A test still running at that time is interrupted.{% else %}They are started only when needed.{% endif %}
+</div>
+{% endif %}
+
+<div class="grid cards">
+  {% for i in inst %}
+  <div class="card" style="cursor:default">
+    <div class="title">{{ i.role|upper }} <span class="badge {{ 'up' if i.state == 'running' and i.ssm else ('running' if i.state in ('pending','stopping') or (i.state == 'running' and not i.ssm) else 'down') }}">{{ i.state }}{{ ' · SSM' if i.ssm }}{{ ' · booting' if i.state == 'running' and not i.ssm }}</span></div>
+    <div class="folder mono">{{ i.id }}</div>
+    <div class="stats"><div><b>{{ i.private_ip or '—' }}</b>private IP</div><div><b>{{ i.type or '—' }}</b>type</div></div>
+    <div class="last">{{ i.name or 'no Name tag' }}</div>
+  </div>
+  {% else %}
+  <div class="card new" style="cursor:default">No instances — configure them in Settings → AWS</div>
+  {% endfor %}
+</div>
+
+<div class="panel mt" id="master-lock" data-url="{{ url_for('api_servers', detail=1) }}">
+  <h2>Master activity</h2>
+  <p class="muted" id="lock-text">Checking who is using the Master…</p>
+</div>
+
+<div class="grid two mt">
+  <div class="panel">
+    <h2>Repository sync</h2>
+    <p class="muted">The repository is the single source of truth. Every run pulls <b>origin/{{ c.branch or (git.branch if git else '?') }}</b> on the Master and the Slaves first; uploads and tag edits must be committed &amp; pushed from the <a href="{{ url_for('git_page') }}">Git</a> page.</p>
+    {% if git %}<p class="mono">this computer: {{ git.branch }} @ {{ git.sha }}</p>{% endif %}
+    {% if can('operator') %}
+    <div class="actions" style="justify-content:flex-start">
+      {{ action('sync', '⇄ Sync servers now') }}
+      {{ action('force_sync', 'Force sync', 'danger', 'Force sync discards any local change made directly on the servers (git reset --hard). Continue?') }}
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Tunnels <span class="muted" style="font-weight:400">· SSM port forwarding to the Master</span></h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Service</th><th>localhost</th><th>Master</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for t in tunnels %}
+        <tr><td><b>{{ t.label }}</b></td><td class="mono">:{{ t.local_port }}</td><td class="mono">:{{ t.remote_port }}</td>
+          <td><span class="badge {{ 'up' if t.open or t.external else '' }}">{{ 'open' if t.open else ('in use' if t.external else 'closed') }}</span></td>
+          <td><div class="actions">
+            {% if t.open or t.external %}<a class="btn sm" href="{{ t.url }}" target="_blank" rel="noopener">Open ↗</a>{% endif %}
+            {% if can('operator') %}
+              <form method="post" action="{{ url_for('tunnels_action') }}">{{ csrf() }}<input type="hidden" name="name" value="{{ t.name }}">
+                {% if t.open %}<button class="btn sm" name="action" value="close">Close</button>{% elif not t.external %}<button class="btn sm primary" name="action" value="open">Open</button>{% endif %}
+                {% if t.name not in ('grafana', 'influx') %}<button class="btn sm danger" name="action" value="delete" title="Remove">✕</button>{% endif %}
+              </form>
+            {% endif %}
+          </div></td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% if can('operator') %}
+    <form method="post" action="{{ url_for('tunnels_action') }}" class="row mt" style="align-items:flex-end">
+      {{ csrf() }}<input type="hidden" name="action" value="save">
+      <div class="field"><label>Name</label><input type="text" name="name" placeholder="jenkins" pattern="[a-z0-9][a-z0-9_\-]{0,23}" required></div>
+      <div class="field"><label>Label</label><input type="text" name="label" placeholder="Jenkins"></div>
+      <div class="field"><label>Master port</label><input type="number" name="remote_port" min="1" max="65535" required></div>
+      <div class="field"><label>Local port</label><input type="number" name="local_port" min="1024" max="65535" required></div>
+      <div class="field" style="flex:0"><button class="btn">Add</button></div>
+    </form>
+    {% endif %}
+    <p class="hint">The Live monitor opens the InfluxDB tunnel by itself; Grafana links open the Grafana tunnel. Tunnels close when the servers stop or this app exits.</p>
+  </div>
+</div>
+
+{% if ops %}
+<div class="panel mt">
+  <h2>Recent server jobs</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Job</th><th>Status</th><th>Started</th><th>By</th></tr></thead>
+    <tbody>{% for o in ops %}<tr><td><a href="{{ url_for('run_detail', run_id=o.id) }}">{{ o.tag }}</a></td><td><span class="badge {{ o.status }}">{{ o.status }}</span></td><td>{{ o.started|dt }}</td><td>{{ o.user }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>SR.masterLock();</script>{% endblock %}

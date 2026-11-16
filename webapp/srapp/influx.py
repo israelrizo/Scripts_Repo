@@ -35,17 +35,39 @@ class InfluxError(RuntimeError):
     pass
 
 
+def base_url(open_tunnel=True):
+    """Local mode: SR_INFLUX_URL. AWS mode: the SSM tunnel to the Master's InfluxDB (opened on demand)."""
+    from . import settings, tunnels
+    if not settings.aws_mode():
+        return INFLUX_URL
+    try:
+        if open_tunnel and settings.get()["tunnels"].get("auto_influx", True):
+            return tunnels.ensure("influx")
+        d = tunnels._def("influx")
+        from . import aws
+        if not aws.port_open(d["local_port"]):
+            raise InfluxError("InfluxDB tunnel is closed (Servers → Tunnels)")
+        return f"http://127.0.0.1:{d['local_port']}"
+    except tunnels.TunnelError as exc:
+        raise InfluxError(f"InfluxDB tunnel: {exc}")
+    except Exception as exc:  # noqa: BLE001 - AwsError etc.
+        if isinstance(exc, InfluxError):
+            raise
+        raise InfluxError(f"InfluxDB tunnel: {exc}")
+
+
 def _q(s):
     """Quote an InfluxQL string literal (values are pre-validated with NAME_RE)."""
     return "'" + s.replace("\\", "\\\\").replace("'", "\\'") + "'"
 
 
-def query(db, q):
+def query(db, q, open_tunnel=True):
+    url = base_url(open_tunnel)
     params = {"q": q, "epoch": "ms"}
     if db:
         params["db"] = db
     data = urllib.parse.urlencode(params).encode()
-    req = urllib.request.Request(f"{INFLUX_URL}/query", data=data, method="POST",
+    req = urllib.request.Request(f"{url}/query", data=data, method="POST",
                                  headers={"Content-Type": "application/x-www-form-urlencoded"})
     if INFLUX_TOKEN:
         req.add_header("Authorization", f"Token {INFLUX_TOKEN}")
@@ -65,7 +87,7 @@ def query(db, q):
                 404: " (InfluxDB 2.x needs a DBRP mapping for this database)"}.get(exc.code, "")
         raise InfluxError(f"InfluxDB HTTP {exc.code}{hint}: {detail}")
     except Exception as exc:  # noqa: BLE001 - surface any connectivity error to the UI
-        raise InfluxError(f"InfluxDB not reachable at {INFLUX_URL}: {exc}")
+        raise InfluxError(f"InfluxDB not reachable at {url}: {exc}")
     results = body.get("results", [])
     if body.get("error"):
         raise InfluxError(body["error"])
@@ -85,8 +107,8 @@ def _first(results):
 
 def ping():
     try:
-        query(None, "SHOW DATABASES")
-        return True, INFLUX_URL
+        query(None, "SHOW DATABASES", open_tunnel=False)  # a status check never opens tunnels by itself
+        return True, base_url(False)
     except InfluxError as exc:
         return False, str(exc)
 
@@ -300,7 +322,7 @@ def diagnostics(db="", app="", measurement="jmeter", minutes=60):
             steps.append({"name": name, "ok": False, "detail": str(exc), "ms": round((time.time() - t0) * 1000)})
             return False
 
-    if not step(f"Connect to {INFLUX_URL}", lambda: f"databases: {', '.join(databases()) or 'none'}"):
+    if not step("Connect to InfluxDB", lambda: f"databases: {', '.join(databases()) or 'none'}"):
         return steps
     if not db:
         return steps

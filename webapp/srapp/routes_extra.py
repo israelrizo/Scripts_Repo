@@ -4,7 +4,7 @@ import time
 
 from flask import abort, flash, g, jsonify, redirect, render_template, request, url_for
 
-from . import (atlassian, connectivity, gitops, influx, notify, projects, runner, scheduler, settings,
+from . import (atlassian, connectivity, gitops, google, influx, notify, projects, runner, scheduler, settings,
                shiftleft, users)
 from .app import _project_or_404, app, can, login_required
 from .config import Config
@@ -44,7 +44,9 @@ def admin_settings():
                                       app_var=f.get("app_var", "").strip(), extra=f.get("extra", "").strip())
             elif section == "smtp":
                 s = cfg["smtp"]
-                s.update(enabled=bool(f.get("enabled")), host=f.get("host", "").strip(),
+                s.update(provider="smtp" if f.get("provider") == "smtp" else "gmail",
+                         attach_report=bool(f.get("attach_report")),
+                         enabled=bool(f.get("enabled")), host=f.get("host", "").strip(),
                          port=int(f.get("port") or 587), security=f.get("security", "starttls"),
                          user=f.get("user", "").strip(), from_addr=f.get("from_addr", "").strip(),
                          always_to=", ".join(settings.parse_emails(f.get("always_to", ""))),
@@ -59,6 +61,7 @@ def admin_settings():
                     raise ValueError("Type a recipient for the test e-mail")
                 subject, html, text = notify.render("end", notify.MOCK)
                 notify.send(to, "[TEST] " + subject, html, text)
+                flash(f"(sent from {notify.sender()})", "ok")
                 flash(f"Test e-mail sent to {', '.join(to)}.", "ok")
                 return redirect(url_for("admin_settings", _anchor="smtp"))
             elif section == "jira":
@@ -76,7 +79,8 @@ def admin_settings():
         diag = influx.diagnostics(request.args.get("db", ""), request.args.get("app", ""),
                                   request.args.get("measurement", "jmeter") or "jmeter",
                                   request.args.get("minutes", 60, type=int))
-    return render_template("settings.html", s=cfg, diag=diag, influx_url=influx.INFLUX_URL,
+    return render_template("settings.html", s=cfg, diag=diag, glink=google.linked(), spaces=google.spaces(),
+                           google_redirect=google.redirect_uri(), influx_url=('SSM tunnel → Master :8086' if settings.aws_mode() else influx.INFLUX_URL),
                            smtp_has_password=bool(cfg["smtp"].get("password_enc")),
                            tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"))
 
@@ -91,6 +95,8 @@ def project_settings(name):
         s = settings.project(name)
         s["staff_emails"] = settings.parse_emails(f.get("staff_emails", ""))
         s["grafana_dashboard"] = f.get("grafana_dashboard", "").strip()
+        known = {x["id"] for x in google.spaces()}
+        s["chat_spaces"] = [x for x in f.getlist("chat_spaces") if x in known]
         repo = f.get("bitbucket_repo", "").strip()
         if repo and not atlassian.REPO_RE.match(repo):
             raise ValueError("Repository must be <workspace>/<repo-slug>")
@@ -194,7 +200,8 @@ def schedules():
                 scheduler.create(g.user["username"], f.get("project", ""), f.get("tag", ""), f.get("kind", "once"),
                                  f.get("at", ""), f.get("date", ""), f.getlist("days"), f.get("props", ""),
                                  bool(f.get("distributed")), f.get("jira", ""), f.get("notes", ""),
-                                 settings.parse_emails(f.get("extra_emails", "")))
+                                 settings.parse_emails(f.get("extra_emails", "")),
+                                 stop_after=bool(f.get("stop_after")))
                 flash("Execution scheduled.", "ok")
             elif action == "toggle":
                 s = next(x for x in scheduler.load() if x["id"] == f.get("id"))
@@ -213,7 +220,7 @@ def schedules():
     plist = projects.list_projects()
     tags = {p["name"]: [t["tag"] for t in projects.parse_tags(p["name"]) if t["exists"]] for p in plist}
     return render_template("schedules.html", items=items, tags=tags, days=scheduler.DAYS,
-                           tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), slaves=Config.REMOTE_HOSTS,
+                           tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), slaves=runner.slave_list(),
                            preset_project=request.args.get("project", ""), preset_tag=request.args.get("tag", ""))
 
 

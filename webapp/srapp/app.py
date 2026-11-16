@@ -273,7 +273,8 @@ def dashboard():
 @login_required()
 def api_status():
     ok, detail = influx.ping()
-    return jsonify(slaves=runner.slave_status(), active=runner.active_runs(),
+    slaves = [] if settings.aws_mode() else runner.slave_status()
+    return jsonify(slaves=slaves, active=runner.active_runs(), aws=settings.aws_mode(),
                    influx={"ok": ok, "detail": detail}, jmeter=runner.jmeter_available())
 
 
@@ -294,7 +295,7 @@ def new_project():
 def project(name):
     _project_or_404(name)
     tab = request.args.get("tab", "tags")
-    ctx = {"name": name, "tab": tab, "tags": projects.parse_tags(name), "slaves": Config.REMOTE_HOSTS}
+    ctx = {"name": name, "tab": tab, "tags": projects.parse_tags(name), "slaves": runner.slave_list()}
     if tab == "scripts":
         ctx.update(scripts=projects.list_scripts(name), folders=projects.test_subfolders(name))
     elif tab == "data":
@@ -415,7 +416,9 @@ def run(name):
     meta = runner.start_tag_run(name, request.form.get("tag", ""), g.user["username"],
                                 request.form.get("props", ""), bool(request.form.get("distributed")),
                                 jira=request.form.get("jira", ""), notes=request.form.get("notes", ""),
-                                extra_emails=extra, notify=bool(request.form.get("notify")))
+                                extra_emails=extra, notify=bool(request.form.get("notify")),
+                                auto_start=bool(request.form.get("auto_start")),
+                                stop_after=bool(request.form.get("stop_after")))
     return redirect(url_for("run_detail", run_id=meta["id"]))
 
 
@@ -423,7 +426,12 @@ def run(name):
 @login_required("operator")
 def sync(name):
     _project_or_404(name)
-    meta = runner.start_sync(name, g.user["username"])
+    if settings.aws_mode():
+        from . import remote_run
+        meta = runner.start_op("Sync repository on servers", g.user["username"],
+                               lambda log: remote_run.op_sync(log, force=False))
+    else:
+        meta = runner.start_sync(name, g.user["username"])
     return redirect(url_for("run_detail", run_id=meta["id"]))
 
 
@@ -691,3 +699,4 @@ def admin_users():
 
 # Feature routes (settings, schedules, git/Bitbucket, shift-left, e-mail, API) live in routes_extra.py
 from . import routes_extra  # noqa: E402,F401
+from . import routes_remote  # noqa: E402,F401

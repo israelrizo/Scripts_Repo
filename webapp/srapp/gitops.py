@@ -56,7 +56,7 @@ def status(fetch=False):
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
         path = path.strip('"')
-        if path.endswith(".DS_Store") or path.startswith("webapp/instance/"):
+        if IGNORED.search(path):
             continue
         files.append({"code": code.strip() or "?", "path": path,
                       "kind": {"M": "modified", "A": "added", "D": "deleted", "R": "renamed",
@@ -90,5 +90,64 @@ def commit_and_push(paths, message, author_name, author_email):
     try:
         _git("push", "origin", "HEAD", timeout=120)
     except (GitError, subprocess.TimeoutExpired) as exc:
-        raise GitError(f"Committed {sha} on the Master but the push failed (pull first?): {exc}")
+        raise GitError(f"Committed {sha} locally but the push failed (pull first?): {exc}")
     return sha
+
+
+# --------------------------------------------------------------------------- centralized sync (AWS mode)
+IGNORED = re.compile(r"(^|/)results/|^\.jmcc/|\.DS_Store$|^webapp/instance/")
+
+
+def branch():
+    return _git("rev-parse", "--abbrev-ref", "HEAD").strip()
+
+
+def head_sha(ref="HEAD"):
+    return _git("rev-parse", ref).strip()
+
+
+def require_pushed(project=None):
+    """The repository (origin) is the single source of truth for Master and Slaves.
+    Returns (branch, sha) when this computer's clone is clean and identical to origin; raises GitError otherwise."""
+    br = branch()
+    if br == "HEAD":
+        raise GitError("The local repository is in detached HEAD; check out a branch first")
+    try:
+        _git("fetch", "--quiet", "origin", br, timeout=60)
+    except (GitError, subprocess.TimeoutExpired) as exc:
+        raise GitError(f"Cannot reach the repository (origin): {exc}")
+    dirty = []
+    for line in _git("status", "--porcelain=v1", "-uall").splitlines():
+        path = line[3:].split(" -> ")[-1].strip('"')
+        if IGNORED.search(path):
+            continue
+        if project is None or path.startswith(project + "/") or path.startswith("webapp/bin/"):
+            dirty.append(path)
+    if dirty:
+        shown = ", ".join(dirty[:4]) + (f" (+{len(dirty) - 4} more)" if len(dirty) > 4 else "")
+        raise GitError(f"Uncommitted changes: {shown}. Commit & push them on the Git page so the servers get them.")
+    try:
+        behind, ahead = map(int, _git("rev-list", "--left-right", "--count", f"origin/{br}...HEAD").split())
+    except GitError:
+        raise GitError(f"Branch {br} does not exist on origin yet; push it first (Git page)")
+    if ahead:
+        raise GitError(f"{ahead} local commit(s) not pushed. Push them on the Git page so the servers get them.")
+    if behind:
+        raise GitError(f"This computer is {behind} commit(s) behind origin/{br}. Pull on the Git page first.")
+    return br, head_sha()
+
+
+def server_sync_script(remote_root, br, force=False):
+    """Script run on Master/Slaves: bring the server clone to origin/<branch> and print the commit."""
+    import shlex
+    q = shlex.quote
+    if force:
+        update = f"git checkout -q -f {q(br)} 2>&1 && git reset -q --hard origin/{q(br)} 2>&1"
+    else:
+        update = (f"(git checkout -q {q(br)} 2>&1 || git checkout -q -b {q(br)} --track origin/{q(br)} 2>&1) && "
+                  f"git merge -q --ff-only origin/{q(br)} 2>&1")
+    return (f"cd {q(remote_root)} || exit 3\n"
+            f"export GIT_TERMINAL_PROMPT=0\n"
+            f"git fetch -q origin {q(br)} 2>&1 || exit 4\n"
+            f"{update} || exit 5\n"
+            f"echo \"@@SHA@@ $(git rev-parse HEAD)\"\n")

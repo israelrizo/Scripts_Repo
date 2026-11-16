@@ -24,6 +24,42 @@
   <p class="hint mt">Connection settings come from the service environment: <code>SR_INFLUX_URL</code>, <code>SR_INFLUX_USER</code>/<code>SR_INFLUX_PASSWORD</code> (1.x) or <code>SR_INFLUX_TOKEN</code> (2.x).</p>
 </div>
 
+
+<div class="panel" id="aws">
+  <h2>AWS · remote execution <span class="badge {{ 'up' if s.aws.enabled else '' }}">{{ 'enabled' if s.aws.enabled else 'local mode' }}</span></h2>
+  <p class="hint">When enabled, this app runs on <b>your computer</b> and drives the Master and Slaves with your AWS CLI session (SSM): start/stop instances, sync the repository, launch tests, stream the console, download reports and open tunnels.</p>
+  <form method="post" action="{{ url_for('aws_settings') }}">
+    {{ csrf() }}
+    <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.aws.enabled }}> Run tests on the AWS servers (Master + Slaves) instead of this machine</label>
+    <div class="row">
+      <div class="field"><label>AWS profile</label><input type="text" name="profile" value="{{ s.aws.profile }}" placeholder="default / bancobase-qa"><div class="hint">The profile you use for SSM (<code>aws configure list-profiles</code>).</div></div>
+      <div class="field"><label>Region</label><input type="text" name="region" value="{{ s.aws.region }}" placeholder="us-east-1"></div>
+      <div class="field"><label>Daily auto-off</label><input type="text" name="auto_off" value="{{ s.aws.auto_off }}" placeholder="18:00"><div class="hint">Servers are shut down at this time ({{ s.app.timezone or 'America/Mexico_City' }}).</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Master instance id</label><input type="text" name="master" value="{{ s.aws.master }}" placeholder="i-0123456789abcdef0"></div>
+      <div class="field" style="flex:2"><label>Slave instance ids</label><input type="text" name="slaves" value="{{ s.aws.slaves|join(', ') }}" placeholder="i-0aaa…, i-0bbb…"><div class="hint">Their private IPs are read from EC2 and passed to JMeter (<code>-R</code>) automatically.</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Linux user on the servers</label><input type="text" name="remote_user" value="{{ s.aws.remote_user }}" placeholder="ubuntu"><div class="hint">Owner of the scripts folder; needs <code>jmeter</code> on its PATH and git access to the repository.</div></div>
+      <div class="field" style="flex:2"><label>Scripts folder on Master and Slaves</label><input type="text" name="remote_root" value="{{ s.aws.remote_root }}"></div>
+      <div class="field"><label>Branch</label><input type="text" name="branch" value="{{ s.aws.branch }}" placeholder="same as this computer"></div>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:2"><label>Command to (re)start jmeter-server on a Slave</label><input type="text" name="slave_start_cmd" value="{{ s.aws.slave_start_cmd }}"><div class="hint">Run as root through SSM only when a Slave does not answer on port 1099.</div></div>
+      <div class="field"><label>Download .jtl up to (MB)</label><input type="number" name="jtl_max_mb" value="{{ s.aws.jtl_max_mb }}" min="0"></div>
+    </div>
+    <label class="check field"><input type="checkbox" name="auto_influx" value="1" {{ 'checked' if s.tunnels.auto_influx }}> Open the InfluxDB tunnel automatically for the Live monitor</label>
+    <div class="actions" style="justify-content:flex-start">
+      <button class="btn primary">Save</button>
+      <button class="btn" name="action" value="identity" formnovalidate>Who am I?</button>
+      <button class="btn" name="action" value="test" formnovalidate>Test connection</button>
+    </div>
+  </form>
+  <form method="post" action="{{ url_for('servers_action') }}" class="mt">{{ csrf() }}<input type="hidden" name="action" value="sso">
+    <button class="btn">AWS SSO login</button> <span class="hint">Runs <code>aws sso login</code> for this profile and opens the browser; use it when the session expired.</span></form>
+</div>
+
 <div class="grid two mt">
   <form class="panel" method="post" id="grafana">
     {{ csrf() }}<input type="hidden" name="section" value="grafana">
@@ -51,9 +87,16 @@
 
   <form class="panel" method="post" id="smtp">
     {{ csrf() }}<input type="hidden" name="section" value="smtp">
-    <h2>E-mail notifications (SMTP)</h2>
+    <h2>E-mail notifications</h2>
     <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.smtp.enabled }}> Enabled</label>
-    <div class="row">
+    <div class="field"><label>Send with</label>
+      <select name="provider">
+        <option value="gmail" {{ 'selected' if s.smtp.provider != 'smtp' }}>My Gmail account{{ ' — ' ~ glink.email if glink.email else ' (not linked yet)' }}</option>
+        <option value="smtp" {{ 'selected' if s.smtp.provider == 'smtp' }}>SMTP server</option>
+      </select></div>
+    <label class="check field"><input type="checkbox" name="attach_report" value="1" {{ 'checked' if s.smtp.attach_report }}> Attach the HTML report (.zip) to the end-of-run e-mail <span class="hint">(recipients cannot open links to your computer)</span></label>
+    <details class="field" {{ 'open' if s.smtp.provider == 'smtp' }}><summary><b>SMTP server</b> <span class="hint">(only when not using Gmail)</span></summary>
+    <div class="row mt">
       <div class="field" style="flex:3"><label>SMTP host</label><input type="text" name="host" value="{{ s.smtp.host }}" placeholder="smtp.gmail.com / email-smtp.us-east-1.amazonaws.com"></div>
       <div class="field" style="flex:1"><label>Port</label><input type="number" name="port" value="{{ s.smtp.port }}"></div>
       <div class="field" style="flex:1"><label>Security</label><select name="security">{% for v in ['starttls','ssl','none'] %}<option {{ 'selected' if s.smtp.security == v }}>{{ v }}</option>{% endfor %}</select></div>
@@ -63,6 +106,7 @@
       <div class="field"><label>Password {% if smtp_has_password %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="password" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if smtp_has_password else '' }}"></div>
     </div>
     <div class="field"><label>From</label><input type="text" name="from_addr" value="{{ s.smtp.from_addr }}" placeholder="jmeter-control-center@bancobase.com"></div>
+    </details>
     <div class="field"><label>Always notify</label><input type="text" name="always_to" value="{{ s.smtp.always_to }}">
       <div class="hint">Plus each project's staff (project → Settings) and the extra addresses typed when launching a run.</div></div>
     <label class="check"><input type="checkbox" name="notify_start" value="1" {{ 'checked' if s.smtp.notify_start }}> When a run starts</label>
@@ -91,6 +135,56 @@
         <div class="field"><label>Default workspace</label><input type="text" name="workspace" value="{{ s.bitbucket.workspace }}" placeholder="bancobase"></div>
       </div>
       <button class="btn primary">Save</button>
+    </form>
+  </div>
+
+  <div class="panel" id="gmail">
+    <h2>Gmail account <span class="badge {{ 'up' if glink.linked else '' }}">{{ glink.email if glink.linked else 'not linked' }}</span></h2>
+    <p class="hint">E-mails are sent <b>from your own account</b> through the Gmail API. The app only gets permission to <i>send</i> (scope <code>gmail.send</code>); it cannot read your mailbox.</p>
+    <form method="post" action="{{ url_for('google_settings') }}">
+      {{ csrf() }}<input type="hidden" name="action" value="client">
+      <div class="field"><label>OAuth client ID</label><input type="text" name="client_id" value="{{ glink.client_id }}" placeholder="1234567890-abc.apps.googleusercontent.com"></div>
+      <div class="field"><label>OAuth client secret {% if glink.has_secret %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="client_secret" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if glink.has_secret else '' }}"></div>
+      <p class="hint">One-time, by the team's Google Cloud admin: APIs &amp; Services → enable <i>Gmail API</i> → Credentials → OAuth client ID (<i>Web application</i>) with redirect URI <code>{{ google_redirect }}</code>. The same client can be shared by all engineers.</p>
+      <button class="btn">Save client</button>
+    </form>
+    <div class="actions mt" style="justify-content:flex-start">
+      <form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="link"><button class="btn primary" {{ 'disabled' if not (glink.client_id and glink.has_secret) }}>{{ 'Re-link Gmail account' if glink.linked else 'Link my Gmail account' }}</button></form>
+      {% if glink.linked %}<form method="post" action="{{ url_for('google_settings') }}" data-confirm="Unlink {{ glink.email }}?">{{ csrf() }}<input type="hidden" name="action" value="unlink"><button class="btn danger">Unlink</button></form>{% endif %}
+    </div>
+  </div>
+
+  <div class="panel" id="chat">
+    <h2>Google Chat spaces</h2>
+    <form method="post" action="{{ url_for('google_settings') }}">
+      {{ csrf() }}<input type="hidden" name="action" value="chat">
+      <label class="check"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.chat.enabled }}> Send a message to the spaces</label>
+      <label class="check"><input type="checkbox" name="notify_start" value="1" {{ 'checked' if s.chat.notify_start }}> When a run starts</label>
+      <label class="check field"><input type="checkbox" name="notify_end" value="1" {{ 'checked' if s.chat.notify_end }}> When a run ends (results in the same thread)</label>
+      <button class="btn">Save</button>
+    </form>
+    <div class="table-wrap mt"><table>
+      <thead><tr><th>Space</th><th>Default (every run)</th><th></th></tr></thead>
+      <tbody>
+      {% for sp in spaces %}
+        <tr><td><b>{{ sp.name }}</b></td>
+          <td><form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_default"><input type="hidden" name="id" value="{{ sp.id }}"><input type="hidden" name="value" value="{{ '0' if sp.default else '1' }}"><button class="btn sm">{{ '★ default' if sp.default else '☆ per project' }}</button></form></td>
+          <td><div class="actions">
+            <form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_test"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm">Test</button></form>
+            <form method="post" action="{{ url_for('google_settings') }}" data-confirm="Remove space {{ sp.name }}?">{{ csrf() }}<input type="hidden" name="action" value="space_delete"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm danger">✕</button></form>
+          </div></td></tr>
+      {% else %}<tr><td colspan="3" class="empty">No spaces yet.</td></tr>{% endfor %}
+      </tbody>
+    </table></div>
+    <form method="post" action="{{ url_for('google_settings') }}" class="mt">
+      {{ csrf() }}<input type="hidden" name="action" value="space_add">
+      <div class="row">
+        <div class="field"><label>Space name</label><input type="text" name="name" placeholder="QA Performance" required></div>
+        <div class="field" style="flex:2"><label>Webhook URL</label><input type="password" name="url" autocomplete="off" placeholder="https://chat.googleapis.com/v1/spaces/…/messages?key=…&token=…" required></div>
+      </div>
+      <label class="check field"><input type="checkbox" name="default" value="1" checked> Default space (notified for every project)</label>
+      <button class="btn">Add space</button>
+      <p class="hint">In Google Chat: space → <i>Apps &amp; integrations</i> → <i>Webhooks</i> → add → copy the URL. Non-default spaces are chosen per project (project → Settings).</p>
     </form>
   </div>
 </div>

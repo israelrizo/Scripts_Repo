@@ -3,16 +3,18 @@
 Recipients of every notification: settings.smtp.always_to (qaperformance@bancobase.com)
 + the project's staff e-mails (project settings) + extra addresses typed in the run dialog.
 """
+import io
 import smtplib
 import ssl
 import time
+import zipfile
 from datetime import datetime
 from email.message import EmailMessage
 from email.utils import formataddr, make_msgid
 
 from flask import render_template
 
-from . import atlassian, projects, runner, settings
+from . import atlassian, google, projects, runner, settings
 from . import report as rpt
 
 ME = "JMeter Control Center"
@@ -65,6 +67,7 @@ def run_summary(meta):
         pub = rpt.history(project).get(rd)
         if pub:
             out["confluence_url"] = pub["url"]
+    out["local_links"] = settings.is_local_url(base_url)
     if out["jira"]:
         jira_base = settings.get()["jira"].get("url") or ""
         out["jira_url"] = f"{jira_base.rstrip('/')}/browse/{out['jira']}" if jira_base else ""
@@ -129,19 +132,60 @@ def recipients(project, extra=None):
     return out
 
 
-def send(to, subject, html, text):
+def report_attachment(project, result_dir):
+    """Zip of html_report for e-mail (recipients cannot open links to the engineer's localhost)."""
+    cfg = settings.get()["smtp"]
+    if not cfg.get("attach_report") or not result_dir:
+        return None
+    try:
+        d = projects.result_dir(project, result_dir) / "html_report"
+    except projects.ProjectError:
+        return None
+    if not d.is_dir():
+        return None
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in d.rglob("*"):
+            if f.is_file():
+                zf.write(f, f"html_report/{f.relative_to(d)}")
+    data = buf.getvalue()
+    if len(data) > int(cfg.get("attach_max_mb") or 15) * 1024 * 1024:
+        return None
+    return f"{result_dir}_html_report.zip", data
+
+
+def sender():
+    cfg = settings.get()["smtp"]
+    if cfg.get("provider", "gmail") == "gmail":
+        return google.linked()["email"]
+    return cfg.get("from_addr", "")
+
+
+def send(to, subject, html, text, attachment=None):
     cfg = settings.get()["smtp"]
     if not cfg.get("enabled"):
         raise RuntimeError("E-mail notifications are disabled (Settings → E-mail)")
-    if not cfg.get("host") or not cfg.get("from_addr"):
-        raise RuntimeError("SMTP host / from address not configured")
+    if not to:
+        raise RuntimeError("No recipients")
+    provider = cfg.get("provider", "gmail")
+    from_addr = sender()
+    if not from_addr:
+        raise RuntimeError("Gmail account not linked (Settings → E-mail)" if provider == "gmail"
+                           else "SMTP from address not configured")
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = formataddr((ME, cfg["from_addr"]))
+    msg["From"] = formataddr((ME, from_addr)) if provider != "gmail" else from_addr
     msg["To"] = ", ".join(to)
-    msg["Message-ID"] = make_msgid(domain=cfg["from_addr"].split("@")[-1])
+    msg["Message-ID"] = make_msgid(domain=from_addr.split("@")[-1])
     msg.set_content(text)
     msg.add_alternative(html, subtype="html")
+    if attachment:
+        msg.add_attachment(attachment[1], maintype="application", subtype="zip", filename=attachment[0])
+    if provider == "gmail":
+        google.send_gmail(msg.as_bytes())
+        return
+    if not cfg.get("host"):
+        raise RuntimeError("SMTP host not configured")
     port = int(cfg.get("port") or 587)
     ctx = ssl.create_default_context()
     if cfg.get("security") == "ssl":
@@ -161,6 +205,61 @@ def send(to, subject, html, text):
             pass
 
 
+# --------------------------------------------------------------------------- Google Chat
+def chat_payload(event, s):
+    """Text + card for a Google Chat space."""
+    icon = "▶️" if event == "start" else {"SATISFACTORIA": "✅", "INSATISFACTORIA": "⚠️"}.get(
+        s.get("verdict"), "✅" if s["status"] == "finished" else "❌")
+    title = f"{icon} {s['label']} · {s['tag']}"
+    state = "En ejecución" if event == "start" else (s.get("verdict") or s["status"].upper())
+    lines = [f"*{title}*", f"{state} · por {s['user']} · {s['started']}"
+             + (f" · duración {s['duration']}" if event == "end" else "")]
+    widgets = [{"decoratedText": {"topLabel": "Estado", "text": f"<b>{state}</b>"}},
+               {"decoratedText": {"topLabel": "Ejecutado por", "text": f"{s['user']} · {s['started']}"}}]
+    if s.get("slaves"):
+        widgets.append({"decoratedText": {"topLabel": "Generadores", "text": f"Master + {len(s['slaves'])} slaves"}})
+    if s.get("notes"):
+        widgets.append({"decoratedText": {"topLabel": "Notas", "text": s["notes"], "wrapText": True}})
+    t = s.get("totals")
+    if event == "end" and t:
+        kpi = (f"{t['samples']:,} peticiones · error {t['error_pct']} % · prom {t['avg'] or 0:.0f} ms · "
+               f"p95 {t['p95'] or 0:.0f} ms · {t['tps']} TPS")
+        lines.append(kpi)
+        widgets.append({"decoratedText": {"topLabel": "Resultados", "text": kpi, "wrapText": True}})
+        for name, expected, actual, ok in s.get("checks", []):
+            widgets.append({"decoratedText": {"topLabel": name, "text": f"{'✅' if ok else '❌'} {actual} (criterio {expected})"}})
+    buttons = [{"text": label, "onClick": {"openLink": {"url": url}}}
+               for label, url in (("Confluence", s.get("confluence_url")), ("Jira", s.get("jira_url")))
+               if url and not settings.is_local_url(url)]
+    if buttons:
+        widgets.append({"buttonList": {"buttons": buttons}})
+    return {"text": "\n".join(lines),
+            "cardsV2": [{"cardId": "jmcc", "card": {
+                "header": {"title": f"{s['label']} · {s['tag']}", "subtitle": "JMeter Control Center · " + state},
+                "sections": [{"widgets": widgets}]}}]}
+
+
+def send_chat(event, meta, summary):
+    cfg = settings.get()["chat"]
+    if not cfg.get("enabled") or not cfg.get(f"notify_{event}", True) or not meta.get("notify", True):
+        return
+    targets = google.chat_targets(meta["project"])
+    if not targets:
+        return
+    payload = chat_payload(event, summary)
+    ok, bad = [], []
+    for space in targets:
+        try:
+            google.send_chat(space, payload, thread_key=f"jmcc-{meta['id']}")
+            ok.append(space["name"])
+        except Exception as exc:  # noqa: BLE001
+            bad.append(f"{space['name']} ({exc})")
+    if ok:
+        _log(meta, f"chat: {event} message sent to {', '.join(ok)}")
+    if bad:
+        _log(meta, f"chat: FAILED for {'; '.join(bad)}")
+
+
 def _log(meta, line):
     p = runner._runs_dir() / f"{meta['id']}.log"
     with p.open("a") as fh:
@@ -177,9 +276,13 @@ def on_start(meta):
             to = recipients(meta["project"], meta.get("extra_emails"))
             subject, html, text = render("start", run_summary(meta))
             send(to, subject, html, text)
-            _log(meta, f"notify: start e-mail sent to {', '.join(to)}")
+            _log(meta, f"notify: start e-mail sent from {sender()} to {', '.join(to)}")
         except Exception as exc:  # noqa: BLE001 - never break a run because of e-mail
             _log(meta, f"notify: start e-mail FAILED: {exc}")
+    try:
+        send_chat("start", meta, run_summary(meta))
+    except Exception as exc:  # noqa: BLE001
+        _log(meta, f"chat: FAILED: {exc}")
 
 
 def on_end(meta):
@@ -191,10 +294,16 @@ def on_end(meta):
         try:
             to = recipients(meta["project"], meta.get("extra_emails"))
             subject, html, text = render("end", summary)
-            send(to, subject, html, text)
-            _log(meta, f"notify: end e-mail sent to {', '.join(to)}")
+            att = report_attachment(meta["project"], meta.get("result_dir"))
+            send(to, subject, html, text, att)
+            _log(meta, f"notify: end e-mail sent from {sender()} to {', '.join(to)}"
+                 + (f" (attached {att[0]}, {len(att[1]) / 1024:.0f} KB)" if att else ""))
         except Exception as exc:  # noqa: BLE001
             _log(meta, f"notify: end e-mail FAILED: {exc}")
+    try:
+        send_chat("end", meta, summary)
+    except Exception as exc:  # noqa: BLE001
+        _log(meta, f"chat: FAILED: {exc}")
     if meta.get("jira"):
         try:
             atlassian.Jira(meta["user"]).comment(meta["jira"], jira_comment(summary))
@@ -218,8 +327,8 @@ def jira_comment(s):
     for name, expected, actual, ok in s.get("checks", []):
         lines.append(f"* {'(/)' if ok else '(x)'} {name}: {actual} (criterio {expected})")
     links = [(n, u) for n, u in (("Reporte HTML", s["report_url"]), ("Grafana", s["grafana_url"]),
-                                 ("Confluence", s["confluence_url"]), ("Ejecución", s["run_url"])) if u]
+                                 ("Confluence", s["confluence_url"]), ("Ejecución", s["run_url"]))
+             if u and not settings.is_local_url(u)]
     if links:
         lines += ["", " · ".join(f"[{n}|{u}]" for n, u in links)]
-    lines.append("_(Enlaces localhost: abrir con el túnel SSM del Control Center)_")
     return "\n".join(lines)

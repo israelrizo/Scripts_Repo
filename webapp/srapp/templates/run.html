@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-head">
   <div>
-    <p class="sub"><a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / executions</p>
+    <p class="sub">{% if run.kind == 'ops' %}<a href="{{ url_for('servers_page') }}">Servers</a> / jobs{% else %}<a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / executions{% endif %}</p>
     <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status">{{ run.status }}</span></h1>
     <p class="sub">{{ run.script or '' }} · by {{ run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
       {% if run.remote_hosts and run.kind == 'test' %} · distributed on <span class="mono">{{ run.remote_hosts|join(', ') }}</span>{% endif %}
@@ -14,17 +14,18 @@
     {% if run.notes %}<p class="sub">📝 {{ run.notes }}</p>{% endif %}
   </div>
   <div class="actions" id="run-actions">
-    <a class="btn primary" id="report-btn" target="_blank" style="{{ '' if run.result_dir and run.status == 'finished' else 'display:none' }}"
-       href="{{ url_for('report', name=run.project, run_name=run.result_dir) if run.result_dir else '#' }}">Open HTML report</a>
+    {% if run.kind != 'ops' %}<a class="btn primary" id="report-btn" target="_blank" style="{{ '' if run.result_dir and run.status == 'finished' else 'display:none' }}"
+       href="{{ url_for('report', name=run.project, run_name=run.result_dir) if run.result_dir else '#' }}">Open HTML report</a>{% endif %}
+    {% if run.kind == 'ops' %}<a class="btn" href="{{ url_for('servers_page') }}">← Servers</a>{% endif %}
     {% if run.result_dir and run.status == 'finished' %}<a class="btn" href="{{ url_for('confluence_report', name=run.project, run_name=run.result_dir) }}">Confluence report</a>{% endif %}
     {% if run.kind == 'test' %}
       {% set t0 = targets[0] if targets else None %}
       {% set gl = grafana_link(run.project, t0.application if t0 else None, ((run.started or run.created) * 1000 - 5000)|int, ((run.ended * 1000 + 15000)|int) if run.ended else None) %}
-      {% if gl %}<a class="btn" href="{{ gl }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
+      {% if gl %}<a class="btn" href="{{ url_for('tunnel_go', name='grafana', next=gl) if aws_mode else gl }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
       <a class="btn" href="{{ url_for('run_email', run_id=run.id) }}" target="_blank" title="Preview the quick report e-mail">✉ Preview</a>
       {% if can('operator') and run.status not in ('running','starting','stopping') %}<form method="post" action="{{ url_for('run_notify', run_id=run.id) }}" data-confirm="Send the quick report e-mail again?">{{ csrf() }}<button class="btn">✉ Send</button></form>{% endif %}
     {% endif %}
-    {% if can('operator') and run.status in ('running','stopping') %}
+    {% if can('operator') and run.status in ('running','stopping','starting') and run.kind != 'ops' %}
       <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Graceful stop: JMeter finishes current iterations and still builds the report.">{{ csrf() }}<button class="btn">■ Stop</button></form>
       <form method="post" action="{{ url_for('stop_run', run_id=run.id) }}" data-confirm="Kill the process group now? The HTML report will NOT be generated.">{{ csrf() }}<input type="hidden" name="force" value="1"><button class="btn danger">✕ Kill</button></form>
     {% endif %}
@@ -33,7 +34,8 @@
 
 <div class="panel">
   <h3>Console</h3>
-  <div class="console" id="console" data-run="{{ run.id }}" data-project="{{ run.project }}" data-report-base="{{ url_for('report', name=run.project, run_name='__RUN__') }}"></div>
+  <div class="console" id="console" data-run="{{ run.id }}" data-project="{{ run.project }}" data-report-base="{{ url_for('report', name=run.project, run_name='__RUN__') if run.kind != 'ops' else '' }}"></div>
+  {% if run.mode == 'aws' and run.kind == 'test' %}<p class="hint">The test runs on the Master; this console mirrors it every few seconds through SSM. It keeps running if you close this page or the app.{% if run.stop_after %} The servers will be <b>stopped when it ends</b>.{% endif %}</p>{% endif %}
   <label class="check mt"><input type="checkbox" id="follow" checked> Follow output</label>
 </div>
 

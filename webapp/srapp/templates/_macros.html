@@ -3,13 +3,13 @@
 {% macro run_row(r, show_project=true) %}
 <tr>
   <td><a href="{{ url_for('run_detail', run_id=r.id) }}" class="mono">{{ r.id }}</a></td>
-  {% if show_project %}<td><a href="{{ url_for('project', name=r.project) }}">{{ r.project }}</a></td>{% endif %}
+  {% if show_project %}<td>{% if r.kind == 'ops' %}<a href="{{ url_for('servers_page') }}">servers</a>{% else %}<a href="{{ url_for('project', name=r.project) }}">{{ r.project }}</a>{% endif %}</td>{% endif %}
   <td><code>{{ r.tag }}</code>{% if r.remote_hosts and r.kind == 'test' %} <span class="chip" title="{{ r.remote_hosts|join(', ') }}">{{ r.remote_hosts|length }} slaves</span>{% endif %}</td>
   <td><span class="badge {{ r.status }}">{{ r.status }}</span></td>
   <td class="nowrap">{{ r.started|dt }}</td>
   <td class="num mono">{{ r|duration }}</td>
   <td>{{ r.user }}</td>
-  <td class="right">{% if r.result_dir %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result_dir) }}" target="_blank">Report</a>{% endif %}</td>
+  <td class="right">{% if r.result_dir and r.kind == 'test' %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result_dir) }}" target="_blank">Report</a>{% endif %}</td>
 </tr>
 {% endmacro %}
 

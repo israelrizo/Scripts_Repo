@@ -24,8 +24,9 @@
     <a href="{{ url_for('dashboard') }}" class="{{ 'active' if ep in ('dashboard','project','compare','confluence_report') }}">Projects</a>
     <a href="{{ url_for('runs') }}" class="{{ 'active' if ep in ('runs','run_detail') }}">Executions</a>
     <a href="{{ url_for('schedules') }}" class="{{ 'active' if ep == 'schedules' }}">Schedules</a>
+    {% if aws_mode %}<a href="{{ url_for('servers_page') }}" class="{{ 'active' if ep == 'servers_page' }}">Servers</a>{% endif %}
     <a href="{{ url_for('monitor') }}" class="{{ 'active' if ep == 'monitor' }}">Live monitor</a>
-    {% if grafana_url %}<a href="{{ grafana_link() or grafana_url }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
+    {% if grafana_url %}<a href="{{ url_for('tunnel_go', name='grafana', next=(grafana_link() or grafana_url)) if aws_mode else (grafana_link() or grafana_url) }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
     <a href="{{ url_for('git_page') }}" class="{{ 'active' if ep == 'git_page' }}">Git</a>
     {% if can('admin') %}
       <a href="{{ url_for('admin_users') }}" class="{{ 'active' if ep == 'admin_users' }}">Users</a>
