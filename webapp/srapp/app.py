@@ -599,6 +599,7 @@ def monitor():
     db, app_name = request.args.get("db", ""), request.args.get("app", "")
     start = request.args.get("from", type=int)
     end = request.args.get("to", type=int)
+    rng = request.args.get("range", type=int)  # a "Window" choice: live view of the last N seconds
     run_name = request.args.get("result")
     if run_name and not start:
         start = _result_window(run_name)
@@ -611,7 +612,7 @@ def monitor():
     if db and db not in dbs and not err:
         err = f"Database {db} not found in InfluxDB"
     return render_template("monitor.html", dbs=dbs, db=db, app_name=app_name, start=start, end=end,
-                           influx_error=err)
+                           rng=rng, influx_error=err)
 
 
 @app.get("/api/influx/apps")
