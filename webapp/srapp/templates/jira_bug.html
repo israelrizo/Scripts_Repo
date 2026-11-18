@@ -19,7 +19,7 @@
     <div class="field">
       <label for="f-{{ key }}">{{ label }}{% if key in required %} <span class="muted">(required)</span>{% endif %}{% if kind == 'list' %} <span class="muted">· one per line</span>{% endif %}</label>
       {% if kind == 'line' %}
-        <input type="text" id="f-{{ key }}" name="{{ key }}" value="{{ f[key] }}" {{ 'required' if key in required }} {{ 'maxlength=250' if key == 'resumen' }}>
+        <input type="text" id="f-{{ key }}" name="{{ key }}" value="{{ f[key] }}" {{ 'required' if key in required }} {{ 'maxlength=250' if key == 'resumen' }}{% if key == 'epica' %} placeholder="PQA-298" pattern="[A-Za-z][A-Za-z0-9_]{0,19}-[0-9]{1,9}" title="Jira epic key, e.g. PQA-298" autocapitalize="characters" style="max-width:260px"{% endif %}>
       {% elif kind == 'text' %}
         <textarea id="f-{{ key }}" name="{{ key }}" rows="3" {{ 'required' if key in required }} placeholder="{{ 'Usuarios / procesos afectados, riesgo para la liberación…' if key == 'impacto' else '' }}">{{ f[key] }}</textarea>
       {% else %}
@@ -48,7 +48,7 @@
   <input type="hidden" name="img_bug_errores" id="img_bug_errores">
   <label class="check field mt"><input type="checkbox" name="attach_charts" value="1" checked> Attach the response time and errors charts</label>
   {% else %}
-  <div class="flash warn">No time series for this execution (the HTML report has no graph data{{ ' and InfluxDB: ' ~ series.error if series.error else '' }}). The bug can still be filed with the table.</div>
+  <div class="flash warn">No time series for this execution ({{ series.error ~ '; ' if series.error else '' }}the HTML report has no graph data either). The bug can still be filed with the table.</div>
   {% endif %}
   <label class="check field"><input type="checkbox" name="attach" value="1" {{ 'checked' if run.result_dir }} {{ 'disabled' if not run.result_dir }}> Attach the HTML report (zip) as evidence</label>
   <div class="actions">

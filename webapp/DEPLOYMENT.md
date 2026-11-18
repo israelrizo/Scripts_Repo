@@ -287,7 +287,7 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   for any engineer's execution (after *Fetch*, the report must be on your computer). It opens the non-functional bug
   template prefilled from the run (scenario, criteria, results by transaction, evidence, HTML report attached);
   *Reportado por* is whoever files it, and the evidence says who launched the run. The engineer completes *Contexto*
-  and *Impacto* and submits with their own Jira credentials. The link is stored per execution and shared through the
+  and *Impacto* and submits with their own Jira credentials. The **parent epic** (e.g. `PQA-298`) is required: the app checks that it exists and is an epic, links the bug to it (`parent`, or the legacy *Epic Link* field on older company-managed projects) and remembers it per project (*project → Settings → Parent epic for bugs*, shared with the team). The link is stored per execution and shared through the
   project profile, so every installation shows the bug and nobody files it twice. Board: *Settings → Jira →
   Performance bugs* (default project key, issue type, labels), overridable per project (*project → Settings → Jira
   project for bugs*).
@@ -345,4 +345,4 @@ Every engineer, on their own computer (macOS or Windows). Settings, users, run h
 
 What changes for the user: runs are Master-only unless *Distributed* is ticked; up to 3 projects can run at the same
 time (one execution per project); the servers receive the scripts from the engineer's computer; e-mail uses the App
-Password (the Gmail OAuth linking was removed). The bug also carries the **5 slowest transactions** (requests, error %, avg, p95, p99, max) and two charts, **response time** (average of those transactions + overall p95) and **errors per second** (with the error response codes), attached as PNG and shown in the description. Their data comes from the JMeter HTML report (`html_report/content/js/graph.js`, works offline) or, if it has none, from InfluxDB for the run window.
+Password (the Gmail OAuth linking was removed). The bug also carries the **5 slowest transactions** (requests, error %, avg, p95, p99, max) and two charts, **response time** (average and p95) and **errors and hits per second** — the same charts as the run page —, attached as PNG and shown in the description. Their data comes from InfluxDB for the run window; when InfluxDB is not reachable it falls back to the JMeter HTML report (`html_report/content/js/graph.js`).
