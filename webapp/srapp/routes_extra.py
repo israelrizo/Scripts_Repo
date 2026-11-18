@@ -138,6 +138,10 @@ def project_settings(name):
         if jp and not atlassian.PROJECT_RE.match(jp):
             raise ValueError("The Jira project key looks like PERF (letters, digits, _)")
         s["jira_project"] = jp
+        ep = f.get("jira_epic", "").strip().upper()
+        if ep and not atlassian.ISSUE_RE.match(ep):
+            raise ValueError("The parent epic looks like PQA-298")
+        s["jira_epic"] = ep
         sl = s["shiftleft"]
         sl.update(tag=f.get("sl_tag", ""), threads=int(f.get("sl_threads") or 5),
                   duration=int(f.get("sl_duration") or 120), sla_p95=float(f.get("sl_p95") or 1500),
@@ -303,8 +307,10 @@ def _bug_page(meta, back_url):
                                 charts=charts, slow=bugs.slowest(summary) if request.form.get("slow_table") else ())
             extras = ([f"{len(issue['charts'])} chart(s)"] if issue.get("charts") else []) + \
                      ([issue["attached"]] if issue["attached"] else [])
-            flash(f"Jira bug {issue['key']} created in {jira_key}" + (f" with {' and '.join(extras)} attached" if extras else "")
-                  + ".", "ok")
+            flash(f"Jira bug {issue['key']} created in {jira_key} under epic {issue['epic']['key']}"
+                  + (f" with {' and '.join(extras)} attached" if extras else "") + ".", "ok")
+            if issue.get("epic_saved"):
+                team.profile_changed(meta["project"], "project_settings", g.user["username"])
             if issue.get("attach_error"):
                 flash(f"The report was not attached: {issue['attach_error']}", "warn")
             team.profile_changed(meta["project"], "bugs", g.user["username"])   # every installation sees the link

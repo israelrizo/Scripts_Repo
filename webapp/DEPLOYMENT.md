@@ -287,7 +287,7 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   for any engineer's execution (after *Fetch*, the report must be on your computer). It opens the non-functional bug
   template prefilled from the run (scenario, criteria, results by transaction, evidence, HTML report attached);
   *Reportado por* is whoever files it, and the evidence says who launched the run. The engineer completes *Contexto*
-  and *Impacto* and submits with their own Jira credentials. The link is stored per execution and shared through the
+  and *Impacto* and submits with their own Jira credentials. The **parent epic** (e.g. `PQA-298`) is required: the app checks that it exists and is an epic, links the bug to it (`parent`, or the legacy *Epic Link* field on older company-managed projects) and remembers it per project (*project → Settings → Parent epic for bugs*, shared with the team). The link is stored per execution and shared through the
   project profile, so every installation shows the bug and nobody files it twice. Board: *Settings → Jira →
   Performance bugs* (default project key, issue type, labels), overridable per project (*project → Settings → Jira
   project for bugs*).

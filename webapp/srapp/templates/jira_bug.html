@@ -19,7 +19,7 @@
     <div class="field">
       <label for="f-{{ key }}">{{ label }}{% if key in required %} <span class="muted">(required)</span>{% endif %}{% if kind == 'list' %} <span class="muted">· one per line</span>{% endif %}</label>
       {% if kind == 'line' %}
-        <input type="text" id="f-{{ key }}" name="{{ key }}" value="{{ f[key] }}" {{ 'required' if key in required }} {{ 'maxlength=250' if key == 'resumen' }}>
+        <input type="text" id="f-{{ key }}" name="{{ key }}" value="{{ f[key] }}" {{ 'required' if key in required }} {{ 'maxlength=250' if key == 'resumen' }}{% if key == 'epica' %} placeholder="PQA-298" pattern="[A-Za-z][A-Za-z0-9_]{0,19}-[0-9]{1,9}" title="Jira epic key, e.g. PQA-298" autocapitalize="characters" style="max-width:260px"{% endif %}>
       {% elif kind == 'text' %}
         <textarea id="f-{{ key }}" name="{{ key }}" rows="3" {{ 'required' if key in required }} placeholder="{{ 'Usuarios / procesos afectados, riesgo para la liberación…' if key == 'impacto' else '' }}">{{ f[key] }}</textarea>
       {% else %}

@@ -16,6 +16,7 @@ THREADS_RE = re.compile(r"^-J(?:threads|hilos|users|usuarios|vus?|num_?threads)\
 
 # (key, label, kind) in template order; kind: line | text | list
 FIELDS = [
+    ("epica", "Épica padre (ej. PQA-298)", "line"),
     ("resumen", "Resumen", "line"), ("contexto", "Contexto", "text"), ("ambiente", "Ambiente", "line"),
     ("aplicacion", "Aplicación", "line"), ("fecha", "Fecha de ejecución", "line"),
     ("reportado_por", "Reportado por", "line"), ("objetivo", "Objetivo de la prueba", "text"),
@@ -25,7 +26,7 @@ FIELDS = [
     ("esperado", "Resultado esperado", "list"), ("actual", "Resultado actual", "list"),
     ("evidencia", "Evidencia", "list"), ("impacto", "Impacto", "text"), ("cierre", "Criterios de aceptación para cierre", "list"),
 ]
-REQUIRED = ("resumen", "impacto")
+REQUIRED = ("epica", "resumen", "impacto")
 BUG_STATUSES = ("finished", "stopped")   # a graceful stop still produces the HTML report
 
 
@@ -38,6 +39,14 @@ def target(project):
         key = ""
     labels = [x.strip() for x in (j.get("bug_labels") or "").split(",") if x.strip()]
     return (key or j.get("bug_project") or "").upper(), j.get("bug_issue_type") or "Bug", labels
+
+
+def project_epic(project):
+    """Parent epic last used for this project's bugs (project settings, shared with the team)."""
+    try:
+        return settings.project(project).get("jira_epic") or ""
+    except ValueError:
+        return ""
 
 
 def eligible(summary):
@@ -132,6 +141,7 @@ def prefill(meta, summary=None, reporter=""):
     layer = report.preset_label(d)
     names = ", ".join(c[0].lower() for c in failed) or "los criterios de aceptación"
     return {
+        "epica": project_epic(meta["project"]),
         "resumen": f"[Rendimiento] {app} no cumple {names} en {ttype.lower()} ({meta.get('tag')})"[:250],
         "contexto": d.get("scenario") or meta.get("notes") or "",
         "ambiente": env.group(1) if env else "",
@@ -282,6 +292,7 @@ def from_form(form):
     for key, _, kind in FIELDS:
         raw = (form.get(key) or "").strip()
         out[key] = [x.strip(" -•*\t") for x in raw.splitlines() if x.strip(" -•*\t")] if kind == "list" else raw
+    out["epica"] = out["epica"].upper().replace(" ", "")
     return out
 
 
@@ -303,7 +314,7 @@ def _ms(v):
 
 
 def render_wiki(f, slow=(), charts=()):
-    rows = [("Tipo", "Bug no funcional - Rendimiento"), ("Resumen", f["resumen"]), ("Ambiente", f["ambiente"]),
+    rows = [("Tipo", "Bug no funcional - Rendimiento"), ("Épica padre", f.get("epica", "")), ("Resumen", f["resumen"]), ("Ambiente", f["ambiente"]),
             ("Aplicación", f["aplicacion"]), ("Fecha de ejecución", f["fecha"]), ("Reportado por", f["reportado_por"])]
     scen = [("Operaciones simultáneas", f["operaciones"]), ("Endpoint / servicio evaluado", f["endpoint"]),
             ("Volumen de datos", f["volumen"]), ("Duración de la prueba", f["duracion"]),
@@ -342,7 +353,18 @@ def create(username, meta, fields, attach_report=True, by="", charts=None, slow=
         raise atlassian.AtlassianError("No Jira project for bugs: set it in Settings → Jira (or the project's settings)")
     jira = atlassian.Jira(username)
     charts = charts or {}
-    issue = jira.create_issue(key, itype, fields["resumen"], render_wiki(fields, slow, list(charts)), labels)
+    epic = jira.epic(fields["epica"])          # must exist and be an epic, before anything is created
+    issue = jira.create_issue(key, itype, fields["resumen"], render_wiki(fields, slow, list(charts)), labels,
+                              epic=epic["key"])
+    issue["epic"] = epic
+    if epic["key"] != project_epic(meta["project"]):   # next bug of this project starts with the same epic
+        try:
+            ps = settings.project(meta["project"])
+            ps["jira_epic"] = epic["key"]
+            settings.save_project(meta["project"], ps)
+            issue["epic_saved"] = True
+        except (ValueError, OSError):
+            pass
     issue["attached"], issue["charts"] = "", []
     for name, data in charts.items():    # the description shows them once attached (!name!)
         try:

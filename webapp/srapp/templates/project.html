@@ -379,6 +379,8 @@
       <h2 class="mt">Jira</h2>
       <div class="field"><label>Jira project for bugs (board)</label><input type="text" name="jira_project" value="{{ ps.jira_project }}" placeholder="empty = default in Settings → Jira" pattern="[A-Z][A-Z0-9_]{1,19}" title="Jira project key, e.g. PERF">
         <div class="hint">Where “Create Jira bug” files the performance bugs of this project.</div></div>
+      <div class="field"><label>Parent epic for bugs</label><input type="text" name="jira_epic" value="{{ ps.jira_epic }}" placeholder="PQA-298" pattern="[A-Za-z][A-Za-z0-9_]{0,19}-[0-9]{1,9}" title="Jira epic key, e.g. PQA-298">
+        <div class="hint">Prefilled in the bug form (required there). Updated with the last epic used.</div></div>
     </div>
     <div class="panel">
       <h2>Shift-left · Bitbucket</h2>

@@ -77,6 +77,7 @@ PROJECT_DEFAULTS = {
     "nr_apps": [],                 # New Relic APM services pinned for this project
     "grafana_dashboard": "",
     "jira_project": "",
+    "jira_epic": "",               # parent epic of the performance bugs (last used, e.g. PQA-298)
     "bitbucket_repo": "",          # workspace/repo-slug of the application repository (shift-left)
     "shiftleft": {"tag": "", "threads": 5, "duration": 120, "sla_p95": 1500, "sla_err": 1.0,
                   "base_branch": "", "runner_label": "jmeter-master"},

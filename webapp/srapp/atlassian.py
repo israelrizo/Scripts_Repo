@@ -104,13 +104,39 @@ class Jira:
                 "status": j.get("fields", {}).get("status", {}).get("name"),
                 "url": f"{self.base}/browse/{j.get('key')}"}
 
+    def epic(self, key):
+        """The issue `key` if it is an epic ({key, summary, url}); AtlassianError otherwise."""
+        if not ISSUE_RE.match(key or ""):
+            raise AtlassianError(f"Invalid epic key '{key}' (e.g. PQA-298)")
+        try:
+            j = _http("GET", f"{self.base}/rest/api/2/issue/{key}?fields=summary,issuetype", self.auth)
+        except AtlassianError as exc:
+            if "404" in str(exc):
+                raise AtlassianError(f"Epic {key} does not exist or you cannot see it")
+            raise
+        it = (j.get("fields") or {}).get("issuetype") or {}
+        if it.get("hierarchyLevel") != 1 and (it.get("name") or "").strip().lower() not in ("epic", "épica", "epica"):
+            raise AtlassianError(f"{key} is a {it.get('name') or 'issue'}, not an epic")
+        return {"key": j.get("key") or key, "summary": (j.get("fields") or {}).get("summary") or "",
+                "url": f"{self.base}/browse/{j.get('key') or key}"}
+
+    def _epic_link_field(self):
+        """Id of the legacy 'Epic Link' custom field (company-managed projects on older Jira), or ''."""
+        try:
+            for f in _http("GET", f"{self.base}/rest/api/2/field", self.auth) or []:
+                if (f.get("name") or "").strip().lower() in ("epic link", "vínculo de épica", "enlace de épica"):
+                    return f.get("id") or ""
+        except AtlassianError:
+            pass
+        return ""
+
     def comment(self, key, text):
         if not ISSUE_RE.match(key or ""):
             raise AtlassianError(f"Invalid Jira key '{key}'")
         return _http("POST", f"{self.base}/rest/api/2/issue/{key}/comment", self.auth, {"body": text[:30000]})
 
 
-    def create_issue(self, project_key, issue_type, summary, description, labels=()):
+    def create_issue(self, project_key, issue_type, summary, description, labels=(), epic=""):
         if not PROJECT_RE.match(project_key or ""):
             raise AtlassianError(f"Invalid Jira project key '{project_key}'")
         fields = {"project": {"key": project_key}, "issuetype": {"name": issue_type or "Bug"},
@@ -118,7 +144,19 @@ class Jira:
         labels = [re.sub(r"\s+", "-", x.strip()) for x in labels if x and x.strip()]
         if labels:
             fields["labels"] = labels[:10]
-        j = _http("POST", f"{self.base}/rest/api/2/issue", self.auth, {"fields": fields})
+        if epic:
+            if not ISSUE_RE.match(epic):
+                raise AtlassianError(f"Invalid epic key '{epic}'")
+            fields["parent"] = {"key": epic}         # Jira Cloud: parent epic (team- and company-managed)
+        try:
+            j = _http("POST", f"{self.base}/rest/api/2/issue", self.auth, {"fields": fields})
+        except AtlassianError as exc:
+            link = self._epic_link_field() if epic and "parent" in str(exc).lower() else ""
+            if not link:
+                raise
+            fields.pop("parent")
+            fields[link] = epic                        # older company-managed projects: Epic Link field
+            j = _http("POST", f"{self.base}/rest/api/2/issue", self.auth, {"fields": fields})
         key = j.get("key")
         if not key:
             raise AtlassianError(f"Jira did not return an issue key: {str(j)[:200]}")
