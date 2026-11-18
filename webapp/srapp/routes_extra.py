@@ -99,6 +99,23 @@ def admin_settings():
 
 
 # --------------------------------------------------------------------------- project settings + shift-left
+@app.post("/p/<name>/criteria")
+@login_required("operator")
+def project_criteria(name):
+    _project_or_404(name)
+    f = request.form
+    try:
+        for key in ("crit_avg", "crit_p95", "crit_err", "crit_tps"):
+            v = (f.get(key) or "").strip()
+            if v:
+                float(v)
+        status = team.save_profile(name, f.to_dict(), g.user["username"])
+        flash(f"Acceptance criteria {status}.", "ok" if "shared with" in status else "warn")
+    except ValueError:
+        flash("Criteria must be numbers (empty = not evaluated).", "error")
+    return redirect(url_for("project", name=name, tab="settings", _anchor="criteria"))
+
+
 @app.post("/p/<name>/settings")
 @login_required("operator")
 def project_settings(name):

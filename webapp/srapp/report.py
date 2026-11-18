@@ -490,4 +490,9 @@ def publish(project, run_name, username, g, fields, images, storage, attachments
     _record(project, run_name, {"page_id": page_id, "url": url, "title": title, "user": username,
                                 "ts": time.time(), "space": space, "version": page.get("version", {}).get("number")})
     save_defaults(project, fields)
+    try:
+        from . import team
+        team.profile_changed(project, username)   # share the criteria with the team (background)
+    except Exception:  # noqa: BLE001 - the report is published; sharing catches up on the next sync
+        pass
     return url

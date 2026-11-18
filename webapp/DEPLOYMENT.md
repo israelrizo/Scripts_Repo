@@ -261,6 +261,12 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   Testing Team*) once, then *Settings → Team sharing → Publish to the team*. They are stored in
   `.jmcc/shared/team.json` on the Master (mode 600, scripts owner) and every installation applies them on its next
   sync. Never commit these values to the repository.
+* **Acceptance criteria per project** — *project → Settings → Acceptance criteria & report data* (avg, p95,
+  error %, TPS, application, scenario, scope, base URL, tool). Saved in `.jmcc/projects/<project>.json` on the
+  Master with who changed it and when, and pulled by every installation on sync; publishing a Confluence report also
+  updates them. Last change wins; edits made with the Master off are shared on the next sync. Criteria that existed
+  only on a computer before sharing are kept as `instance/report_defaults/<project>.local-backup.json` when the
+  team's version replaces them.
 * **Performance bugs** — a run that ends **INSATISFACTORIA** (acceptance criteria of the project's report
   defaults) shows **Create Jira bug**: the non-functional bug template prefilled from the run (scenario, criteria,
   results by transaction, evidence, HTML report attached). The engineer completes *Contexto* and *Impacto* and

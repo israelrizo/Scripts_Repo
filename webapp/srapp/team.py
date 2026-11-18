@@ -230,9 +230,9 @@ def _list_remote():
     return {i: int(t) for i, t in re.findall(r"@@F@@ ([0-9a-f]{12}) (\d+)", out)}
 
 
-def _fetch_remote(ids):
-    files = " ".join(q(f"{i}.json") for i in ids if RUN_ID_RE.match(i))
-    script = f"cd {q(_jdir() + '/history')} && tar -czf - {files} 2>/dev/null | base64 -w0; echo; echo @@END@@"
+def _fetch_remote(ids, folder="history", name_re=RUN_ID_RE):
+    files = " ".join(q(f"{i}.json") for i in ids if name_re.match(i))
+    script = f"cd {q(_jdir() + '/' + folder)} && tar -czf - {files} 2>/dev/null | base64 -w0; echo; echo @@END@@"
     rc, out, err = aws.run(aws.cfg()["master"], script, timeout=90)
     raw = None
     if "@@END@@" in out:   # missing when SSM cut the output (24 KB): the batch is split below
@@ -245,18 +245,19 @@ def _fetch_remote(ids):
     if raw is None or (raw and raw[:2] != b"\x1f\x8b"):
         if len(ids) > 1:   # output truncated by SSM: split the batch
             half = len(ids) // 2
-            return _fetch_remote(ids[:half]) + _fetch_remote(ids[half:])
+            return _fetch_remote(ids[:half], folder, name_re) + _fetch_remote(ids[half:], folder, name_re)
         raise TeamError(f"team record {ids[0]} is too large to read")
     recs = []
     if raw:
         with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as tf:
             for m in tf.getmembers():
-                if m.isfile() and RUN_ID_RE.match(m.name.rsplit(".", 1)[0]) and m.size < 256 * 1024:
+                stem = m.name.rsplit(".", 1)[0]
+                if m.isfile() and name_re.match(stem) and m.size < 256 * 1024:
                     try:
                         rec = json.loads(tf.extractfile(m).read())
                     except ValueError:
                         continue
-                    if isinstance(rec, dict) and rec.get("id") == m.name[:-5]:
+                    if isinstance(rec, dict) and (rec.get("id") or rec.get("project")) == stem:
                         recs.append(rec)
     return recs
 
@@ -324,14 +325,20 @@ def sync(log=print, fetch_reports=None):
     log(f"team history: {len(recs)} new/updated execution(s), {legacy} older result folder(s), "
         f"{len(remote)} shared in total")
 
-    # 3. team settings (New Relic, default Chat spaces)
+    # 3. project profiles (acceptance criteria and report data)
+    try:
+        log("project criteria: " + sync_profiles())
+    except (TeamError, aws.AwsError) as exc:
+        log(f"project criteria: not synced ({exc})")
+
+    # 4. team settings (New Relic, default Chat spaces)
     try:
         applied = pull_shared()
         log("team settings: " + (f"updated (published by {applied})" if applied else "up to date"))
     except (TeamError, aws.AwsError) as exc:
         log(f"team settings: not read ({exc})")
 
-    # 4. recent reports (HTML only, the .jtl stays on the Master)
+    # 5. recent reports (HTML only, the .jtl stays on the Master)
     if fetch_reports is None:
         fetch_reports = cfg.get("auto_fetch_reports")
     if fetch_reports:
@@ -445,3 +452,115 @@ def apply_shared(data):
         cfg["chat"].update(spaces=items, enabled=bool(ch.get("enabled", True)),
                            notify_start=bool(ch.get("notify_start", True)), notify_end=bool(ch.get("notify_end", True)))
     settings.save(cfg)
+
+
+# --------------------------------------------------------------------------- project profiles
+# Acceptance criteria and report data of a project (report defaults: application, scenario, scope, base URL, tool,
+# avg / p95 / error % / TPS criteria, Confluence space...). Shared so whoever picks up a project gets the same
+# criteria and the same INSATISFACTORIA verdicts. Last change wins; each profile says who changed it and when.
+PROJECT_RE = re.compile(r"^[a-z0-9][a-z0-9\-]{1,60}$")
+
+
+def profile_info(project):
+    return (state().get("profiles") or {}).get(project) or {}
+
+
+def _set_profile(project, **changes):
+    with _lock:
+        st = state()
+        prof = st.setdefault("profiles", {})
+        prof[project] = dict(prof.get(project) or {}, **changes)
+        _store("state.json", st)
+
+
+def _me(fallback=""):
+    return (aws.sso_email() if settings.aws_mode() else "") or fallback
+
+
+def save_profile(project, fields, by=""):
+    """Save the project's report defaults here and share them. Returns a short status for the UI."""
+    from . import report
+    cur = report.load_defaults(project)
+    cur.update({k: (fields.get(k) or "").strip() for k in report.DEFAULT_KEYS if k in fields})
+    report.save_defaults(project, cur)
+    return profile_changed(project, by, wait=True)
+
+
+def profile_changed(project, by="", wait=False):
+    """Mark the local profile as newer than the Master's and publish it (now, or in the background)."""
+    if not PROJECT_RE.match(project or ""):
+        return "saved"
+    who = _me(by)
+    _set_profile(project, rev=time.time(), by=who, at=datetime.now().strftime("%Y-%m-%d %H:%M"), pending=True)
+    if not settings.aws_mode():
+        return "saved on this computer (AWS mode is off: not shared)"
+
+    def push():
+        try:
+            ok, why = master_ready()
+            if not ok:
+                return f"saved on this computer; shared on the next sync ({why})"
+            publish_profile(project)
+            return "saved and shared with the team"
+        except (TeamError, aws.AwsError) as exc:
+            return f"saved on this computer; not shared yet ({exc})"
+    if wait:
+        return push()
+    threading.Thread(target=push, daemon=True).start()
+    return "saved"
+
+
+def publish_profile(project):
+    from . import report
+    info = profile_info(project)
+    data = {"project": project, "rev": info.get("rev") or time.time(), "by": info.get("by") or _me(),
+            "at": info.get("at") or datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "report_defaults": report.load_defaults(project)}
+    _write_remote(f"{_jdir()}/projects/{project}.json", data)
+    _set_profile(project, rev=data["rev"], by=data["by"], at=data["at"], pending=False)
+
+
+def sync_profiles():
+    from . import report
+    rc, out, err = aws.run(aws.cfg()["master"],
+                           f"cd {q(_jdir() + '/projects')} 2>/dev/null || exit 0\n"
+                           "for f in *.json; do [ -f \"$f\" ] && echo \"@@P@@ ${f%.json}\"; done", timeout=60)
+    names = [n for n in re.findall(r"@@P@@ (\S+)", out) if PROJECT_RE.match(n)]
+    remote = {}
+    for n in range(0, len(names), BATCH):
+        for rec in _fetch_remote(names[n:n + BATCH], "projects", PROJECT_RE):
+            remote[rec["project"]] = rec
+    pulled, pushed = [], []
+    for project, rec in remote.items():
+        try:
+            projects.project_dir(project)
+        except projects.ProjectError:
+            continue                       # project not cloned on this computer
+        local = profile_info(project)
+        has_local = bool(report.load_defaults(project))
+        if local.get("pending") and (local.get("rev") or 0) > (rec.get("rev") or 0):
+            publish_profile(project)
+            pushed.append(project)
+        elif (rec.get("rev") or 0) > (local.get("rev") or 0) or not has_local:
+            src = Config.INSTANCE_DIR / "report_defaults" / f"{project}.json"
+            if has_local and not local.get("rev") and src.exists():   # criteria from before sharing: keep a copy
+                src.with_name(f"{project}.local-backup.json").write_text(src.read_text())
+            report.save_defaults(project, rec.get("report_defaults") or {})
+            _set_profile(project, rev=rec.get("rev"), by=rec.get("by", ""), at=rec.get("at", ""), pending=False)
+            pulled.append(f"{project} ({rec.get('by') or '?'})")
+    # profiles that exist only here (saved offline, or before sharing existed)
+    for f in sorted((Config.INSTANCE_DIR / "report_defaults").glob("*.json")):
+        project = f.stem
+        if project in remote or not PROJECT_RE.match(project):
+            continue
+        if not profile_info(project).get("rev"):
+            _set_profile(project, rev=f.stat().st_mtime, by=_me(), at=datetime.fromtimestamp(f.stat().st_mtime)
+                         .strftime("%Y-%m-%d %H:%M"), pending=True)
+        publish_profile(project)
+        pushed.append(project)
+    parts = []
+    if pulled:
+        parts.append("updated from the team: " + ", ".join(pulled))
+    if pushed:
+        parts.append("shared from this computer: " + ", ".join(pushed))
+    return "; ".join(parts) or f"up to date ({len(remote)} project(s) shared)"

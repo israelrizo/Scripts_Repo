@@ -348,7 +348,8 @@ def project(name):
     elif tab == "monitor":
         ctx.update(targets=_safe_targets(name))
     elif tab == "settings":
-        ctx.update(ps=settings.project(name))
+        from . import team
+        ctx.update(ps=settings.project(name), crit=rpt.load_defaults(name), crit_info=team.profile_info(name))
     elif tab == "quality":
         from . import quality
         res = quality.review_project(projects.project_dir(name))
