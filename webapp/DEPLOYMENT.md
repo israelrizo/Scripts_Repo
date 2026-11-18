@@ -212,7 +212,9 @@ changes a `.jmx` (results in the job summary). CLI: `cd webapp && python -m srap
   `qaperformance@bancobase.com`, the project's staff (project → Settings) and the extra recipients of the run. The
   end-of-run e-mail attaches the HTML report (`.zip`, up to 15 MB) because links to `localhost` only work on the
   sender's computer. TLS is mandatory when a password is used.
-* **Google Chat**: incoming webhooks. *Default* spaces get every run; others are picked per project. Start and end
+* **Google Chat**: incoming webhooks. When you create the webhook, name it *JMeter Control Center* and use the
+  Control Center icon as avatar URL: `https://raw.githubusercontent.com/israelrizo/Scripts_Repo/main/webapp/srapp/static/brand/chat-webhook-icon.png`
+  (`webapp/srapp/static/brand/chat-webhook-icon.png`, 512×512, works with Chat's circular crop). *Default* spaces get every run; others are picked per project. Start and end
   messages of a run go to the same thread.
 
 ## 8. Confluence reports
