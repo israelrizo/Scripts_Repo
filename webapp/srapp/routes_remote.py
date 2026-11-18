@@ -229,7 +229,7 @@ def remote_results(name):
 def remote_results_fetch(name):
     _project_or_404(name)
     rd = request.form.get("result", "")
-    if not rd.startswith("Ejecucion_") or "/" in rd or ".." in rd:
+    if not rd.startswith("Ejecucion_") or not aws.safe_name(rd):
         abort(400)
     return _op(f"Fetch {rd}", remote_run.op_fetch(name, rd))
 

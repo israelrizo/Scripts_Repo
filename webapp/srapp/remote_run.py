@@ -320,7 +320,7 @@ def finish(run_id, rc):
         if m:
             result_dir = Path(m.group(1)).name
     updates = {"returncode": rc}
-    if result_dir and re.match(r"^Ejecucion_[A-Za-z0-9_.\-]+$", result_dir):
+    if result_dir and result_dir.startswith("Ejecucion_") and aws.safe_name(result_dir):
         try:
             collect(meta["project"], result_dir, L, run_id)
             updates["result_dir"] = result_dir
