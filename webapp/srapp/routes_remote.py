@@ -146,7 +146,8 @@ def aws_settings():
             flash(f"SSH key created: {k}. The app adds its public part to the servers on the next copy.", "ok")
         elif f.get("action") == "identity":
             ident = aws.identity()
-            flash(f"AWS identity: {ident['arn']} (account {ident['account']})", "ok")
+            who = ident["email"] or ident["arn"].rsplit("/", 1)[-1]
+            flash(f"AWS identity: {who} (account {ident['account']})", "ok")
         elif f.get("action") == "test":
             inst = aws.instances(use_cache=False)
             flash("Instances: " + ", ".join(f"{i['role']} {i['state']}{' · SSM online' if i['ssm'] else ''}"
@@ -211,6 +212,52 @@ def google_settings():
     except (google.GoogleError, StopIteration, ValueError) as exc:
         flash(str(exc) or "Unknown space", "error")
     return redirect(url_for("admin_settings", _anchor="chat"))
+
+
+# --------------------------------------------------------------------------- team history / team settings
+@app.post("/team/sync")
+@login_required("operator")
+def team_sync():
+    r = _require_aws()
+    if r:
+        return r
+    return _op("Team sync", remote_run.op_team_sync)
+
+
+@app.post("/team/fetch")
+@login_required("operator")
+def team_fetch():
+    name, rd = request.form.get("project", ""), request.form.get("result", "")
+    _project_or_404(name)
+    if not rd.startswith("Ejecucion_") or not aws.safe_name(rd):
+        abort(400)
+    return _op(f"Fetch {rd}", remote_run.op_fetch(name, rd))
+
+
+@app.post("/admin/team")
+@login_required("admin")
+def team_settings():
+    from . import team
+    f = request.form
+    action = f.get("action")
+    try:
+        if action == "save":
+            cfg = settings.get()
+            cfg["team"].update(auto_sync=bool(f.get("auto_sync")), auto_fetch_reports=bool(f.get("auto_fetch_reports")),
+                               fetch_days=max(1, min(90, int(f.get("fetch_days") or 7))),
+                               fetch_max=max(1, min(50, int(f.get("fetch_max") or 10))))
+            settings.save(cfg)
+            flash("Team sync settings saved.", "ok")
+        elif action == "publish":
+            data = team.publish_shared(aws.sso_email() or g.user["username"])
+            what = [w for w, k in (("New Relic", "newrelic"), ("Google Chat default spaces", "chat")) if k in data]
+            flash(f"Published to the team: {', '.join(what)}. Every installation applies it on its next sync.", "ok")
+        elif action == "pull":
+            by = team.pull_shared(force=True)
+            flash(f"Team settings applied (published by {by})." if by else "No team settings published yet.", "ok")
+    except (team.TeamError, aws.AwsError, ValueError) as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin_settings", _anchor="team"))
 
 
 # --------------------------------------------------------------------------- reports stored on the Master

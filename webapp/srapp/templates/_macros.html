@@ -8,7 +8,7 @@
   <td><span class="badge {{ r.status }}">{{ r.status }}</span></td>
   <td class="nowrap">{{ r.started|dt }}</td>
   <td class="num mono">{{ r|duration }}</td>
-  <td>{{ r.user }}</td>
+  <td>{{ r.email or r.user }}</td>
   <td class="right">{% if r.result_dir and r.kind == 'test' %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result_dir) }}" target="_blank">Report</a>{% endif %}</td>
 </tr>
 {% endmacro %}

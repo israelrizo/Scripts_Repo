@@ -52,7 +52,7 @@ def validate_webhook(url):
 
 def spaces():
     """[{id, name, default}] without the secret URLs."""
-    return [{"id": s["id"], "name": s["name"], "default": bool(s.get("default"))}
+    return [{"id": s["id"], "name": s["name"], "default": bool(s.get("default")), "shared": bool(s.get("shared"))}
             for s in settings.get()["chat"]["spaces"]]
 
 

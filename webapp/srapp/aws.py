@@ -107,9 +107,34 @@ def call(args, timeout=60, parse=True):
 
 
 # --------------------------------------------------------------------------- identity / instances
+EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
+_ident_cache = {"at": 0.0, "value": None}
+
+
 def identity():
     d = call(["sts", "get-caller-identity"], timeout=30)
-    return {"account": d.get("Account"), "arn": d.get("Arn")}
+    arn = d.get("Arn") or ""
+    return {"account": d.get("Account"), "arn": arn, "email": email_from_arn(arn)}
+
+
+def email_from_arn(arn):
+    """AWS SSO assumed-role ARNs end with the user's e-mail:
+    arn:aws:sts::<acct>:assumed-role/AWSReservedSSO_<PermissionSet>_<hash>/<e-mail>  ->  <e-mail> (lower case).
+    Anything else (IAM users, other roles) -> ''."""
+    tail = (arn or "").rsplit("/", 1)[-1].strip()
+    return tail.lower() if ":assumed-role/" in (arn or "") and EMAIL_RE.match(tail) else ""
+
+
+def sso_email(max_age=600):
+    """E-mail of the engineer signed in with aws sso login ('' when unknown). Cached for a few minutes."""
+    if time.time() - _ident_cache["at"] < max_age and _ident_cache["value"] is not None:
+        return _ident_cache["value"]
+    try:
+        value = identity()["email"]
+    except AwsError:
+        value = ""
+    _ident_cache.update(at=time.time(), value=value)
+    return value
 
 
 def node_ids(distributed=True):
@@ -159,6 +184,7 @@ def instances(use_cache=True, max_age=8):
 def invalidate():
     with _cache_lock:
         _cache["data"] = None
+    _ident_cache.update(at=0.0, value=None)
 
 
 def start(ids):

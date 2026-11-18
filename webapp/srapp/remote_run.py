@@ -22,7 +22,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import aws, gitops, projects, push_sync, runner
+from . import aws, gitops, projects, push_sync, runner, settings
 from .config import Config
 
 q = shlex.quote
@@ -57,6 +57,9 @@ def pipeline(run_id):
     L = lambda m: _log(run_id, m)  # noqa: E731
     meta = runner.get(run_id)
     try:
+        email = aws.sso_email()
+        if email:   # who launched it, as the team sees it (AWS SSO e-mail)
+            meta = runner.update(run_id, email=email)
         c = aws.cfg()
         master = c["master"]
         ids = aws.node_ids(meta["distributed"])
@@ -345,7 +348,7 @@ def finish(run_id, rc):
             L(f"WARNING: could not stop the servers: {exc}")
 
 
-def collect(project, result_dir, L, token=None):
+def collect(project, result_dir, L, token=None, include_jtl=True):
     """tar the result folder on the Master, download it through SSM and unpack it into the local clone."""
     c = aws.cfg()
     master = c["master"]
@@ -358,7 +361,8 @@ cd {q(aws.remote_root() + '/' + project + '/results')} || exit 3
 mkdir -p {q(outbox)}
 MB=$(du -cm {q(result_dir)}/*.jtl 2>/dev/null | tail -1 | cut -f1)
 EX=""
-if [ "${{MB:-0}}" -gt {limit} ]; then EX="--exclude=*.jtl"; echo "@@NOJTL@@ $MB"; fi
+if [ {0 if include_jtl else 1} = 1 ]; then EX="--exclude=*.jtl"; echo "@@SKIPJTL@@";
+elif [ "${{MB:-0}}" -gt {limit} ]; then EX="--exclude=*.jtl"; echo "@@NOJTL@@ $MB"; fi
 tar -czf {q(outbox)}/{q(result_dir)}.tar.gz $EX {q(result_dir)} && echo "@@TAR@@ OK"
 """
     rc, out, err = aws.run(master, script, timeout=900)
@@ -498,6 +502,17 @@ def op_start(log):
     left = aws.auto_off_minutes()
     if left is not None:
         log(f"servers ready · automatic shutdown at {aws.cfg()['auto_off']} (in {left / 60:.1f} h)")
+    _team_sync(log)
+
+
+def _team_sync(log):
+    from . import team
+    if not settings.get()["team"].get("auto_sync"):
+        return
+    try:
+        team.sync(log)
+    except Exception as exc:  # noqa: BLE001 - the sync never fails the job that triggered it
+        log(f"team sync failed: {exc}")
 
 
 def op_stop(log, force=False):
@@ -647,7 +662,18 @@ def op_sso_login(log):
         raise Abort("aws sso login failed (is this profile an SSO profile? otherwise run 'aws configure')")
     aws.invalidate()
     ident = aws.identity()
-    log(f"signed in: {ident['arn']}")
+    log(f"signed in: {ident['email'] or ident['arn'].rsplit('/', 1)[-1]}")
+    from . import team
+    ok, why = team.master_ready()
+    if ok:
+        _team_sync(log)
+    else:
+        log(f"team sync: {why} — it runs when the servers start")
+
+
+def op_team_sync(log):
+    from . import team
+    team.sync(log)
 
 
 def op_fetch(project, result_dir):

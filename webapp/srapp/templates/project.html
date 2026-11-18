@@ -355,6 +355,9 @@
       {% endif %}
       <h2 class="mt">Grafana</h2>
       <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>
+      <h2 class="mt">Jira</h2>
+      <div class="field"><label>Jira project for bugs (board)</label><input type="text" name="jira_project" value="{{ ps.jira_project }}" placeholder="empty = default in Settings → Jira" pattern="[A-Z][A-Z0-9_]{1,19}" title="Jira project key, e.g. PERF">
+        <div class="hint">Where “Create Jira bug” files the performance bugs of this project.</div></div>
     </div>
     <div class="panel">
       <h2>Shift-left · Bitbucket</h2>

@@ -39,7 +39,7 @@ def run_summary(meta):
     project = meta["project"]
     out = {
         "project": project, "label": project.replace("-jmeter-framework", "").upper(), "tag": meta.get("tag"),
-        "script": meta.get("script", ""), "status": meta.get("status"), "user": meta.get("user"),
+        "script": meta.get("script", ""), "status": meta.get("status"), "user": meta.get("email") or meta.get("user"),
         "started": _fmt_dt(meta.get("started")), "ended": _fmt_dt(meta.get("ended")), "duration": _duration(meta),
         "props": " ".join(meta.get("props") or []), "slaves": meta.get("remote_hosts") or [],
         "jira": meta.get("jira") or "", "notes": meta.get("notes") or "",

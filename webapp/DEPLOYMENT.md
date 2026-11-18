@@ -243,6 +243,30 @@ changes a `.jmx` (results in the job summary). CLI: `cd webapp && python -m srap
 * **Scheduler** — runs inside the app on your computer: schedules fire only while the app is open and the computer
   awake. Scheduled runs start the servers and can stop them at the end. Timezone: *Settings → Application*.
 
+## 9b. Team history, shared settings and performance bugs
+
+Each engineer runs their own Control Center, so the Master is where the team meets:
+
+* **Identity** — runs are attributed to the engineer's **AWS SSO e-mail**, taken from the last part of the
+  assumed-role ARN (`…/AWSReservedSSO_<set>_<hash>/<e-mail>`); the rest of the ARN is never stored or shown.
+* **Team history** — every execution launched on the Master is written to `<remote_root>/.jmcc/history/<run>.json`
+  (who, computer, project, tag, script, props, slaves, status, verdict, p95 / error %, Jira bug). *Executions →
+  Team (Master)* lists them with filters by project and engineer; *Fetch* downloads a report on demand. Result
+  folders on the Master without a record (older runs) appear as *folder only*. The Slaves keep no results: everything
+  a distributed test produces ends on the Master.
+* **Automatic sync** — after *aws sso login* (if the Master is up) and every *Start servers*, the app pulls new
+  records and, optionally, the reports of the last N days (**HTML only**, the `.jtl` stays on the Master). *Settings
+  → Team sharing*. The history is cached locally, so it stays visible with the Master off.
+* **Team settings** — an admin saves the New Relic key and the default Google Chat space (e.g. *Performance
+  Testing Team*) once, then *Settings → Team sharing → Publish to the team*. They are stored in
+  `.jmcc/shared/team.json` on the Master (mode 600, scripts owner) and every installation applies them on its next
+  sync. Never commit these values to the repository.
+* **Performance bugs** — a run that ends **INSATISFACTORIA** (acceptance criteria of the project's report
+  defaults) shows **Create Jira bug**: the non-functional bug template prefilled from the run (scenario, criteria,
+  results by transaction, evidence, HTML report attached). The engineer completes *Contexto* and *Impacto* and
+  submits with their own Jira credentials. Board: *Settings → Jira → Performance bugs* (default project key, issue
+  type, labels), overridable per project (*project → Settings → Jira project for bugs*).
+
 ## 10. Legacy: Control Center hosted on the Master
 
 The previous model (app as a systemd service on the Master, reached through an SSM port forward to 8090) still works:

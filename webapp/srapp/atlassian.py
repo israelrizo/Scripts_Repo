@@ -15,6 +15,7 @@ import uuid
 from . import confluence, settings
 
 ISSUE_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,19}-\d{1,9}$")
+PROJECT_RE = re.compile(r"^[A-Z][A-Z0-9_]{1,19}$")
 REPO_RE = re.compile(r"^[A-Za-z0-9_.\-]{1,64}/[A-Za-z0-9_.\-]{1,128}$")
 
 
@@ -107,6 +108,32 @@ class Jira:
         if not ISSUE_RE.match(key or ""):
             raise AtlassianError(f"Invalid Jira key '{key}'")
         return _http("POST", f"{self.base}/rest/api/2/issue/{key}/comment", self.auth, {"body": text[:30000]})
+
+
+    def create_issue(self, project_key, issue_type, summary, description, labels=()):
+        if not PROJECT_RE.match(project_key or ""):
+            raise AtlassianError(f"Invalid Jira project key '{project_key}'")
+        fields = {"project": {"key": project_key}, "issuetype": {"name": issue_type or "Bug"},
+                  "summary": summary[:250], "description": description[:32000]}
+        labels = [re.sub(r"\s+", "-", x.strip()) for x in labels if x and x.strip()]
+        if labels:
+            fields["labels"] = labels[:10]
+        j = _http("POST", f"{self.base}/rest/api/2/issue", self.auth, {"fields": fields})
+        key = j.get("key")
+        if not key:
+            raise AtlassianError(f"Jira did not return an issue key: {str(j)[:200]}")
+        return {"key": key, "url": f"{self.base}/browse/{key}"}
+
+    def attach(self, key, filename, data, content_type="application/zip"):
+        if not ISSUE_RE.match(key or ""):
+            raise AtlassianError(f"Invalid Jira key '{key}'")
+        boundary = uuid.uuid4().hex
+        safe = re.sub(r'[^A-Za-z0-9_.\-]', "_", filename)[:120]
+        body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{safe}\"\r\n"
+                f"Content-Type: {content_type}\r\n\r\n").encode() + data + f"\r\n--{boundary}--\r\n".encode()
+        return _http("POST", f"{self.base}/rest/api/2/issue/{key}/attachments", self.auth, body,
+                     {"Content-Type": f"multipart/form-data; boundary={boundary}", "X-Atlassian-Token": "no-check"},
+                     timeout=180)
 
 
 # --------------------------------------------------------------------------- Bitbucket Cloud
