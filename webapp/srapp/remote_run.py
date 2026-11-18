@@ -2,9 +2,11 @@
 
 Pipeline of a test run:
   1. servers   make sure Master (+ Slaves) are running and reachable by SSM (optionally start them)
-  2. sync      git fetch + fast-forward to origin/<branch> on every server (the repo is the source of truth)
+  2. sync      push: copy this computer's project folder (+ webapp/bin) to every server over SSH through SSM
+              git:  git fetch + fast-forward to origin/<branch> on every server
   3. slaves    check jmeter-server on each Slave from the Master (start it when needed)
-  4. launch    take the Master lock (.jmcc/active) and start run_by_tag.sh detached (survives SSM / laptop sleep)
+  4. launch    take a Master slot (.jmcc/active.d/<project>: 1 test per project, max_runs per Master, Slaves for one
+              distributed test) and start run_by_tag.sh detached (survives SSM / laptop sleep)
   5. monitor   poll the remote console log through SSM and mirror it into the local run log
   6. collect   download the result folder (tar.gz through an SSM tunnel) into this computer's clone
   7. finish    notifications, optional stop of the servers
@@ -20,7 +22,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import aws, gitops, projects, runner
+from . import aws, gitops, projects, push_sync, runner
 from .config import Config
 
 q = shlex.quote
@@ -65,9 +67,20 @@ def pipeline(run_id):
         if left is not None and left < 90:
             L(f"WARNING: the servers shut down automatically at {c['auto_off']} (in {left:.0f} min)")
 
-        L(f"sync: {len(ids)} server(s) → origin/{meta['branch']} @ {meta['sha'][:8]}")
-        results = aws.run_many(ids, gitops.server_sync_script(aws.remote_root(), meta["branch"]), timeout=180)
-        for iid in ids:
+        _precheck(meta)
+        if (meta.get("sync_method") or "git") == "push":
+            L(f"sync: copying {meta['project']} from this computer to {len(ids)} server(s) (SSH through SSM)"
+              + (f" · includes {meta['local_changes']} uncommitted change(s)" if meta.get("local_changes") else ""))
+            try:
+                push_sync.push(ids, L, only=[meta["project"], "webapp/bin"])
+            except push_sync.SyncError as exc:
+                raise Abort(str(exc))
+            ids_to_check = []
+        else:
+            L(f"sync: {len(ids)} server(s) → origin/{meta['branch']} @ {meta['sha'][:8]}")
+            results = aws.run_many(ids, gitops.server_sync_script(aws.remote_root(), meta["branch"]), timeout=180)
+            ids_to_check = ids
+        for iid in ids_to_check:
             r = results[iid]
             if isinstance(r, Exception):
                 raise Abort(f"sync failed on {iid}: {r}")
@@ -75,10 +88,10 @@ def pipeline(run_id):
             m = re.search(r"@@SHA@@ ([0-9a-f]{40})", out)
             if rc != 0 or not m:
                 raise Abort(f"sync failed on {iid} (exit {rc}): {(out + err).strip()[-300:]} — "
-                            "the server clone has local changes or diverged; use Servers → Force sync")
+                            f"{gitops.sync_hint(rc, out + err)}")
             if m.group(1) != meta["sha"]:
                 raise Abort(f"{iid} is at {m.group(1)[:8]} but this computer is at {meta['sha'][:8]}")
-        L("sync: all servers at the same commit")
+        L("sync: all servers have this computer's files" if ids_to_check == [] else "sync: all servers at the same commit")
 
         ips = []
         if meta["distributed"]:
@@ -150,31 +163,65 @@ def _check_slaves(run_id, master, slave_ids, L):
     return ips
 
 
+def _slot_scan():
+    """Shell snippet: walk the Master slots, drop stale ones, count live ones (sets N, prints @@ACTIVE@@ lines)."""
+    return r"""
+N=0
+for f in "$J"/active.d/* "$J/active"; do
+  [ -f "$f" ] || continue
+  APID= AUSER= ATAG= ARUN= APROJ= ADIST=
+  read -r APID AUSER ATAG ARUN APROJ ADIST < "$f" || true
+  if [ -n "$APID" ] && kill -0 "$APID" 2>/dev/null; then
+    N=$((N+1)); echo "@@ACTIVE@@ $AUSER $ATAG $ARUN ${APROJ:--} ${ADIST:-0}"
+  else
+    rm -f "$f"
+  fi
+done
+"""
+
+
 def _launch(run_id, meta, master, ips, L):
     j = _jdir()
     root = aws.remote_root()
+    proj = meta["project"]
+    max_runs = int(aws.cfg().get("max_runs") or 3)
+    dist = 1 if ips else 0
     script = f"""
-J={q(j)}; RUN={q(run_id)}
-mkdir -p "$J/runs"
-if [ -f "$J/active" ]; then
-  read -r APID AUSER ATAG ARUN < "$J/active" || true
-  if [ -n "$APID" ] && kill -0 "$APID" 2>/dev/null; then echo "@@BUSY@@ $AUSER $ATAG $ARUN"; exit 75; fi
+J={q(j)}; RUN={q(run_id)}; P={q(proj)}; MAX={max_runs}; DIST={dist}
+mkdir -p "$J/runs" "$J/active.d"
+exec 9>"$J/slots.lock"
+if command -v flock >/dev/null 2>&1; then flock -w 30 9 || {{ echo "@@LOCKWAIT@@"; exit 74; }}; fi
+{_slot_scan()}
+if [ -f "$J/active.d/$P" ]; then read -r a u t r rest < "$J/active.d/$P"; echo "@@BUSYPROJ@@ $u $t $r"; exit 75; fi
+if [ "$DIST" = 1 ] && grep -qs ' 1$' "$J"/active.d/* ; then
+  b=$(grep -ls ' 1$' "$J"/active.d/* | head -1); read -r a u t r rest < "$b"; echo "@@BUSYSLAVES@@ $u $t $r"; exit 75
 fi
+if [ "$N" -ge "$MAX" ]; then echo "@@BUSYMAX@@ $N"; exit 75; fi
 REAL=$(command -v jmeter) || {{ echo "@@NOJMETER@@"; exit 76; }}
-cd {q(root + '/' + meta['project'])} || exit 77
+cd {q(root + '/' + proj)} || exit 77
 export PATH={q(root + '/webapp/bin')}:"$PATH"
 export SR_REAL_JMETER="$REAL" SR_EXTRA_PROPS={q(' '.join(meta['props']))} SR_REMOTE_HOSTS={q(','.join(ips))}
 S=""; command -v setsid >/dev/null 2>&1 && S=setsid
-$S nohup bash -c 'bash run_by_tag.sh "$0"; echo $? > "$1"' {q(meta['tag'])} "$J/runs/$RUN.rc" > "$J/runs/$RUN.log" 2>&1 < /dev/null &
+$S nohup bash -c 'bash run_by_tag.sh "$0"; echo $? > "$1"' {q(meta['tag'])} "$J/runs/$RUN.rc" > "$J/runs/$RUN.log" 2>&1 < /dev/null 9>&- &
 PID=$!
-echo "$PID {q(meta['user'])} {q(meta['tag'])} $RUN" > "$J/active"
+echo "$PID {q(meta['user'])} {q(meta['tag'])} $RUN $P $DIST" > "$J/active.d/$P"
 echo "@@STARTED@@ $PID $REAL"
 """
     rc, out, err = aws.run(master, script, timeout=90)
-    busy = re.search(r"@@BUSY@@ (\S+) (\S+) (\S+)", out)
+    busy = re.search(r"@@BUSYPROJ@@ (\S+) (\S+) (\S+)", out)
     if busy:
-        raise Abort(f"The Master is busy: {busy.group(1)} is running {busy.group(2)} (run {busy.group(3)}). "
-                    "Wait for it or ask them to stop it.")
+        raise Abort(f"{meta['project']} is already running on the Master: {busy.group(1)} started {busy.group(2)} "
+                    f"(run {busy.group(3)}). Only one execution per project at a time.")
+    busy = re.search(r"@@BUSYSLAVES@@ (\S+) (\S+) (\S+)", out)
+    if busy:
+        raise Abort(f"The Slaves are in use by {busy.group(1)} ({busy.group(2)}, run {busy.group(3)}): only one "
+                    "distributed test at a time. Run without the Slaves or wait.")
+    m = re.search(r"@@BUSYMAX@@ (\d+)", out)
+    if m:
+        raise Abort(f"The Master already runs {m.group(1)} tests (maximum {max_runs} at the same time). Wait for one "
+                    "to finish.")
+    if "@@LOCKWAIT@@" in out:
+        raise Abort("Another engineer is launching a test right now; try again in a few seconds")
     if "@@NOJMETER@@" in out:
         raise Abort(f"'jmeter' is not on the PATH of user {aws.cfg().get('remote_user') or 'root'} on the Master")
     m = re.search(r"@@STARTED@@ (\d+) (\S+)", out)
@@ -261,7 +308,8 @@ def finish(run_id, rc):
     j = _jdir()
     _append(run_id, "\n" + "#" * 60 + "\n")
     try:
-        aws.run(master, f'grep -q " {q(run_id)}$" {q(j)}/active 2>/dev/null && rm -f {q(j)}/active; true', 30)
+        aws.run(master, f'for f in {q(j)}/active.d/* {q(j)}/active; do [ -f "$f" ] || continue; '
+                        f'read -r a b c r rest < "$f"; [ "$r" = {q(run_id)} ] && rm -f "$f"; done; true', 30)
     except aws.AwsError:
         pass
     status = "stopped" if meta["status"] == "stopping" else ("finished" if rc == 0 else "failed")
@@ -285,6 +333,11 @@ def finish(run_id, rc):
     if meta.get("stop_after"):
         time.sleep(2)
         try:
+            others = master_active()
+            if others:
+                L("servers left running: other tests are still running on the Master ("
+                  + ", ".join(f"{a['user']} {a['tag']}" for a in others) + ")")
+                return
             ids = aws.node_ids(True)
             L(f"stopping {len(ids)} server(s) as requested")
             aws.stop(ids)
@@ -358,8 +411,22 @@ def stop(meta, force=False):
                   f'echo 143 > {q(_jdir())}/runs/{q(meta["id"])}.rc\n')
         aws.run(master, script, timeout=60)
         return "Kill sent to the Master (no HTML report will be generated)."
-    aws.run(master, 'for p in 4445 4446 4447; do echo -n "Shutdown" > /dev/udp/127.0.0.1/$p; done 2>/dev/null; true',
-            timeout=60)
+    # Several tests may run on the Master: send Shutdown only to the UDP port of THIS run's JMeter (4445…4455).
+    script = f"""
+kill -0 {int(pid)} 2>/dev/null || {{ echo "@@GONE@@"; exit 0; }}
+d() {{ echo "$1"; for c in $(pgrep -P "$1" 2>/dev/null); do d "$c"; done; }}
+PIDS=$(d {int(pid)} | tr '\\n' '|' | sed 's/|$//')
+[ -n "$PIDS" ] || {{ echo "@@GONE@@"; exit 0; }}
+PORTS=$(ss -Hulnp 2>/dev/null | grep -E "pid=($PIDS)," | grep -oE ':(444[5-9]|445[0-5]) ' | tr -d ': ' | sort -u)
+[ -n "$PORTS" ] || {{ echo "@@NOPORT@@"; exit 0; }}
+for p in $PORTS; do echo -n "Shutdown" > /dev/udp/127.0.0.1/$p && echo "@@SENT@@ $p"; done
+"""
+    rc, out, _ = aws.run(master, script, timeout=60)
+    if "@@GONE@@" in out:
+        return "The test already ended on the Master."
+    if "@@SENT@@" not in out:
+        return ("Could not find this run's JMeter shutdown port on the Master; use Force stop "
+                "(other tests on the Master are not affected).")
     return "Graceful shutdown requested on the Master (threads finish their current iteration)."
 
 
@@ -378,13 +445,28 @@ def resume_all():
 
 # --------------------------------------------------------------------------- remote info
 def master_active():
-    """Who holds the Master lock right now (any engineer), or None."""
+    """Tests running on the Master right now (any engineer): [{user, tag, run, project, distributed}]."""
     j = _jdir()
-    rc, out, _ = aws.run(aws.cfg()["master"],
-                         f'[ -f {q(j)}/active ] && read -r P U T R < {q(j)}/active && kill -0 "$P" 2>/dev/null '
-                         f'&& echo "@@ACTIVE@@ $U $T $R"; true', timeout=40)
-    m = re.search(r"@@ACTIVE@@ (\S+) (\S+) (\S+)", out)
-    return {"user": m.group(1), "tag": m.group(2), "run": m.group(3)} if m else None
+    rc, out, _ = aws.run(aws.cfg()["master"], f"J={q(j)}\n{_slot_scan()}\ntrue", timeout=40)
+    return [{"user": u, "tag": t, "run": r, "project": "" if p == "-" else p, "distributed": d == "1"}
+            for u, t, r, p, d in re.findall(r"@@ACTIVE@@ (\S+) (\S+) (\S+) (\S+) (\S+)", out)]
+
+
+def _precheck(meta):
+    """Fail fast (before copying anything) when the project, the Slaves or every Master slot is taken."""
+    try:
+        act = master_active()
+    except aws.AwsError:
+        return
+    max_runs = int(aws.cfg().get("max_runs") or 3)
+    for a in act:
+        if a["project"] == meta["project"] and a["run"] != meta["id"]:
+            raise Abort(f"{meta['project']} is already running on the Master: {a['user']} started {a['tag']} "
+                        f"(run {a['run']}). Only one execution per project at a time.")
+        if meta.get("distributed") and a["distributed"]:
+            raise Abort(f"The Slaves are in use by {a['user']} ({a['tag']}): only one distributed test at a time.")
+    if len(act) >= max_runs:
+        raise Abort(f"The Master already runs {len(act)} tests (maximum {max_runs} at the same time).")
 
 
 def remote_results(project, limit=40):
@@ -425,8 +507,8 @@ def op_stop(log, force=False):
     if not force and inst.get(master, {}).get("state") == "running" and inst[master]["ssm"]:
         active = master_active()
         if active:
-            raise Abort(f"{active['user']} is running {active['tag']} on the Master. Stop that run first "
-                        "(or use Force stop).")
+            raise Abort("Tests are running on the Master: " + ", ".join(f"{a['user']} {a['tag']}" for a in active)
+                        + ". Stop them first (or use Force stop).")
     running = [i for i in ids if inst[i]["state"] in ("running", "pending")]
     if not running:
         log("all servers are already stopped")
@@ -444,18 +526,40 @@ def op_stop(log, force=False):
         time.sleep(8)
 
 
-def op_sync(log, force=False):
+def op_sync(log, force=False, project=None):
     c = aws.cfg()
+    inst = {i["id"]: i for i in aws.instances(use_cache=False)}
+    ids = [i for i in aws.node_ids(True) if inst[i]["state"] == "running" and inst[i]["ssm"]]
+    if not ids:
+        raise Abort("no running servers to sync")
+    if (c.get("sync_method") or "push") == "push":
+        busy = []
+        try:
+            busy = sorted({a["project"] for a in master_active() if a["project"]})
+        except aws.AwsError:
+            pass
+        br, sha, n = push_sync.local_state()
+        log(f"{'MIRROR ' if force else ''}copy of {project or 'every project'} from this computer ({br}@{sha[:8]}"
+            f"{f' + {n} uncommitted change(s)' if n else ''}) to {len(ids)} server(s)")
+        if project and project in busy:
+            raise Abort(f"{project} has a test running on the Master; its files cannot change until it ends")
+        if busy and not project:
+            log(f"  left untouched because a test is running: {', '.join(busy)}")
+        try:
+            if project:
+                push_sync.push(ids, log, only=[project, "webapp/bin"])
+            else:
+                push_sync.push(ids, log, mirror=force, skip=busy)
+        except push_sync.SyncError as exc:
+            raise Abort(str(exc))
+        log("all servers have this computer's scripts")
+        return
     br = c.get("branch") or gitops.branch()
     try:
         gitops._git("fetch", "--quiet", "origin", br, timeout=60)
         want = gitops.head_sha(f"origin/{br}")
     except (gitops.GitError, subprocess.TimeoutExpired) as exc:
         raise Abort(f"cannot read origin/{br} from this computer: {exc}")
-    inst = {i["id"]: i for i in aws.instances(use_cache=False)}
-    ids = [i for i in aws.node_ids(True) if inst[i]["state"] == "running" and inst[i]["ssm"]]
-    if not ids:
-        raise Abort("no running servers to sync")
     log(f"{'FORCE ' if force else ''}sync origin/{br} @ {want[:8]} on {len(ids)} server(s)")
     results = aws.run_many(ids, gitops.server_sync_script(aws.remote_root(), br, force), timeout=180)
     bad = 0
@@ -471,10 +575,10 @@ def op_sync(log, force=False):
         if rc == 0 and m and m.group(1) == want:
             log(f"  {role}: OK {m.group(1)[:8]}")
         else:
-            log(f"  {role}: FAILED (exit {rc}) {(out + err).strip()[-200:]}")
+            log(f"  {role}: FAILED (exit {rc}) {(out + err).strip()[-200:]} — {gitops.sync_hint(rc, out + err)}")
             bad += 1
     if bad:
-        raise Abort(f"{bad} server(s) not in sync. If they have local changes use Force sync (discards them).")
+        raise Abort(f"{bad} server(s) not in sync (see the reason above each server).")
     log("all servers in sync with the repository")
 
 
@@ -489,8 +593,10 @@ def op_health(log):
     script = (f"echo \"host=$(hostname) up=$(uptime -p 2>/dev/null || uptime)\"\n"
               f"echo \"disk=$(df -h {q(aws.remote_root())} 2>/dev/null | tail -1 | awk '{{print $4\" free of \"$2}}')\"\n"
               f"echo \"jmeter=$(command -v jmeter || echo NOT-FOUND)\"\n"
-              f"cd {q(aws.remote_root())} 2>/dev/null && echo \"git=$(git rev-parse --abbrev-ref HEAD) "
-              f"$(git rev-parse --short HEAD) dirty=$(git status --porcelain 2>/dev/null | grep -v '^??' | wc -l | tr -d ' ')\"\n")
+              f"echo \"rsync=$(command -v rsync || echo no) ssh22=$( (exec 3<>/dev/tcp/127.0.0.1/22) 2>/dev/null && echo up || echo DOWN)\"\n"
+              + ("" if (c.get("sync_method") or "push") == "push" else
+                 f"cd {q(aws.remote_root())} 2>/dev/null && echo \"git=$(git rev-parse --abbrev-ref HEAD) "
+                 f"$(git rev-parse --short HEAD) dirty=$(git status --porcelain 2>/dev/null | grep -v '^??' | wc -l | tr -d ' ')\"\n"))
     results = aws.run_many([i["id"] for i in up], script, timeout=90)
     for i in up:
         r = results[i["id"]]
@@ -511,8 +617,16 @@ def op_health(log):
             log(f"  master → {line}")
     if master:
         active = master_active()
-        log(f"  master lock: {active['user']} running {active['tag']} ({active['run']})" if active
-            else "  master lock: free")
+        mx = int(c.get("max_runs") or 3)
+        if active:
+            for a in active:
+                log(f"  master slot: {a['user']} running {a['tag']} ({a['project'] or '?'}, run {a['run']}"
+                    f"{', distributed' if a['distributed'] else ''})")
+        log(f"  master slots in use: {len(active)}/{mx}")
+    if (c.get("sync_method") or "push") == "push":
+        for i in up:
+            ok, msg = push_sync.test(i["id"])
+            log(f"  {i['role']}: SSH through SSM {'OK ' + msg if ok else 'FAILED: ' + msg}")
 
 
 def op_sso_login(log):

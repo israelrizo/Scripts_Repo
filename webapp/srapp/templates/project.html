@@ -10,8 +10,13 @@
   <div class="actions">
     {% if can('operator') and slaves %}
     {% if aws_mode %}
+    {% if push_sync_mode %}
+    <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="Copy {{ name }} from this computer to the Master and the Slaves now?">
+      {{ csrf() }}<button class="btn" title="Copy this project from this computer to Master and Slaves">⇄ Copy to servers</button>
+    {% else %}
     <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="git pull origin on the Master and the Slaves now?">
       {{ csrf() }}<button class="btn" title="Bring Master and Slaves to the latest pushed commit">⇄ Sync servers</button>
+    {% endif %}
     </form>
     {% else %}
     <form method="post" action="{{ url_for('sync', name=name) }}" data-confirm="rsync data/ and tests/ of {{ name }} to {{ slaves|join(', ') }}?">
@@ -32,7 +37,7 @@
 {% if tab == 'tags' %}
 <div class="panel">
   <div class="page-head" style="margin-bottom:10px"><h2 style="margin:0">Tags in <code>run_by_tag.sh</code></h2>
-  {% if can('operator') %}<button class="btn" onclick="document.getElementById('dlg-tag').showModal()">＋ Register tag</button>{% endif %}</div>
+  {% if can('operator') %}<button class="btn" data-open-dialog="dlg-tag">＋ Register tag</button>{% endif %}</div>
   <div class="table-wrap"><table>
     <thead><tr><th>Tag</th><th>Script</th><th>EXTRA_ARGS</th><th class="right">Actions</th></tr></thead>
     <tbody>
@@ -88,13 +93,13 @@
       <p class="hint" id="run-autooff" data-url="{{ url_for('api_servers') }}"></p>
       {% endif %}
       {% if slaves %}
-      <label class="check"><input type="checkbox" name="distributed" value="1" checked> Distributed on {{ slaves|length }} slaves (<span class="mono">{{ slaves|join(', ') }}</span>)</label>
+      <label class="check"><input type="checkbox" name="distributed" value="1"> Distributed on {{ slaves|length }} slaves (<span class="mono">{{ slaves|join(', ') }}</span>)</label>
       <p class="hint">Each slave runs the full thread count of the plan. Total load = threads × {{ slaves|length }}.</p>
       {% else %}
       <p class="hint">Runs on the Master only (no slaves configured).</p>
       {% endif %}
     </div>
-    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">▶ Start execution</button></div>
+    <div class="dlg-foot"><button type="button" class="btn" data-close-dialog>Cancel</button><button class="btn primary">▶ Start execution</button></div>
   </form>
 </dialog>
 
@@ -112,7 +117,7 @@
     </table></div>
     <p class="hint" id="srv-note"></p>
   </div>
-  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+  <div class="dlg-foot"><button type="button" class="btn" data-close-dialog>Close</button></div>
 </dialog>
 <script id="servers-url" type="application/json">{{ url_for('servers', name=name)|tojson }}</script>
 {% if nr_enabled %}
@@ -129,7 +134,7 @@
       <p class="hint" id="nr-note"></p>
       <p class="hint">Pinned services are used for every run of this project (otherwise they are discovered for each run). Pinning replaces the current list.</p>
     </div>
-    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button>{% if can('operator') %}<button class="btn primary">Pin selected for this project</button>{% endif %}</div>
+    <div class="dlg-foot"><button type="button" class="btn" data-close-dialog>Close</button>{% if can('operator') %}<button class="btn primary">Pin selected for this project</button>{% endif %}</div>
   </form>
 </dialog>
 <script id="nr-url" type="application/json">{{ url_for('newrelic_discover', name=name)|tojson }}</script>
@@ -150,7 +155,7 @@
         <datalist id="groups">{% for g in tags|map(attribute='group')|unique %}<option>{{ g }}</option>{% endfor %}</datalist>
         <div class="hint">Comment header in run_by_tag.sh; the tag is inserted inside that section.</div></div>
     </div>
-    <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Cancel</button><button class="btn primary">Save tag</button></div>
+    <div class="dlg-foot"><button type="button" class="btn" data-close-dialog>Cancel</button><button class="btn primary">Save tag</button></div>
   </form>
 </dialog>
 {% endif %}
@@ -285,7 +290,7 @@
       <tbody id="remote-body"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody></table></div>
     <form method="post" action="{{ url_for('remote_results_fetch', name=name) }}" id="remote-form">{{ csrf() }}<input type="hidden" name="result" id="remote-result"></form>
   </div>
-  <div class="dlg-foot"><button type="button" class="btn" onclick="this.closest('dialog').close()">Close</button></div>
+  <div class="dlg-foot"><button type="button" class="btn" data-close-dialog>Close</button></div>
 </dialog>
 {% endif %}
 

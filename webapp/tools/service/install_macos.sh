@@ -11,6 +11,11 @@
 # Uninstall: ./uninstall_macos.sh
 # ------------------------------------------------------------------------------
 set -o pipefail
+if [ "$(id -u)" -eq 0 ]; then
+  echo "Do not run this with sudo: the service belongs to your macOS user (it asks for your password only if needed)."
+  echo "Run:  $0"
+  exit 1
+fi
 DRY=0; [ "${1:-}" = "--dry-run" ] && DRY=1
 WEBAPP="$(cd "$(dirname "$0")/../.." && pwd)"
 LABEL=com.bancobase.jmeter-control-center
@@ -24,8 +29,27 @@ xml() { sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' <<<"$1"; }
 [ -f "$WEBAPP/run.py" ] || { echo "run.py not found under $WEBAPP"; exit 1; }
 cd "$WEBAPP" || exit 1
 
+# Files left owned by root by an earlier "sudo" run break the app (it runs as you): offer to give them back.
+ME="$(id -un)"
+BAD="$(find "$WEBAPP" "$HOME/Library/LaunchAgents" "$HOME/Library/Logs/JMeterControlCenter.log" "$HOME/.ssh" \
+          -maxdepth 6 ! -user "$ME" -print 2>/dev/null | head -5)"
+if [ -n "$BAD" ] && [ $DRY -eq 0 ]; then
+  echo "These files belong to another user (probably created with sudo):"
+  echo "$BAD" | sed 's/^/   /'
+  read -r -p "Give them back to $ME now? (asks for your password once) [Y/n] " A
+  if [[ ! "$A" =~ ^[Nn] ]]; then
+    for d in "$WEBAPP" "$HOME/Library/LaunchAgents" "$HOME/Library/Logs/JMeterControlCenter.log" "$HOME/.ssh"; do
+      [ -e "$d" ] && sudo chown -R "$ME":staff "$d"
+    done
+    say "Ownership repaired"
+  fi
+fi
+
 if [ $DRY -eq 0 ]; then
-  command -v python3 >/dev/null || { echo "python3 not found"; exit 1; }
+  command -v python3 >/dev/null || { echo "python3 not found: install Python 3.9+ (python.org or 'brew install python') or run 'xcode-select --install'"; exit 1; }
+  if [ -x .venv/bin/python ] && ! .venv/bin/python -c "print(1)" >/dev/null 2>&1; then
+    say "The Python environment is broken (Python moved or upgraded): recreating it"; rm -rf .venv
+  fi
   for b in git aws session-manager-plugin; do command -v "$b" >/dev/null || echo "WARNING: $b not found on PATH"; done
   if [ ! -x .venv/bin/python ] || ! .venv/bin/python -c "import flask, waitress, qrcode, cryptography, defusedxml" 2>/dev/null; then
     say "Creating the Python environment"
@@ -35,6 +59,10 @@ if [ $DRY -eq 0 ]; then
     say "Create your Control Center login"
     read -r -p "Username: " U
     .venv/bin/python manage_users.py add "$U" --role admin || exit 1
+  fi
+  if ! .venv/bin/python -c "from srapp import push_sync; import sys; sys.exit(0 if push_sync.key_path() else 1)" 2>/dev/null; then
+    read -r -p "No SSH key found. Create one now (used only to copy scripts to the load generators)? [Y/n] " A
+    [[ "$A" =~ ^[Nn] ]] || .venv/bin/python -m srapp.push_sync --make-key
   fi
 fi
 

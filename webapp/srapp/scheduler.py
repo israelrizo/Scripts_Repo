@@ -196,8 +196,8 @@ def tick():
                 _record(s, slot, f"run {meta['id']}")
                 changed = True
             except projects.ProjectError as exc:
-                if "Another test is running" in str(exc) or "already have a test running" in str(exc):
-                    continue  # retry on next tick
+                if isinstance(exc, runner.BusyError) or "Another test is running" in str(exc):
+                    continue  # project / Master busy: retry on next tick (up to RETRY_MINUTES)
                 _record(s, slot, f"error: {exc}")
                 changed = True
         if changed:

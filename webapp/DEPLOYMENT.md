@@ -6,41 +6,48 @@
  Engineer computer (each QA)                          AWS account (private subnets, no inbound ports)
  ───────────────────────────                          ──────────────────────────────────────────────────
  JMeter Control Center  http://localhost:8090         ┌──────────── MASTER (EC2) ──────────────┐
-  ├─ clone of the scripts repo (origin = source        │ git clone of the scripts repo          │
-  │   of truth: commit & push from the Git page)       │ jmeter + run_by_tag.sh                 │
-  ├─ run history, reports, schedules, settings         │ .jmcc/active  = who is running (lock)  │
-  │                                                    │ .jmcc/runs/<id>.log  console           │
-  │  aws ec2 start/stop/describe ─────────────────────►│ InfluxDB :8086 · Grafana :3000         │
-  │  aws ssm send-command (git pull, launch, poll) ───►└───────┬─────────────────────▲──────────┘
+  ├─ your clone of the scripts repo (Bitbucket)       │ scripts folder (copied from engineers) │
+  ├─ run history, reports, schedules, settings         │ jmeter + run_by_tag.sh                 │
+  │                                                    │ .jmcc/active.d/<project> = test slots  │
+  │  aws ec2 start/stop/describe ─────────────────────►│ .jmcc/runs/<id>.log  console           │
+  │  aws ssm send-command (launch, poll, keys) ───────►│ InfluxDB :8086 · Grafana :3000         │
+  │  rsync over ssh ⟶ AWS-StartSSHSession (scripts) ──►└───────┬─────────────────────▲──────────┘
   │  aws ssm start-session (tunnels 3000 / 8086,              RMI 1099 / 50000     metrics :8086
   │                        report download)          ┌────────┴────────┐   ┌────────┴────────┐
   │                                                  │ SLAVE 1          │   │ SLAVE 2          │
-  ├─ Gmail API (your account) · Google Chat webhooks  │ jmeter-server    │   │ jmeter-server    │
-  └─ Confluence / Jira / Bitbucket                    │ same git clone   │   │ same git clone   │
+  ├─ SMTP (your Gmail + App Password) · Google Chat   │ jmeter-server    │   │ jmeter-server    │
+  └─ Confluence / Jira / Bitbucket                    │ scripts folder   │   │ scripts folder   │
                                                       └──────────────────┘   └──────────────────┘
 ```
 
 * **The site is always available**: it runs on each engineer's computer, the servers are started only when needed
   and are shut down automatically every day at **18:00** (configurable in *Settings → AWS → Daily auto-off*).
-* **Everything goes through your AWS CLI session** (the SSM access you already use): no SSH keys, no inbound rules,
-  no public IPs, nothing listening on the servers except what JMeter itself needs.
-* **The repository is the single source of truth.** Uploads, new projects and tag edits happen in your local clone;
-  a run is refused until they are committed and pushed (*Git* page). Before every run the app fast-forwards the
-  Master **and** the Slaves to the same commit and verifies it.
-* **One test at a time on the Master**, across all engineers: the Master keeps a lock (`.jmcc/active`) with who is
-  running what; the Servers page shows it and new runs wait.
+* **Everything goes through your AWS CLI session** (the SSM access you already use): no inbound rules, no public IPs.
+  SSH is only used *inside* SSM (`AWS-StartSSHSession`), with your own key, which the app installs on the servers.
+* **The servers do not need to reach Bitbucket.** Before every run the app copies **the project being run** (plus
+  `webapp/bin`) from **your clone** to the Master — and to the Slaves when the run is distributed — with rsync (or a
+  tar stream when rsync is missing, e.g. on Windows). Uncommitted changes travel too, so keep your work committed and
+  pushed on the *Git* page to share it with the team. (*Settings → AWS → How scripts reach the servers* can switch
+  back to the old "servers pull from git" mode where the servers do have repository access.)
+* **Up to 3 tests at the same time on the Master, one per project** (*Settings → AWS → Tests at the same time*).
+  Each running test holds a slot file `.jmcc/active.d/<project>` with who runs what; the Slaves serve **one**
+  distributed test at a time (jmeter-server limit). Copies never touch a project whose test is running.
+* **Runs use only the Master by default.** Tick *Distributed on N slaves* in the run dialog when you need them.
 * A run keeps going on the Master if you close the app or your laptop sleeps; when the app starts again it
   re-attaches to it, mirrors the rest of the console and downloads the report.
 
 ### What a run does
 1. **Servers** — starts Master + Slaves if they are stopped (option in the run dialog) and waits for SSM.
-2. **Sync** — `git fetch` + fast-forward to `origin/<branch>` on every server; aborts if one diverges.
+2. **Sync** — checks the project / Master / Slaves are free, then copies the project folder from your computer
+   (rsync over SSH through SSM; your public key is added to `authorized_keys` of the scripts owner first).
 3. **Slaves** — checks `jmeter-server` on port 1099 of each Slave from the Master (restarts it when needed).
-4. **Launch** — takes the Master lock and starts `run_by_tag.sh <tag>` detached (`-R <slave IPs>`, `-G` properties).
+4. **Launch** — takes a Master slot (atomic, `flock`) and starts `run_by_tag.sh <tag>` detached
+   (`-R <slave IPs>`, `-G` properties only when distributed).
 5. **Console** — mirrors the remote log to the run page every ~3 s through SSM.
 6. **Report** — packs `results/Ejecucion_…`, downloads it through an SSM tunnel into your clone (the `.jtl` is
    skipped above *Download .jtl up to (MB)*; it stays on the Master — *Reports → Fetch from Master*).
-7. **Notify** — e-mail from your Gmail (report attached), Google Chat spaces, Jira comment; optionally stops the servers.
+7. **Notify** — e-mail from your account over SMTP (report attached), Google Chat spaces, Jira comment; optionally
+   stops the servers (only when no other test is running on the Master).
 
 ## 2. Engineer computer setup (each QA, macOS or Windows)
 
@@ -54,11 +61,14 @@ git clone -b New_Repo <repo-url> ~/Documents/Github/Scripts_Repo
 ~/Documents/Github/Scripts_Repo/webapp/tools/launcher/build_macos_app.sh   # app icon in Launchpad / Dock
 ```
 
-**Windows** (PowerShell, no administrator rights needed)
+**Windows** (normal user, **not** "Run as administrator")
 ```powershell
-git clone -b New_Repo <repo-url> $HOME\Documents\Github\Scripts_Repo
-powershell -ExecutionPolicy Bypass -File $HOME\Documents\Github\Scripts_Repo\webapp\tools\service\install_windows.ps1
+git clone <repo-url> $HOME\Documents\BitBucket\jmeter-framework
 ```
+Then double-click `webapp\tools\service\install_windows.cmd`. It runs the installer with
+`-ExecutionPolicy Bypass` for that run only (no "running scripts is disabled" error, no system change), ignores the
+Microsoft Store `python` placeholder, offers to install missing Python / Git / AWS CLI / Session Manager plugin with
+winget, creates your SSH key and refuses to run from an elevated window.
 Creates the Python environment, your login, the background service (Task Scheduler task at logon) and the
 **JMeter Control Center** shortcut (Start menu + Desktop) with the icon. Use `-NoService` to only run it manually
 (`tools\launcher\jmeter-control-center.bat`). Git for Windows keeps `.sh` files with LF endings (`.gitattributes`).
@@ -71,7 +81,7 @@ Creates the Python environment, your login, the background service (Task Schedul
 | Keep awake while a run is close / running | `caffeinate` | `SetThreadExecutionState` |
 | Wake from sleep 5 min before each slot | `pmset schedule wake` (optional sudoers rule offered by the installer) | Task Scheduler wake timers (no admin) |
 | Logs | `~/Library/Logs/JMeterControlCenter.log`, `webapp/instance/service.log` | `webapp\instance\service.log` |
-| Remove | `tools/service/uninstall_macos.sh` | `tools\service\uninstall_windows.ps1` |
+| Remove | `tools/service/uninstall_macos.sh [--purge] [--remove-data]` (no sudo) | `tools\service\uninstall_windows.cmd [-Purge] [-Elevated] [-RemoveData]` |
 
 Scheduled runs start the load generators themselves (and can stop them at the end). A laptop with the lid closed
 on battery may still sleep: keep night-schedule machines on the power adapter. The *Schedules* page shows whether
@@ -82,7 +92,7 @@ Open **JMeter Control Center**: the first time it creates its Python environment
 
 1. **Settings → AWS**: enable *Run tests on the AWS servers*, AWS profile + region, Master and Slave **instance
    ids**, Linux user and scripts folder on the servers, daily auto-off `18:00` → *Test connection*.
-2. **Settings → E-mail → Gmail account**: OAuth client (once per team, see below) → *Link my Gmail account*.
+2. **Settings → E-mail**: your address + a Google **App Password** (see below) → *Send test*.
 3. **Settings → Google Chat spaces**: add the team space(s) as *default*; project-specific spaces per project.
 4. *Atlassian*: your Confluence / Jira / Bitbucket tokens (as before).
 
@@ -91,22 +101,31 @@ The command line equivalent of the launcher: `cd webapp && SR_MODE=aws ./.venv/b
 **AWS permissions** needed by the engineers' profile (scope them to the generator instances):
 `ec2:DescribeInstances`, `ec2:StartInstances`, `ec2:StopInstances`, `ssm:SendCommand` (document
 `AWS-RunShellScript`), `ssm:GetCommandInvocation`, `ssm:DescribeInstanceInformation`, `ssm:StartSession`
-(document `AWS-StartPortForwardingSession`), `ssm:TerminateSession`, `sts:GetCallerIdentity`.
+(documents `AWS-StartPortForwardingSession` **and `AWS-StartSSHSession`**), `ssm:TerminateSession`,
+`ssm:ResumeSession`, `sts:GetCallerIdentity`. `ssm:SendCommand` needs both the instances **and** the document
+`arn:aws:ssm:<region>::document/AWS-RunShellScript` as resources.
 
-**Gmail OAuth client (once, Google Cloud admin of the team):** APIs & Services → enable *Gmail API* → OAuth consent
-screen (Internal) → Credentials → *OAuth client ID* → type **Web application** → authorized redirect URI
-`http://localhost:8090/oauth/google/callback`. Share the client ID/secret with the team; each engineer links their
-own account (scope `gmail.send` only: the app can send, not read).
+**SSH key (push sync):** the app uses `~/.ssh/id_ed25519` (or the path in *Settings → AWS*). Create one with
+`ssh-keygen -t ed25519` if you have none; a key with a passphrase needs `ssh-agent`. Windows needs the built-in
+*OpenSSH Client* (Settings → Optional features); without rsync the app streams a tar.gz instead.
+
+**E-mail with a Google App Password (no OAuth client, no admin rights):** turn on 2-Step Verification in your
+Google account → <https://myaccount.google.com/apppasswords> → create "JMeter Control Center" → in *Settings → E-mail*
+enter host `smtp.gmail.com`, port `587`, `starttls`, your address as user and the 16-character password (spaces are
+removed automatically). If the page says App Passwords are not available, your Workspace admin blocks them.
 
 ## 3. Servers setup (Master and both Slaves)
 
 * **SSM agent online** and an instance profile with `AmazonSSMManagedInstanceCore` (already the case).
-* **Same scripts path on the three servers**: a git clone of the repository at
-  `/mnt/jmeter/JMeter_Scripts/jmeter-framework`, owned by the Linux user set in *Settings → AWS* (e.g. `ubuntu`),
-  on the same branch. Never edit files there: the app fast-forwards them before each run (*Servers → Force sync*
-  discards local changes).
-* **Git read access to the repository from the servers** for that user (deploy key / read-only token / credential
-  helper), so `git fetch` works non-interactively. Test with `sudo -u ubuntu git -C <path> fetch`.
+* **Same scripts folder on the three servers** (e.g. `/mnt/jmeter/JMeter_Scripts/jmeter-framework`), writable by
+  the Linux user set in *Settings → AWS* (e.g. `ubuntu`). It does not need to be a git clone and the servers do not
+  need access to Bitbucket. Never edit files there: they are overwritten by the next copy (*Servers → Mirror*
+  also deletes files that do not exist on your computer, except results and running projects).
+* **`sshd` listening on port 22 (localhost is enough) and `rsync`** (`sudo apt-get install -y rsync`) on the three
+  servers; `tar` is the fallback. The app adds each engineer's public key to `~/.ssh/authorized_keys` of the scripts
+  owner through SSM. **Offboarding:** remove the person's key line from that file on the three servers.
+* `flock` and `ss` (util-linux / iproute2, present on Ubuntu) on the Master: test slots and graceful stop of one
+  test without touching the others.
 * **`jmeter` on the login PATH** of that user on the Master, and `python3` (used to hand reports to the tunnel).
 * SSM runs commands as root; the app switches to the scripts owner with `sudo -u <user> -H bash -l`.
 * **Slaves**: `jmeter-server` as a service (`deploy/jmeter-server.service`); the app can restart it with the command
@@ -189,10 +208,10 @@ changes a `.jmx` (results in the job summary). CLI: `cd webapp && python -m srap
 
 ## 7. Notifications
 
-* **E-mail**: sent **from the engineer's own Gmail** (linked account) to `qaperformance@bancobase.com`, the project's
-  staff (project → Settings) and the extra recipients of the run. The end-of-run e-mail attaches the HTML report
-  (`.zip`, up to 15 MB) because links to `localhost` only work on the sender's computer. An SMTP server can still be
-  used instead (*Settings → E-mail → Send with*).
+* **E-mail**: sent **from the engineer's own account over SMTP** (Gmail: `smtp.gmail.com` + App Password) to
+  `qaperformance@bancobase.com`, the project's staff (project → Settings) and the extra recipients of the run. The
+  end-of-run e-mail attaches the HTML report (`.zip`, up to 15 MB) because links to `localhost` only work on the
+  sender's computer. TLS is mandatory when a password is used.
 * **Google Chat**: incoming webhooks. *Default* spaces get every run; others are picked per project. Start and end
   messages of a run go to the same thread.
 
@@ -245,3 +264,36 @@ InfluxDB SSM tunnel, which opens by itself while the Master is running. Typical 
 | Applications list empty | Backend Listener writing to another InfluxDB (slaves' `localhost`, see §4 #1) or different measurement |
 | Last sample is old | Nothing is writing: check the listener URL / port 8086 from the slaves |
 | Users panel 0 while others work | Fixed in this version (the outer sub-query had no time range → InfluxDB 1.x HTTP 500) |
+
+## 12. Updating an existing installation
+
+Step-by-step guide in Spanish (install, every credential, daily use, uninstall / reinstall):
+`webapp/docs/Instalacion_y_Credenciales.md`, with the narrated video *JMeter_Control_Center_Tutorial.mp4*.
+
+
+Every engineer, on their own computer (macOS or Windows). Settings, users, run history and reports in
+`webapp/instance/` are kept.
+
+1. **Stop the app**: close the launcher window (Ctrl+C). If the background service is installed it restarts the app
+   by itself in step 4, no need to stop it.
+2. **Get the new version** in your clone of the scripts repository (the one the service was installed from):
+   `git pull` on the branch where the Control Center was merged — or, with the update package you received, from
+   the repository root: `tar -xzf jmcc-update.tar.gz` (macOS and Windows 10+; it overwrites only Control Center
+   files under `webapp/`), then commit & push them so the other engineers get the same version.
+3. **Python packages** (only if `webapp/requirements.txt` changed):
+   macOS `webapp/.venv/bin/pip install -r webapp/requirements.txt` · Windows
+   `webapp\.venv\Scripts\pip install -r webapp\requirements.txt`.
+4. **Restart**:
+   * macOS with the service: `launchctl kickstart -k gui/$(id -u)/com.bancobase.jmeter-control-center`
+     (**never with sudo**; to reinstall the service run `webapp/tools/service/install_macos.sh`, also without sudo).
+   * Windows: double-click `webapp\tools\service\install_windows.cmd` again (repairs and restarts the service).
+   * Without the service: open *JMeter Control Center* again.
+5. **Check once** (admin): *Settings → AWS* → *How scripts reach the servers* = **Copy from this computer**, SSH key
+   path (empty = `~/.ssh/id_ed25519`), *Tests at the same time* = 3 → **Save** → **Test connection** (must show
+   *Master via SSH (push sync): …*). *Settings → E-mail*: your address + App Password → **Send test**.
+6. **First copy**: *Servers* → **Copy all projects to the servers** (adds your key to the servers and copies every
+   project; the next runs only copy the project being run).
+
+What changes for the user: runs are Master-only unless *Distributed* is ticked; up to 3 projects can run at the same
+time (one execution per project); the servers receive the scripts from the engineer's computer; e-mail uses the App
+Password (the Gmail OAuth linking was removed).

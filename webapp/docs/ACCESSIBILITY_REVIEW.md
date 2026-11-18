@@ -30,10 +30,18 @@ Recently run tags appear first in Quick run (↻). Typing several words narrows 
 | 10 | Grade "B" badge contrast 4.1:1 | 1.4.3 | Darker green (≥ 5.5:1); grades also show the letter, never colour alone |
 | 11 | Windows High Contrast | 1.4.11 | `forced-colors` keeps borders on buttons and status dots visible |
 | 12 | File inputs without name | 4.1.2 | `aria-label` "Choose files to upload" |
+| 13 | *(second pass)* Primary buttons, Quick run and the skip link: white on light blue in **dark mode** = 3.2:1 | 1.4.3 | Primary buttons use a darker blue in both themes (≥ 5.1:1); chips use their own text colour (≥ 5.7:1) |
+| 14 | *(second pass)* Master activity was a paragraph updated silently; the run dialog remembered *Distributed* | 4.1.3, 3.2.2 | `role="status"` list of the slots in use (n/3); the dialog always opens **Master only** (Run again restores the previous choice) |
+| 15 | *(second pass)* Inline `onclick` handlers (blocked by the new Content-Security-Policy) | — | Declarative `data-*` attributes handled in `app.js`; same keyboard behaviour |
 
 Already compliant and kept: language attribute, logical heading order per page, tables with header rows,
 status never conveyed by colour only (badges include text), touch targets ≥ 24 px (`.btn.sm`), responsive layout
 down to 360 px, both colour schemes with AA contrast for body text (muted text ≥ 5:1).
+
+Second pass (after the multi-run and push-sync changes): every page (Projects, project/Tags, Quality, Servers,
+Settings, Schedules, Executions, run, Live monitor, Compare, Git, Users, New project) checked for unnamed fields and
+controls, duplicate ids, dialogs without name, tables without headers, heading order, landmarks and text contrast in
+dark mode — no findings left besides the ones fixed above.
 
 ## Recommendations (not implemented)
 

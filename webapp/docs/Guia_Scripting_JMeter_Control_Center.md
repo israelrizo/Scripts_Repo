@@ -37,9 +37,9 @@ Antes de crear scripts, asegúrese de que el entorno de JMeter esté configurado
 | Clonar el repositorio | `git clone -b <rama> <url-del-repositorio>` en su equipo (macOS o Windows). |
 | Instalar la aplicación | **macOS:** `webapp/tools/service/install_macos.sh` · **Windows:** `webapp\tools\service\install_windows.ps1`. Instala el servicio en segundo plano (las programaciones se ejecutan sin abrir la aplicación) y el acceso directo con icono. |
 | Abrir | Acceso directo **JMeter Control Center** → `http://localhost:8090`. |
-| AWS | **Settings → AWS:** perfil de AWS con acceso SSM, región, IDs de las instancias Master y Slaves, usuario y carpeta de scripts en los servidores, apagado automático `18:00`. Botón **Test connection**. |
+| AWS | **Settings → AWS:** perfil de AWS con acceso SSM, región, IDs de las instancias Master y Slaves, usuario y carpeta de scripts en los servidores, llave SSH (`~/.ssh/id_ed25519`), apagado automático `18:00`. Botón **Test connection**. Cada ejecución copia el proyecto **desde su clon local** a los servidores (los servidores no acceden a Bitbucket): mantenga su trabajo con *commit* y *push*. |
 | JMeter local | **Account → JMeter on this computer:** ruta de su instalación de JMeter (habilita el botón **✎ JMeter** para abrir scripts en modo GUI). |
-| Notificaciones | **Settings → E-mail:** vincular su cuenta de Gmail (solo envío). **Google Chat:** espacios por defecto y por proyecto. |
+| Notificaciones | **Settings → E-mail:** su correo + una *contraseña de aplicación* de Google (SMTP). **Google Chat:** espacios por defecto y por proyecto. |
 | Integraciones | **Atlassian:** Confluence, Jira y Bitbucket con sus propios tokens. **Settings → New Relic:** cuenta compartida del equipo. |
 
 **Nota:** Los servidores generadores se apagan automáticamente todos los días a las **18:00 hrs**. El Control Center los enciende cuando una ejecución lo requiere y puede apagarlos al terminar.
@@ -185,7 +185,7 @@ La correlación es el proceso de capturar datos dinámicos de las respuestas del
 | 4. Registrar el tag | Pestaña **Tags → Register tag** | Tag + `EXTRA_ARGS` (`-Jthreads=… -Jrampup=… -Jduration=… -JP_DNS=…`). |
 | 5. Publicar | Página **Git** | Commit & push. Los scripts con errores de calidad requieren confirmación explícita. **Nada se ejecuta en los servidores si no está en el repositorio.** |
 | 6. Validar conectividad | **Servers** (botón por tag) | DNS, TCP, TLS y HTTP de cada host del script, revisados desde el Master. |
-| 7. Ejecutar | **▶ Run** | Opción de encender los servidores, ejecución distribuida, ticket de Jira, notas, destinatarios extra y apagado al terminar. |
+| 7. Ejecutar | **▶ Run** | Por defecto solo en el Master; marque *Distributed* para usar los Slaves. Hasta **3 proyectos a la vez** en el Master y **una ejecución por proyecto**; los Slaves atienden una prueba distribuida a la vez. Opción de encender los servidores, ticket de Jira, notas, destinatarios extra y apagado al terminar. |
 | 8. Monitorear | Página del run / **Live monitor** / **Grafana** | Consola en vivo, usuarios, hits/s, errores, p95, códigos de respuesta y métricas APM de **New Relic**. |
 | 9. Analizar | **Reports → Compare** | Comparación contra la línea base (umbral de regresión, tendencia, CSV). |
 | 10. Reportar | **Reports → Confluence** | Reporte de resultados con la plantilla oficial, gráficas, New Relic en *Recursos Servidor* y adjuntos. |
@@ -193,8 +193,8 @@ La correlación es el proceso de capturar datos dinámicos de las respuestas del
 | **Funcionalidad** | **Uso recomendado** |
 | --- | --- |
 | Programaciones (**Schedules**) | Pruebas nocturnas o de regresión: encienden los generadores, ejecutan y pueden apagarlos. Requieren el servicio en segundo plano instalado y el equipo conectado a corriente. Evite que una prueba larga cruce las **18:00**. |
-| Servidores (**Servers**) | Estado, encendido/apagado, quién está usando el Master, health check, sincronización del repositorio y túneles (Grafana 3000, InfluxDB 8086, otros). |
-| Notificaciones | Correo desde su Gmail (con el reporte HTML adjunto), Google Chat y comentario en el ticket de Jira al terminar. |
+| Servidores (**Servers**) | Estado, encendido/apagado, quién está usando el Master (espacios ocupados de 3), health check, copia de los scripts desde su equipo y túneles (Grafana 3000, InfluxDB 8086, otros). |
+| Notificaciones | Correo desde su cuenta vía SMTP (con el reporte HTML adjunto), Google Chat y comentario en el ticket de Jira al terminar. |
 | Shift-left | **project → Settings → Open PR in Bitbucket** agrega un *performance gate* al repositorio de la aplicación. |
 
 ---

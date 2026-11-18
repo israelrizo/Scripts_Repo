@@ -1,10 +1,12 @@
 """Routes for the "runs on the engineer's computer" mode: servers (EC2 via AWS CLI), SSM tunnels,
-AWS settings / SSO, Gmail account linking, Google Chat spaces and fetching reports from the Master."""
-import secrets
+AWS settings / SSO, Google Chat spaces and fetching reports from the Master."""
+import shlex
 
-from flask import abort, flash, g, jsonify, redirect, render_template, request, session, url_for
+from flask import abort, flash, g, jsonify, redirect, render_template, request, url_for
 
-from . import aws, gitops, google, newrelic, notify, power, projects, remote_run, runner, scheduler, settings, tunnels
+from . import (aws, gitops, google, newrelic, notify, power, projects, push_sync, remote_run, runner, scheduler, settings,
+               tunnels)
+from .config import Config
 from .app import _project_or_404, app, can, login_required
 
 
@@ -60,6 +62,7 @@ def api_servers():
         if master and master["state"] == "running" and master["ssm"]:
             try:
                 out["active"] = remote_run.master_active()
+                out["max_runs"] = int(aws.cfg().get("max_runs") or 3)
             except aws.AwsError as exc:
                 out["active_error"] = str(exc)
     out["tunnels"] = tunnels.status()
@@ -138,7 +141,10 @@ def aws_settings():
     cfg = settings.get()
     c = cfg["aws"]
     try:
-        if f.get("action") == "identity":
+        if f.get("action") == "make_key":
+            k = push_sync.make_key(c.get("ssh_key") or None)
+            flash(f"SSH key created: {k}. The app adds its public part to the servers on the next copy.", "ok")
+        elif f.get("action") == "identity":
             ident = aws.identity()
             flash(f"AWS identity: {ident['arn']} (account {ident['account']})", "ok")
         elif f.get("action") == "test":
@@ -147,9 +153,14 @@ def aws_settings():
                                              for i in inst), "ok")
             master = inst[0]
             if master["state"] == "running" and master["ssm"]:
+                root = shlex.quote(aws.remote_root())
                 rc, out, err = aws.run(master["id"], 'echo "user=$(whoami) jmeter=$(command -v jmeter || echo NOT-FOUND) '
-                                       f'repo=$([ -d {aws.remote_root()}/.git ] && echo ok || echo MISSING)"', 60)
+                                       f'folder=$([ -w {root} ] && echo writable || echo NOT-WRITABLE) '
+                                       f'git=$([ -d {root}/.git ] && echo yes || echo no)"', 60)
                 flash(f"Master via SSM: {out.strip() or err.strip()}", "ok" if rc == 0 else "error")
+                if (c.get("sync_method") or "push") == "push":
+                    ok, msg = push_sync.test(master["id"])
+                    flash(f"Master via SSH (push sync): {msg}", "ok" if ok else "error")
         else:
             c.update(enabled=bool(f.get("enabled")), profile=f.get("profile", "").strip(),
                      region=f.get("region", "").strip(), master=f.get("master", "").strip(),
@@ -157,7 +168,9 @@ def aws_settings():
                      remote_user=f.get("remote_user", "").strip(), remote_root=f.get("remote_root", "").strip(),
                      branch=f.get("branch", "").strip(), auto_off=f.get("auto_off", "").strip(),
                      slave_start_cmd=f.get("slave_start_cmd", "").strip()[:200],
-                     jtl_max_mb=int(f.get("jtl_max_mb") or 200))
+                     jtl_max_mb=int(f.get("jtl_max_mb") or 200),
+                     sync_method="git" if f.get("sync_method") == "git" else "push",
+                     ssh_key=f.get("ssh_key", "").strip(), max_runs=int(f.get("max_runs") or 3))
             aws.validate(c)
             if c["enabled"] and not c["master"]:
                 raise ValueError("Set the Master instance id")
@@ -165,12 +178,12 @@ def aws_settings():
             settings.save(cfg)
             aws.invalidate()
             flash("AWS settings saved.", "ok")
-    except (ValueError, aws.AwsError) as exc:
+    except (ValueError, aws.AwsError, push_sync.SyncError) as exc:
         flash(str(exc), "error")
     return redirect(url_for("admin_settings", _anchor="aws"))
 
 
-# --------------------------------------------------------------------------- Gmail account + Chat spaces
+# --------------------------------------------------------------------------- Google Chat spaces
 @app.post("/admin/settings/google")
 @login_required("admin")
 def google_settings():
@@ -178,20 +191,7 @@ def google_settings():
     cfg = settings.get()
     try:
         action = f.get("action")
-        if action == "client":
-            cfg["google"]["client_id"] = f.get("client_id", "").strip()
-            if f.get("client_secret"):
-                cfg["google"]["client_secret_enc"] = settings.encrypt(f.get("client_secret").strip())
-            settings.save(cfg)
-            flash("OAuth client saved. Now link your Gmail account.", "ok")
-        elif action == "link":
-            state = google.new_state()
-            session["google_state"] = state
-            return redirect(google.auth_url(state))
-        elif action == "unlink":
-            google.unlink()
-            flash("Gmail account unlinked.", "ok")
-        elif action == "space_add":
+        if action == "space_add":
             google.add_space(f.get("name"), f.get("url"), f.get("default"))
             flash("Chat space added.", "ok")
         elif action == "space_default":
@@ -210,24 +210,7 @@ def google_settings():
             flash(f"Test message sent to {space['name']}.", "ok")
     except (google.GoogleError, StopIteration, ValueError) as exc:
         flash(str(exc) or "Unknown space", "error")
-    return redirect(url_for("admin_settings", _anchor="smtp" if f.get("action") in ("client", "unlink") else "chat"))
-
-
-@app.get("/oauth/google/callback")
-@login_required("admin")
-def google_callback():
-    expected = session.pop("google_state", None)
-    if request.args.get("error"):
-        flash(f"Google sign-in cancelled: {request.args.get('error')}", "error")
-    elif not expected or not secrets.compare_digest(expected, request.args.get("state", "")):
-        flash("Google sign-in rejected (state mismatch). Try again.", "error")
-    else:
-        try:
-            email = google.exchange(request.args.get("code", ""))
-            flash(f"Gmail account linked: {email or 'ok'}. Notifications are sent from this account.", "ok")
-        except google.GoogleError as exc:
-            flash(str(exc), "error")
-    return redirect(url_for("admin_settings", _anchor="smtp"))
+    return redirect(url_for("admin_settings", _anchor="chat"))
 
 
 # --------------------------------------------------------------------------- reports stored on the Master
@@ -347,7 +330,7 @@ def recent_tags(limit=6):
             continue
         seen.add((m["project"], m.get("tag")))
         out.append({"project": m["project"], "tag": m.get("tag"), "props": " ".join(m.get("props") or []),
-                    "status": m["status"], "when": m.get("started") or m.get("created"), "id": m["id"]})
+                    "dist": 1 if m.get("distributed") else None, "status": m["status"], "when": m.get("started") or m.get("created"), "id": m["id"]})
         if len(out) >= limit:
             break
     return out
@@ -428,4 +411,14 @@ def scheduler_power_settings():
 def _remote_ctx():
     return {"aws_mode": settings.aws_mode(), "slave_list": runner.slave_list,
             "chat_spaces_all": google.spaces(), "auto_off": settings.get()["aws"].get("auto_off"),
-            "nr_enabled": newrelic.enabled(), "recent_tags": recent_tags}
+            "nr_enabled": newrelic.enabled(), "recent_tags": recent_tags,
+            "push_sync_mode": (settings.get()["aws"].get("sync_method") or "push") == "push",
+            "repo_root": str(Config.REPO_ROOT), "ssh_key_found": _key_found()}
+
+
+def _key_found():
+    try:
+        k = push_sync.key_path()
+        return str(k) if k and k.is_file() else ""
+    except Exception:  # noqa: BLE001
+        return ""

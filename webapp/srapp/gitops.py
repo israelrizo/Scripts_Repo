@@ -144,6 +144,23 @@ def require_pushed(project=None):
     return br, head_sha()
 
 
+def sync_hint(rc, output=""):
+    """Explain a failed server_sync_script by its exit code (3 = folder, 4 = fetch, 5 = checkout/merge)."""
+    low = (output or "").lower()
+    if rc == 3:
+        return "the scripts folder does not exist on the server (check Settings → AWS → scripts folder)"
+    if rc == 4:
+        if any(k in low for k in ("password", "username", "authentication", "permission denied", "403", "401")):
+            return ("the server cannot log in to the repository: give the scripts owner on the server non-interactive "
+                    "read access (repository access token or access key), see DEPLOYMENT.md §3")
+        if any(k in low for k in ("could not resolve", "timed out", "unable to access", "connection")):
+            return "the server cannot reach the repository host (DNS / outbound HTTPS or SSH from the VPC)"
+        return "git fetch failed on the server (does the branch exist on origin and can the server read it?)"
+    if rc == 5:
+        return "the server clone has local changes or diverged; use Servers → Force sync (discards them)"
+    return "unexpected error running git on the server"
+
+
 def server_sync_script(remote_root, br, force=False):
     """Script run on Master/Slaves: bring the server clone to origin/<branch> and print the commit."""
     import shlex

@@ -164,9 +164,7 @@ def report_attachment(project, result_dir):
 
 def sender():
     cfg = settings.get()["smtp"]
-    if cfg.get("provider", "gmail") == "gmail":
-        return google.linked()["email"]
-    return cfg.get("from_addr", "")
+    return (cfg.get("from_addr") or cfg.get("user") or "").strip()
 
 
 def send(to, subject, html, text, attachment=None):
@@ -175,23 +173,18 @@ def send(to, subject, html, text, attachment=None):
         raise RuntimeError("E-mail notifications are disabled (Settings → E-mail)")
     if not to:
         raise RuntimeError("No recipients")
-    provider = cfg.get("provider", "gmail")
     from_addr = sender()
     if not from_addr:
-        raise RuntimeError("Gmail account not linked (Settings → E-mail)" if provider == "gmail"
-                           else "SMTP from address not configured")
+        raise RuntimeError("E-mail account not configured (Settings → E-mail: your address and App Password)")
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = formataddr((ME, from_addr)) if provider != "gmail" else from_addr
+    msg["From"] = formataddr((ME, from_addr))
     msg["To"] = ", ".join(to)
     msg["Message-ID"] = make_msgid(domain=from_addr.split("@")[-1])
     msg.set_content(text)
     msg.add_alternative(html, subtype="html")
     if attachment:
         msg.add_attachment(attachment[1], maintype="application", subtype="zip", filename=attachment[0])
-    if provider == "gmail":
-        google.send_gmail(msg.as_bytes())
-        return
     if not cfg.get("host"):
         raise RuntimeError("SMTP host not configured")
     port = int(cfg.get("port") or 587)

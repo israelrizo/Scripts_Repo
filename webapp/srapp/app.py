@@ -1,11 +1,13 @@
 """Scripts_Repo JMeter Control Center - Flask application."""
 import functools
 import io
+import os
 import re
 import secrets
 import tarfile
 import time
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 from flask import (Flask, abort, flash, g, jsonify, redirect, render_template, request,
                    send_file, send_from_directory, session, url_for)
@@ -60,10 +62,27 @@ def csrf_token():
 
 
 app.jinja_env.globals["csrf_token"] = csrf_token
+app.jinja_env.globals["csp_nonce"] = lambda: g.get("csp_nonce", "")
+
+
+def _allowed_hosts():
+    hosts = {"localhost", "127.0.0.1", "[::1]", "::1"}
+    pub = settings.get()["app"].get("public_url") or ""
+    host = urlparse(pub).hostname
+    if host:
+        hosts.add(host.lower())
+    hosts.update(h.strip().lower() for h in os.environ.get("SR_ALLOWED_HOSTS", "").split(",") if h.strip())
+    return hosts
 
 
 @app.before_request
 def _load_user():
+    # DNS rebinding: a web page can resolve its own name to 127.0.0.1 and talk to this app; only answer known names
+    host = (request.host or "").rsplit(":", 1)[0].lower() if not (request.host or "").startswith("[") \
+        else (request.host or "").split("]")[0] + "]"
+    if host not in _allowed_hosts():
+        abort(400, "Unknown host name. Open the app at http://localhost:8090 (or add the name to SR_ALLOWED_HOSTS).")
+    g.csp_nonce = secrets.token_urlsafe(16)
     g.user = None
     g.api = False
     if request.path.startswith("/api/v1/"):
@@ -91,6 +110,17 @@ def _headers(resp):
     resp.headers.setdefault("X-Content-Type-Options", "nosniff")
     resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     resp.headers.setdefault("Referrer-Policy", "same-origin")
+    resp.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
+    # JMeter HTML dashboards (results/<run>/report/) ship their own inline scripts: they keep the basic headers only
+    if resp.mimetype == "text/html" and "/report/" not in request.path and g.get("csp_nonce"):
+        resp.headers.setdefault("Content-Security-Policy",
+                                "default-src 'self'; "
+                                f"script-src 'self' 'nonce-{g.csp_nonce}'; "
+                                "style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; "
+                                "connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; "
+                                "frame-ancestors 'self'")
+    if request.path.startswith(("/login", "/account", "/admin")):
+        resp.headers.setdefault("Cache-Control", "no-store")
     return resp
 
 
@@ -175,7 +205,9 @@ def _complete_login(username, nxt=""):
     session.permanent = True
     session["user"] = username
     csrf_token()
-    return redirect(nxt if nxt.startswith("/") and not nxt.startswith("//") else url_for("dashboard"))
+    safe = (nxt.startswith("/") and not nxt.startswith(("//", "/\\")) and "\\" not in nxt
+            and not urlparse(nxt).netloc and not any(ord(ch) < 32 for ch in nxt))
+    return redirect(nxt if safe else url_for("dashboard"))
 
 
 @app.route("/login/2fa", methods=["GET", "POST"])
@@ -449,8 +481,8 @@ def sync(name):
     _project_or_404(name)
     if settings.aws_mode():
         from . import remote_run
-        meta = runner.start_op("Sync repository on servers", g.user["username"],
-                               lambda log: remote_run.op_sync(log, force=False))
+        meta = runner.start_op(f"Sync {name} to the servers", g.user["username"],
+                               lambda log: remote_run.op_sync(log, force=False, project=name))
     else:
         meta = runner.start_sync(name, g.user["username"])
     return redirect(url_for("run_detail", run_id=meta["id"]))

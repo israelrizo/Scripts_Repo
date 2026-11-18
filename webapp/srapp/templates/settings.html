@@ -41,9 +41,21 @@
       <div class="field" style="flex:2"><label>Slave instance ids</label><input type="text" name="slaves" value="{{ s.aws.slaves|join(', ') }}" placeholder="i-0aaa…, i-0bbb…"><div class="hint">Their private IPs are read from EC2 and passed to JMeter (<code>-R</code>) automatically.</div></div>
     </div>
     <div class="row">
-      <div class="field"><label>Linux user on the servers</label><input type="text" name="remote_user" value="{{ s.aws.remote_user }}" placeholder="ubuntu"><div class="hint">Owner of the scripts folder; needs <code>jmeter</code> on its PATH and git access to the repository.</div></div>
+      <div class="field"><label>Linux user on the servers</label><input type="text" name="remote_user" value="{{ s.aws.remote_user }}" placeholder="ubuntu"><div class="hint">Owner of the scripts folder; needs <code>jmeter</code> on its PATH (and git access to the repository only with the git method).</div></div>
       <div class="field" style="flex:2"><label>Scripts folder on Master and Slaves</label><input type="text" name="remote_root" value="{{ s.aws.remote_root }}"></div>
-      <div class="field"><label>Branch</label><input type="text" name="branch" value="{{ s.aws.branch }}" placeholder="same as this computer"></div>
+      <div class="field"><label>Branch</label><input type="text" name="branch" value="{{ s.aws.branch }}" placeholder="same as this computer"><div class="hint">Only for the git method.</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>How scripts reach the servers</label>
+        <select name="sync_method">
+          <option value="push" {{ 'selected' if (s.aws.sync_method or 'push') == 'push' }}>Copy from this computer (SSH through SSM)</option>
+          <option value="git" {{ 'selected' if s.aws.sync_method == 'git' }}>Servers pull from the repository (git)</option>
+        </select>
+        <div class="hint">Copy: each run sends <b>your</b> clone's project folder (<span class="mono">{{ repo_root }}</span>) to the servers with rsync (or tar), uncommitted changes included. Use it when the servers cannot reach Bitbucket.</div></div>
+      <div class="field"><label>SSH private key</label><input type="text" name="ssh_key" value="{{ s.aws.ssh_key }}" placeholder="~/.ssh/id_ed25519" autocomplete="off" spellcheck="false">
+        <div class="hint">{% if ssh_key_found %}Using <span class="mono">{{ ssh_key_found }}</span>. {% else %}<b>No key found</b>: use <i>Create SSH key</i> below. {% endif %}Its public key is added automatically to the servers through SSM. Needs <code>ssm:StartSession</code> on <code>AWS-StartSSHSession</code>.</div></div>
+      <div class="field"><label>Tests at the same time on the Master</label><input type="number" name="max_runs" value="{{ s.aws.max_runs or 3 }}" min="1" max="10">
+        <div class="hint">One per project; the Slaves serve one distributed test at a time.</div></div>
     </div>
     <div class="row">
       <div class="field" style="flex:2"><label>Command to (re)start jmeter-server on a Slave</label><input type="text" name="slave_start_cmd" value="{{ s.aws.slave_start_cmd }}"><div class="hint">Run as root through SSM only when a Slave does not answer on port 1099.</div></div>
@@ -54,6 +66,7 @@
       <button class="btn primary">Save</button>
       <button class="btn" name="action" value="identity" formnovalidate>Who am I?</button>
       <button class="btn" name="action" value="test" formnovalidate>Test connection</button>
+      {% if not ssh_key_found %}<button class="btn" name="action" value="make_key" formnovalidate>Create SSH key</button>{% endif %}
     </div>
   </form>
   <form method="post" action="{{ url_for('servers_action') }}" class="mt">{{ csrf() }}<input type="hidden" name="action" value="sso">
@@ -108,24 +121,19 @@
     {{ csrf() }}<input type="hidden" name="section" value="smtp">
     <h2>E-mail notifications</h2>
     <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.smtp.enabled }}> Enabled</label>
-    <div class="field"><label>Send with</label>
-      <select name="provider">
-        <option value="gmail" {{ 'selected' if s.smtp.provider != 'smtp' }}>My Gmail account{{ ' — ' ~ glink.email if glink.email else ' (not linked yet)' }}</option>
-        <option value="smtp" {{ 'selected' if s.smtp.provider == 'smtp' }}>SMTP server</option>
-      </select></div>
+    <p class="hint">Sent from <b>your own e-mail account</b> over SMTP. For Gmail / Google Workspace: turn on 2-Step Verification, create an <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">App Password</a> and paste it below (host <code>smtp.gmail.com</code>, port 587, STARTTLS).</p>
     <label class="check field"><input type="checkbox" name="attach_report" value="1" {{ 'checked' if s.smtp.attach_report }}> Attach the HTML report (.zip) to the end-of-run e-mail <span class="hint">(recipients cannot open links to your computer)</span></label>
-    <details class="field" {{ 'open' if s.smtp.provider == 'smtp' }}><summary><b>SMTP server</b> <span class="hint">(only when not using Gmail)</span></summary>
-    <div class="row mt">
+    <div class="row">
       <div class="field" style="flex:3"><label>SMTP host</label><input type="text" name="host" value="{{ s.smtp.host }}" placeholder="smtp.gmail.com / email-smtp.us-east-1.amazonaws.com"></div>
       <div class="field" style="flex:1"><label>Port</label><input type="number" name="port" value="{{ s.smtp.port }}"></div>
       <div class="field" style="flex:1"><label>Security</label><select name="security">{% for v in ['starttls','ssl','none'] %}<option {{ 'selected' if s.smtp.security == v }}>{{ v }}</option>{% endfor %}</select></div>
     </div>
     <div class="row">
-      <div class="field"><label>User</label><input type="text" name="user" value="{{ s.smtp.user }}" autocomplete="off"></div>
-      <div class="field"><label>Password {% if smtp_has_password %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="password" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if smtp_has_password else '' }}"></div>
+      <div class="field"><label>Your e-mail (SMTP user)</label><input type="email" name="user" value="{{ s.smtp.user }}" autocomplete="email" placeholder="you@bancobase.com"></div>
+      <div class="field"><label>App Password {% if smtp_has_password %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="password" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if smtp_has_password else '' }}"></div>
     </div>
-    <div class="field"><label>From</label><input type="text" name="from_addr" value="{{ s.smtp.from_addr }}" placeholder="jmeter-control-center@bancobase.com"></div>
-    </details>
+    <div class="field"><label>From (optional)</label><input type="email" name="from_addr" value="{{ s.smtp.from_addr }}" placeholder="same as your e-mail">
+      <div class="hint">Gmail only accepts your own address or a verified alias here.</div></div>
     <div class="field"><label>Always notify</label><input type="text" name="always_to" value="{{ s.smtp.always_to }}">
       <div class="hint">Plus each project's staff (project → Settings) and the extra addresses typed when launching a run.</div></div>
     <label class="check"><input type="checkbox" name="notify_start" value="1" {{ 'checked' if s.smtp.notify_start }}> When a run starts</label>
@@ -155,22 +163,6 @@
       </div>
       <button class="btn primary">Save</button>
     </form>
-  </div>
-
-  <div class="panel" id="gmail">
-    <h2>Gmail account <span class="badge {{ 'up' if glink.linked else '' }}">{{ glink.email if glink.linked else 'not linked' }}</span></h2>
-    <p class="hint">E-mails are sent <b>from your own account</b> through the Gmail API. The app only gets permission to <i>send</i> (scope <code>gmail.send</code>); it cannot read your mailbox.</p>
-    <form method="post" action="{{ url_for('google_settings') }}">
-      {{ csrf() }}<input type="hidden" name="action" value="client">
-      <div class="field"><label>OAuth client ID</label><input type="text" name="client_id" value="{{ glink.client_id }}" placeholder="1234567890-abc.apps.googleusercontent.com"></div>
-      <div class="field"><label>OAuth client secret {% if glink.has_secret %}<span class="chip">saved</span>{% endif %}</label><input type="password" name="client_secret" autocomplete="new-password" placeholder="{{ 'Leave empty to keep' if glink.has_secret else '' }}"></div>
-      <p class="hint">One-time, by the team's Google Cloud admin: APIs &amp; Services → enable <i>Gmail API</i> → Credentials → OAuth client ID (<i>Web application</i>) with redirect URI <code>{{ google_redirect }}</code>. The same client can be shared by all engineers.</p>
-      <button class="btn">Save client</button>
-    </form>
-    <div class="actions mt" style="justify-content:flex-start">
-      <form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="link"><button class="btn primary" {{ 'disabled' if not (glink.client_id and glink.has_secret) }}>{{ 'Re-link Gmail account' if glink.linked else 'Link my Gmail account' }}</button></form>
-      {% if glink.linked %}<form method="post" action="{{ url_for('google_settings') }}" data-confirm="Unlink {{ glink.email }}?">{{ csrf() }}<input type="hidden" name="action" value="unlink"><button class="btn danger">Unlink</button></form>{% endif %}
-    </div>
   </div>
 
   <div class="panel" id="chat">
