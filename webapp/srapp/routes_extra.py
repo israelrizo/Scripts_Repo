@@ -286,36 +286,65 @@ def run_email(run_id):
     return html
 
 
-@app.route("/runs/<run_id>/jira-bug", methods=["GET", "POST"])
-@login_required("operator")
-def run_jira_bug(run_id):
-    from . import bugs
-    meta = runner.get(run_id)
-    if not meta or meta["kind"] != "test":
-        abort(404)
-    if meta.get("jira_bug") and request.method == "GET" and not request.args.get("again"):
-        flash(f"This run already has bug {meta['jira_bug']['key']}.", "warn")
+def _bug_page(meta, back_url):
+    """Review form (GET) and creation (POST) of a performance bug for one execution."""
+    from . import aws, bugs
+    existing = meta.get("jira_bug") or bugs.bug_for(meta["project"], meta.get("result_dir"))
+    if existing and request.method == "GET":
+        flash(f"This execution already has bug {existing['key']}.", "warn")
     summary = notify.run_summary(meta)
     jira_key, issue_type, labels = bugs.target(meta["project"])
+    me = (aws.sso_email() if settings.aws_mode() else "") or g.user["username"]
     if request.method == "POST":
         fields = bugs.from_form(request.form)
         try:
-            issue = bugs.create(g.user["username"], meta, fields, attach_report=bool(request.form.get("attach")))
+            issue = bugs.create(g.user["username"], meta, fields, attach_report=bool(request.form.get("attach")), by=me)
             flash(f"Jira bug {issue['key']} created in {jira_key}" + (f" with {issue['attached']} attached" if issue["attached"] else "")
                   + ".", "ok")
             if issue.get("attach_error"):
                 flash(f"The report was not attached: {issue['attach_error']}", "warn")
-            try:
-                team.republish(run_id)
-            except Exception:  # noqa: BLE001 - the bug exists; the team record catches up on the next run
-                pass
-            return redirect(url_for("run_detail", run_id=run_id))
+            team.profile_changed(meta["project"], "bugs", g.user["username"])   # every installation sees the link
+            if not meta.get("team") and runner.get(meta["id"]):   # launched here: refresh its team record too
+                try:
+                    team.republish(meta["id"])
+                except Exception:  # noqa: BLE001 - the bug exists; the shared link is already in the profile
+                    pass
+            return redirect(back_url)
         except atlassian.AtlassianError as exc:
             flash(f"Bug not created: {exc}", "error")
     else:
-        fields = bugs.prefill(meta, summary)
+        fields = bugs.prefill(meta, summary, reporter=me)
     return render_template("jira_bug.html", run=meta, s=summary, f=fields, specs=bugs.FIELDS, required=bugs.REQUIRED,
-                           jira_key=jira_key, issue_type=issue_type, labels=labels, eligible=bugs.eligible(summary))
+                           jira_key=jira_key, issue_type=issue_type, labels=labels, eligible=bugs.eligible(summary),
+                           existing=existing, back_url=back_url)
+
+
+@app.route("/runs/<run_id>/jira-bug", methods=["GET", "POST"])
+@login_required("operator")
+def run_jira_bug(run_id):
+    meta = runner.get(run_id)
+    if not meta or meta["kind"] != "test":
+        abort(404)
+    return _bug_page(meta, url_for("run_detail", run_id=run_id))
+
+
+@app.route("/p/<name>/results/<run_name>/jira-bug", methods=["GET", "POST"])
+@login_required("operator")
+def result_jira_bug(name, run_name):
+    """Bug for any execution whose report is on this computer, including the team's (Executions → Team)."""
+    from . import aws, bugs
+    _project_or_404(name)
+    if not run_name.startswith("Ejecucion_") or not aws.safe_name(run_name):
+        abort(400)
+    try:
+        meta = bugs.meta_for_result(name, run_name)
+    except projects.ProjectError:
+        flash(f"Fetch the report first: {run_name} is not on this computer yet.", "warn")
+        return redirect(url_for("runs", scope="team", project=name))
+    back = request.args.get("next") or ""
+    if not back.startswith("/") or back.startswith("//"):
+        back = url_for("runs", scope="team", project=name)
+    return _bug_page(meta, back)
 
 
 @app.post("/runs/<run_id>/notify")

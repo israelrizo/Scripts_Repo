@@ -165,8 +165,8 @@
       <div class="row">
         <div class="field"><label>Default project key (board)</label><input type="text" name="bug_project" value="{{ s.jira.bug_project }}" placeholder="PERF" pattern="[A-Z][A-Z0-9_]{1,19}" title="Jira project key, e.g. PERF"></div>
         <div class="field"><label>Issue type</label><input type="text" name="bug_issue_type" value="{{ s.jira.bug_issue_type }}" placeholder="Bug"></div>
-        <div class="field" style="flex:2"><label>Labels (comma separated)</label><input type="text" name="bug_labels" value="{{ s.jira.bug_labels }}"></div>
       </div>
+      <div class="field"><label>Labels (comma separated)</label><input type="text" name="bug_labels" value="{{ s.jira.bug_labels }}"></div>
       <button class="btn primary">Save</button>
     </form>
     <form method="post" id="bitbucket" class="mt">
@@ -210,7 +210,7 @@
       </div>
       <label class="check field"><input type="checkbox" name="default" value="1" checked> Default space (notified for every project)</label>
       <button class="btn">Add space</button>
-      <p class="hint">In Google Chat: space → <i>Apps &amp; integrations</i> → <i>Webhooks</i> → add → copy the URL. Non-default spaces are chosen per project (project → Settings).</p>
+      <p class="hint">In Google Chat: space → <i>Apps &amp; integrations</i> → <i>Webhooks</i> → add (name <i>JMeter Control Center</i>, avatar URL <code>https://raw.githubusercontent.com/israelrizo/Scripts_Repo/main/webapp/srapp/static/brand/chat-webhook-icon.png</code>) → copy the URL. Non-default spaces are chosen per project (project → Settings).</p>
     </form>
   </div>
 

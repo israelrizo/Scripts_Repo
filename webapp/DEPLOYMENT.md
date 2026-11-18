@@ -212,7 +212,9 @@ changes a `.jmx` (results in the job summary). CLI: `cd webapp && python -m srap
   `qaperformance@bancobase.com`, the project's staff (project → Settings) and the extra recipients of the run. The
   end-of-run e-mail attaches the HTML report (`.zip`, up to 15 MB) because links to `localhost` only work on the
   sender's computer. TLS is mandatory when a password is used.
-* **Google Chat**: incoming webhooks. *Default* spaces get every run; others are picked per project. Start and end
+* **Google Chat**: incoming webhooks. When you create the webhook, name it *JMeter Control Center* and use the
+  Control Center icon as avatar URL: `https://raw.githubusercontent.com/israelrizo/Scripts_Repo/main/webapp/srapp/static/brand/chat-webhook-icon.png`
+  (`webapp/srapp/static/brand/chat-webhook-icon.png`, 512×512, works with Chat's circular crop). *Default* spaces get every run; others are picked per project. Start and end
   messages of a run go to the same thread.
 
 ## 8. Confluence reports
@@ -280,11 +282,15 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   `max_runs`, Grafana, tunnels, time zone and the Jira board for bugs. A new engineer uses *Settings → AWS → Import
   setup* with the `jmcc-setup.json` an admin downloads there (no keys, tokens or passwords), signs in with AWS SSO,
   and the first sync brings the rest.
-* **Performance bugs** — a run that ends **INSATISFACTORIA** (acceptance criteria of the project's report
-  defaults) shows **Create Jira bug**: the non-functional bug template prefilled from the run (scenario, criteria,
-  results by transaction, evidence, HTML report attached). The engineer completes *Contexto* and *Impacto* and
-  submits with their own Jira credentials. Board: *Settings → Jira → Performance bugs* (default project key, issue
-  type, labels), overridable per project (*project → Settings → Jira project for bugs*).
+* **Performance bugs** — an execution that ends **finished or stopped** (a graceful stop still builds the report)
+  with verdict **INSATISFACTORIA** offers **Create Jira bug** on its run page, and **🐞 Bug** in *Executions → Team*
+  for any engineer's execution (after *Fetch*, the report must be on your computer). It opens the non-functional bug
+  template prefilled from the run (scenario, criteria, results by transaction, evidence, HTML report attached);
+  *Reportado por* is whoever files it, and the evidence says who launched the run. The engineer completes *Contexto*
+  and *Impacto* and submits with their own Jira credentials. The link is stored per execution and shared through the
+  project profile, so every installation shows the bug and nobody files it twice. Board: *Settings → Jira →
+  Performance bugs* (default project key, issue type, labels), overridable per project (*project → Settings → Jira
+  project for bugs*).
 
 ## 10. Legacy: Control Center hosted on the Master
 

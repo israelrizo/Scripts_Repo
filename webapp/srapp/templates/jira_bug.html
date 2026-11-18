@@ -3,15 +3,15 @@
 {% block title %}Jira bug · {{ run.tag }}{% endblock %}
 {% block content %}
 <div class="page-head"><div>
-  <p class="sub"><a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / <a href="{{ url_for('run_detail', run_id=run.id) }}">{{ run.tag }}</a> / Jira bug</p>
+  <p class="sub"><a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / <a href="{{ back_url }}">{{ run.tag }}</a> / Jira bug{% if run.launched_by %} · launched by {{ run.launched_by }}{% endif %}</p>
   <h1>Reporte de bug no funcional</h1>
   <p class="sub">Prefilled from this execution. Review it, complete <b>Contexto</b> and <b>Impacto</b>, then create it in
     {% if jira_key %}<span class="chip">{{ jira_key }}</span> as <span class="chip">{{ issue_type }}</span>{% else %}<b>no board yet</b>{% endif %}
     {% if labels %} · labels {% for l in labels %}<span class="chip">{{ l }}</span> {% endfor %}{% endif %}.</p>
 </div></div>
 {% if not jira_key %}<div class="flash warn">No Jira project for bugs: set the default board in <a href="{{ url_for('admin_settings', _anchor='jira') }}">Settings → Jira</a> or this project's settings.</div>{% endif %}
-{% if not eligible %}<div class="flash warn">This execution {{ 'passed its acceptance criteria' if s.verdict == 'SATISFACTORIA' else 'has no acceptance-criteria verdict' }}. You can still file a bug.</div>{% endif %}
-{% if run.jira_bug %}<div class="flash warn">This run already has <a href="{{ run.jira_bug.url }}" target="_blank" rel="noopener">{{ run.jira_bug.key }}</a>. Submitting creates another issue.</div>{% endif %}
+{% if not eligible %}<div class="flash warn">This execution {{ 'passed its acceptance criteria' if s.verdict == 'SATISFACTORIA' else ('is ' ~ s.status if s.status not in ('finished', 'stopped') else 'has no acceptance-criteria verdict') }}. You can still file a bug.</div>{% endif %}
+{% if existing %}<div class="flash warn">This execution already has <a href="{{ existing.url }}" target="_blank" rel="noopener">{{ existing.key }}</a>{% if existing.by %} (filed by {{ existing.by }}){% endif %}. Submitting creates another issue.</div>{% endif %}
 
 <form method="post" class="panel" id="bug-form">
   {{ csrf() }}
@@ -30,7 +30,7 @@
   <label class="check field"><input type="checkbox" name="attach" value="1" {{ 'checked' if run.result_dir }} {{ 'disabled' if not run.result_dir }}> Attach the HTML report (zip) as evidence</label>
   <div class="actions">
     <button class="btn primary" {{ 'disabled' if not jira_key }}>🐞 Create bug in Jira</button>
-    <a class="btn" href="{{ url_for('run_detail', run_id=run.id) }}">Cancel</a>
+    <a class="btn" href="{{ back_url }}">Cancel</a>
   </div>
 </form>
 {% endblock %}

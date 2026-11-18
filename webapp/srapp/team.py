@@ -77,8 +77,11 @@ def cached_history():
 
 
 def history(project=None, who=None, limit=500):
-    """Team records newest first, with `local` (report downloaded here) and `mine` flags."""
+    """Team records newest first, with `local` (report downloaded here) and `mine` flags, the shared Jira bug of
+    each execution and, for reports on this computer without one, the verdict against the project's criteria."""
+    from . import bugs
     me = aws.sso_email(max_age=3600) if settings.aws_mode() else ""
+    filed, verdicts = {}, {}
     out = []
     for r in cached_history().values():
         if project and r.get("project") != project:
@@ -89,9 +92,33 @@ def history(project=None, who=None, limit=500):
         here = bool(RUN_ID_RE.match(r.get("id") or "") and (runner._runs_dir() / f"{r['id']}.json").exists())
         r = dict(r, result=rd, local=bool(rd and _local_result(r.get("project"), rd)),
                  mine=bool(me and r.get("email") == me), here=here)
+        proj = r.get("project") or ""
+        if rd and proj:
+            if proj not in filed:
+                filed[proj] = bugs.filed(proj)
+            if not r.get("jira_bug") and filed[proj].get(rd):
+                r["jira_bug"] = filed[proj][rd]
+            if r["local"] and not r.get("verdict"):
+                key = (proj, rd)
+                if key not in verdicts:
+                    verdicts[key] = _local_verdict(proj, rd)
+                r["verdict"] = verdicts[key]
+        r["can_bug"] = bool(rd and r.get("verdict") == "INSATISFACTORIA" and r.get("status") in bugs.BUG_STATUSES
+                            and not r.get("jira_bug"))
         out.append(r)
     out.sort(key=lambda r: r.get("started") or r.get("created") or 0, reverse=True)
     return out[:limit]
+
+
+def _local_verdict(project, rd):
+    from . import report
+    try:
+        raw = report._raw_stats(project, rd)
+        if not raw:
+            return ""
+        return report.evaluate(report.load_defaults(project), report._totals(raw))[0] or ""
+    except Exception:  # noqa: BLE001 - a broken statistics.json just means no verdict
+        return ""
 
 
 def _local_result(project, rd):
@@ -533,7 +560,7 @@ def apply_shared(data):
 # plus "publications": Confluence pages already published per execution (merged, never overwritten).
 PROJECT_RE = re.compile(r"^[a-z0-9][a-z0-9\-]{1,60}$")
 SECTIONS = ("report_defaults", "baselines", "project_settings")
-SECTION_LABELS = {"report_defaults": "criteria", "baselines": "baselines", "project_settings": "settings"}
+SECTION_LABELS = {"report_defaults": "criteria", "baselines": "baselines", "project_settings": "settings"}  # + publications, bugs
 
 
 def _get_section(project, section):
@@ -685,9 +712,22 @@ def reconcile(project, remote=None):
         pulled.append("publications")
     if merged != remote_pub:
         pushed.append("publications")
+    # Jira bugs filed per execution: union too, so nobody files the same bug twice
+    from . import bugs
+    local_bugs, remote_bugs = bugs.filed(project), dict(remote.get("bugs") or {})
+    merged_bugs = dict(remote_bugs)
+    for k, v in local_bugs.items():
+        if k not in merged_bugs or (v.get("ts") or 0) > (merged_bugs[k].get("ts") or 0):
+            merged_bugs[k] = v
+    if merged_bugs != local_bugs:
+        bugs.save_filed(project, merged_bugs)
+        pulled.append("bugs")
+    if merged_bugs != remote_bugs:
+        pushed.append("bugs")
     if pushed:
         _write_remote(f"{_jdir()}/projects/{project}.json",
-                      {"project": project, "sections": rsec, "publications": merged, "updated": time.time()})
+                      {"project": project, "sections": rsec, "publications": merged, "bugs": merged_bugs,
+                       "updated": time.time()})
     return pulled, pushed
 
 
