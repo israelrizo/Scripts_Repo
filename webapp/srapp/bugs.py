@@ -227,8 +227,23 @@ def chart_series(meta, summary):
                 out["source"] = "InfluxDB"
         except Exception as exc:  # noqa: BLE001 - the bug can still be filed without charts
             out["error"] = str(exc)
+    # Keep the points of this execution only: a report can carry samples far from the run (a reused .jtl,
+    # clock skew between generators), which stretches the time axis until the lines are invisible.
+    try:
+        start, end = report._window(meta["project"], meta["result_dir"], meta if meta.get("started") else None) \
+            if meta.get("result_dir") else (None, None)
+    except (projects.ProjectError, OSError, ValueError):
+        start, end = None, None
+    if start and end:
+        lo, hi = start - 120000, end + 120000
+        for key in ("rt", "err"):
+            clipped = [dict(x, pts=[p for p in x["pts"] if lo <= p[0] <= hi]) for x in out[key]]
+            if any(len(x["pts"]) for x in clipped):   # all outside = clocks/zones differ: keep the report's own axis
+                out[key] = clipped
+                out["window"] = [lo, hi]
     out["rt"] = [x for x in out["rt"] if x["pts"]]
     out["err"] = [x for x in out["err"] if x["pts"]]
+    out["points"] = max([len(x["pts"]) for x in out["rt"] + out["err"]] or [0])
     return out
 
 
