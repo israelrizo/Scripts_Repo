@@ -298,8 +298,12 @@ def _bug_page(meta, back_url):
     if request.method == "POST":
         fields = bugs.from_form(request.form)
         try:
-            issue = bugs.create(g.user["username"], meta, fields, attach_report=bool(request.form.get("attach")), by=me)
-            flash(f"Jira bug {issue['key']} created in {jira_key}" + (f" with {issue['attached']} attached" if issue["attached"] else "")
+            charts = bugs.charts_from_form(request.form) if request.form.get("attach_charts") else {}
+            issue = bugs.create(g.user["username"], meta, fields, attach_report=bool(request.form.get("attach")), by=me,
+                                charts=charts, slow=bugs.slowest(summary) if request.form.get("slow_table") else ())
+            extras = ([f"{len(issue['charts'])} chart(s)"] if issue.get("charts") else []) + \
+                     ([issue["attached"]] if issue["attached"] else [])
+            flash(f"Jira bug {issue['key']} created in {jira_key}" + (f" with {' and '.join(extras)} attached" if extras else "")
                   + ".", "ok")
             if issue.get("attach_error"):
                 flash(f"The report was not attached: {issue['attach_error']}", "warn")
@@ -315,6 +319,7 @@ def _bug_page(meta, back_url):
     else:
         fields = bugs.prefill(meta, summary, reporter=me)
     return render_template("jira_bug.html", run=meta, s=summary, f=fields, specs=bugs.FIELDS, required=bugs.REQUIRED,
+                           series=bugs.chart_series(meta, summary), slow=bugs.slowest(summary), chart_names=bugs.CHARTS,
                            jira_key=jira_key, issue_type=issue_type, labels=labels, eligible=bugs.eligible(summary),
                            existing=existing, back_url=back_url)
 

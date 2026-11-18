@@ -345,4 +345,4 @@ Every engineer, on their own computer (macOS or Windows). Settings, users, run h
 
 What changes for the user: runs are Master-only unless *Distributed* is ticked; up to 3 projects can run at the same
 time (one execution per project); the servers receive the scripts from the engineer's computer; e-mail uses the App
-Password (the Gmail OAuth linking was removed).
+Password (the Gmail OAuth linking was removed). The bug also carries the **5 slowest transactions** (requests, error %, avg, p95, p99, max) and two charts, **response time** (average of those transactions + overall p95) and **errors per second** (with the error response codes), attached as PNG and shown in the description. Their data comes from the JMeter HTML report (`html_report/content/js/graph.js`, works offline) or, if it has none, from InfluxDB for the run window.
