@@ -4,9 +4,12 @@ Follows the team template "Reporte de bug no funcional - Prueba de rendimiento":
 app knows (scenario, criteria, results, evidence); the engineer reviews it and completes context and impact.
 The description is Jira wiki markup (REST API v2, Jira Cloud and Data Center).
 """
+import json
 import re
+import time
 
 from . import atlassian, notify, projects, report, runner, settings
+from .config import Config
 
 ENV_RE = re.compile(r"(?<![A-Za-z])(QA\d*|UAT\d*|DEV\d*|STG|STAGING|PREPROD|PRE|SANDBOX|PROD|PRD)(?![A-Za-z])")
 THREADS_RE = re.compile(r"^-J(?:threads|hilos|users|usuarios|vus?|num_?threads)\w*=(\d+)$", re.IGNORECASE)
@@ -23,6 +26,7 @@ FIELDS = [
     ("evidencia", "Evidencia", "list"), ("impacto", "Impacto", "text"), ("cierre", "Criterios de aceptación para cierre", "list"),
 ]
 REQUIRED = ("resumen", "impacto")
+BUG_STATUSES = ("finished", "stopped")   # a graceful stop still produces the HTML report
 
 
 def target(project):
@@ -37,10 +41,58 @@ def target(project):
 
 
 def eligible(summary):
-    return summary.get("status") == "finished" and summary.get("verdict") == "INSATISFACTORIA"
+    return summary.get("status") in BUG_STATUSES and summary.get("verdict") == "INSATISFACTORIA"
 
 
-def prefill(meta, summary=None):
+# --------------------------------------------------------------------------- bugs filed per result (shared)
+# instance/bugs/<project>.json = {result_dir: {key, url, by, ts}}; merged with the team through the project profile
+def _store_path(project):
+    d = Config.INSTANCE_DIR / "bugs"
+    d.mkdir(parents=True, exist_ok=True)
+    return d / f"{project}.json"
+
+
+def filed(project):
+    p = _store_path(project)
+    try:
+        data = json.loads(p.read_text()) if p.exists() else {}
+    except ValueError:
+        data = {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_filed(project, data):
+    clean = {k: v for k, v in (data or {}).items()
+             if isinstance(v, dict) and str(k).startswith("Ejecucion_") and "/" not in str(k)
+             and atlassian.ISSUE_RE.match(str(v.get("key") or ""))}
+    _store_path(project).write_text(json.dumps(clean, indent=2, ensure_ascii=False))
+
+
+def bug_for(project, result_dir):
+    return filed(project).get(result_dir) if result_dir else None
+
+
+def meta_for_result(project, result_dir):
+    """Run data for a result folder, wherever the run was launched: this computer's run, else the team record,
+    else what the folder name says. Raises ProjectError when the report is not on this computer."""
+    projects.result_dir(project, result_dir)
+    local = next((m for m in runner.list_runs(project=project, limit=1000) if m.get("result_dir") == result_dir), None)
+    if local:
+        return dict(local, launched_by=local.get("email") or local.get("user") or "")
+    from . import team
+    rec = next((r for r in team.cached_history().values() if r.get("project") == project
+                and (r.get("result_dir") or r.get("result_remote_only")) == result_dir), None) or {}
+    started = rec.get("started") or team._started_from_name(result_dir)
+    return {"id": rec.get("id") or "team", "kind": "test", "project": project, "result_dir": result_dir,
+            "tag": rec.get("tag") or (result_dir.split("_", 3)[-1] if result_dir.count("_") >= 3 else result_dir),
+            "script": rec.get("script") or "", "props": rec.get("props") or [],
+            "remote_hosts": ["slave"] * int(rec.get("slaves") or 0), "status": rec.get("status") or "finished",
+            "started": started, "ended": rec.get("ended"), "notes": rec.get("notes") or "",
+            "email": rec.get("email") or "", "user": rec.get("email") or rec.get("user") or "",
+            "launched_by": rec.get("email") or rec.get("user") or "", "team": True}
+
+
+def prefill(meta, summary=None, reporter=""):
     s = summary or notify.run_summary(meta)
     d = report.load_defaults(meta["project"])
     t = s.get("totals") or {}
@@ -69,6 +121,9 @@ def prefill(meta, summary=None):
             evidence.append(f"{label}: {url}")
     if meta.get("result_dir"):
         evidence.append(f"Resultados: {meta['result_dir']} (reporte HTML adjunto)")
+    launched = meta.get("launched_by") or meta.get("email") or ""
+    if launched and launched != reporter:
+        evidence.append(f"Ejecución lanzada por {launched}")
     for a in s.get("newrelic") or []:
         evidence.append(f"New Relic {a['name']}: p95 {a['p95_ms']} ms · error {a['error_pct']} %"
                         + (f" · CPU {a['cpu']} %" if a.get("cpu") is not None else "") + (f" · {a['link']}" if a.get("link") else ""))
@@ -82,7 +137,7 @@ def prefill(meta, summary=None):
         "ambiente": env.group(1) if env else "",
         "aplicacion": app,
         "fecha": s.get("started") or "",
-        "reportado_por": meta.get("email") or s.get("user") or "",
+        "reportado_por": reporter or meta.get("email") or s.get("user") or "",
         "objetivo": d.get("alcance") or f"Validar que {app} cumpla los criterios de aceptación de rendimiento "
                                          f"durante una {ttype.lower()}.",
         "operaciones": f"{threads} usuarios virtuales (hilos)" if threads else "",
@@ -141,7 +196,7 @@ def render_wiki(f):
     return "\n".join(out)
 
 
-def create(username, meta, fields, attach_report=True):
+def create(username, meta, fields, attach_report=True, by=""):
     """Create the issue in the project's board; returns {key, url, attached}."""
     missing = [label for key, label, _ in FIELDS if key in REQUIRED and not fields.get(key)]
     if missing:
@@ -160,7 +215,13 @@ def create(username, meta, fields, attach_report=True):
                 issue["attached"] = att[0]
             except atlassian.AtlassianError as exc:
                 issue["attach_error"] = str(exc)
-    runner.update(meta["id"], jira_bug={"key": issue["key"], "url": issue["url"]})
+    link = {"key": issue["key"], "url": issue["url"]}
+    if runner.get(meta["id"]) if re.match(r"^[0-9a-f]{12}$", meta.get("id") or "") else None:
+        runner.update(meta["id"], jira_bug=link)
+    if meta.get("result_dir"):
+        data = filed(meta["project"])
+        data[meta["result_dir"]] = dict(link, by=by or username, ts=time.time())
+        save_filed(meta["project"], data)
     return issue
 
 

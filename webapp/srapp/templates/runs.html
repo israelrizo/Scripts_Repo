@@ -38,6 +38,7 @@
       <td class="right"><div class="actions">
         {% if r.result and r.local %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result) }}" target="_blank">Report</a>
         {% elif r.result and can('operator') %}<form method="post" action="{{ url_for('team_fetch') }}">{{ csrf() }}<input type="hidden" name="project" value="{{ r.project }}"><input type="hidden" name="result" value="{{ r.result }}"><button class="btn sm" title="Download this report from the Master">⇣ Fetch</button></form>{% endif %}
+        {% if r.can_bug and can('operator') %}{% if r.local %}<a class="btn sm danger" href="{{ url_for('result_jira_bug', name=r.project, run_name=r.result, next=request.full_path) }}" title="Failed the acceptance criteria: file a non-functional bug">🐞 Bug</a>{% else %}<button class="btn sm" disabled title="Fetch the report first">🐞 Bug</button>{% endif %}{% endif %}
         {% if r.here %}<a class="btn sm" href="{{ url_for('run_detail', run_id=r.id) }}">Run</a>{% endif %}
       </div></td>
     </tr>

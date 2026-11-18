@@ -585,13 +585,17 @@ def run_detail(run_id):
         except projects.ProjectError:
             targets = []
     verdict = ""
-    if meta["kind"] == "test" and meta.get("status") == "finished" and meta.get("result_dir"):
+    if meta["kind"] == "test" and meta.get("status") in ("finished", "stopped") and meta.get("result_dir"):
         try:
             from . import notify
             verdict = notify.run_summary(meta).get("verdict") or ""
         except Exception:  # noqa: BLE001 - the page renders without the verdict
             app.logger.exception("run verdict failed")
-    return render_template("run.html", run=meta, targets=targets, verdict=verdict)
+    shared_bug = None
+    if meta["kind"] == "test" and not meta.get("jira_bug") and meta.get("result_dir"):
+        from . import bugs
+        shared_bug = bugs.bug_for(meta["project"], meta["result_dir"])   # filed from another computer
+    return render_template("run.html", run=meta, targets=targets, verdict=verdict, shared_bug=shared_bug)
 
 
 @app.get("/api/runs/<run_id>/log")

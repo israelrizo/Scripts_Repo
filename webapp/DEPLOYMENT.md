@@ -280,11 +280,15 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   `max_runs`, Grafana, tunnels, time zone and the Jira board for bugs. A new engineer uses *Settings → AWS → Import
   setup* with the `jmcc-setup.json` an admin downloads there (no keys, tokens or passwords), signs in with AWS SSO,
   and the first sync brings the rest.
-* **Performance bugs** — a run that ends **INSATISFACTORIA** (acceptance criteria of the project's report
-  defaults) shows **Create Jira bug**: the non-functional bug template prefilled from the run (scenario, criteria,
-  results by transaction, evidence, HTML report attached). The engineer completes *Contexto* and *Impacto* and
-  submits with their own Jira credentials. Board: *Settings → Jira → Performance bugs* (default project key, issue
-  type, labels), overridable per project (*project → Settings → Jira project for bugs*).
+* **Performance bugs** — an execution that ends **finished or stopped** (a graceful stop still builds the report)
+  with verdict **INSATISFACTORIA** offers **Create Jira bug** on its run page, and **🐞 Bug** in *Executions → Team*
+  for any engineer's execution (after *Fetch*, the report must be on your computer). It opens the non-functional bug
+  template prefilled from the run (scenario, criteria, results by transaction, evidence, HTML report attached);
+  *Reportado por* is whoever files it, and the evidence says who launched the run. The engineer completes *Contexto*
+  and *Impacto* and submits with their own Jira credentials. The link is stored per execution and shared through the
+  project profile, so every installation shows the bug and nobody files it twice. Board: *Settings → Jira →
+  Performance bugs* (default project key, issue type, labels), overridable per project (*project → Settings → Jira
+  project for bugs*).
 
 ## 10. Legacy: Control Center hosted on the Master
 
