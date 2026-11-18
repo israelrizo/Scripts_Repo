@@ -26,6 +26,10 @@ HOOKS = {"start": [], "end": []}
 ISSUE_RE = re.compile(r"^[A-Z][A-Z0-9_]{0,19}-\d{1,9}$")
 
 
+class BusyError(projects.ProjectError):
+    """The project, the Master or the Slaves are busy: schedules retry instead of failing."""
+
+
 def _fire(event, meta):
     for fn in HOOKS.get(event, []):
         threading.Thread(target=_safe_hook, args=(fn, dict(meta)), daemon=True).start()
@@ -250,26 +254,41 @@ def _start_remote(project, tag, t, user, props, distributed, jira, notes, extra_
         raise projects.ProjectError("Master instance not configured (Settings → AWS)")
     if distributed and not slave_list():
         raise projects.ProjectError("No slave instances configured (Settings → AWS)")
-    try:
-        branch, sha = gitops.require_pushed(project)
-    except gitops.GitError as exc:
-        raise projects.ProjectError(str(exc))
-    if c.get("branch") and c["branch"] != branch:
-        raise projects.ProjectError(f"This computer is on branch {branch} but the servers use {c['branch']} "
-                                    "(Settings → AWS)")
+    changes = 0
+    if (c.get("sync_method") or "push") == "push":
+        from . import push_sync
+        branch, sha, changes = push_sync.local_state()
+    else:
+        try:
+            branch, sha = gitops.require_pushed(project)
+        except gitops.GitError as exc:
+            raise projects.ProjectError(str(exc))
+        if c.get("branch") and c["branch"] != branch:
+            raise projects.ProjectError(f"This computer is on branch {branch} but the servers use {c['branch']} "
+                                        "(Settings → AWS)")
+    max_runs = int(c.get("max_runs") or 3)
     with _lock:
-        if any(r["kind"] == "test" for r in active_runs()):
-            raise projects.ProjectError("You already have a test running. Stop it or wait.")
+        mine = [r for r in active_runs() if r["kind"] == "test"]
+        same = next((r for r in mine if r.get("project") == project), None)
+        if same:
+            raise BusyError(f"{project} is already running {same.get('tag')} (run {same['id']}). "
+                            "Only one execution per project at a time: stop it or wait.")
+        if len(mine) >= max_runs:
+            raise BusyError(f"You already have {len(mine)} tests running (maximum {max_runs} at the same time).")
+        if distributed and any(r.get("distributed") for r in mine):
+            raise BusyError("Your other distributed test is using the Slaves (jmeter-server runs one test at a time).")
         meta = {"id": uuid.uuid4().hex[:12], "kind": "test", "mode": "aws", "project": project, "tag": tag,
                 "script": t["script"], "user": user, "props": props, "distributed": bool(distributed),
                 "remote_hosts": slave_list() if distributed else [], "status": "starting",
                 "created": time.time(), "started": time.time(), "jira": jira, "notes": notes,
                 "extra_emails": list(extra_emails or []), "notify": bool(notify), "source": source,
-                "auto_start": bool(auto_start), "stop_after": bool(stop_after), "branch": branch, "sha": sha}
+                "auto_start": bool(auto_start), "stop_after": bool(stop_after), "branch": branch, "sha": sha,
+                "local_changes": changes, "sync_method": c.get("sync_method") or "push"}
         _save(meta)
     with (_runs_dir() / f"{meta['id']}.log").open("a") as fh:
         fh.write(f"### {time.strftime('%Y-%m-%d %H:%M:%S')}  user={user}  project={project}  tag={tag}\n"
                  f"### remote run on the Master through AWS SSM · {branch}@{sha[:8]}"
+                 f"{f' + {changes} local change(s)' if changes else ''}"
                  f"{' · distributed' if distributed else ''}\n")
         if props:
             fh.write(f"### extra properties: {' '.join(props)}\n")

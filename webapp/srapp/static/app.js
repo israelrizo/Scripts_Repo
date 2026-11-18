@@ -22,6 +22,19 @@ window.SR = window.SR || {};
     }
   });
 
+  // ---- declarative handlers (no inline JS: the Content-Security-Policy only allows scripts with a nonce) ----
+  document.addEventListener('click', (ev) => {
+    const c = ev.target.closest('[data-close-dialog]'); if (c) { c.closest('dialog')?.close(); return; }
+    const o = ev.target.closest('[data-open-dialog]'); if (o) { document.getElementById(o.dataset.openDialog)?.showModal(); return; }
+    const all = ev.target.closest('[data-check-all]');
+    if (all) document.querySelectorAll(`input[name="${CSS.escape(all.dataset.checkAll)}"]`).forEach((x) => { x.checked = all.checked; });
+  });
+  document.addEventListener('change', (ev) => { if (ev.target.matches('[data-autosubmit]')) ev.target.form.requestSubmit ? ev.target.form.requestSubmit() : ev.target.form.submit(); });
+  document.addEventListener('input', (ev) => {
+    const el = ev.target.closest('[data-preview]'); if (!el) return;
+    const out = document.getElementById(el.dataset.preview); if (out) out.textContent = (el.value || '<id>') + (el.dataset.suffix || '');
+  });
+
   // ---- run dialog ----
   document.addEventListener('click', (ev) => {
     const b = ev.target.closest('[data-run-tag]');
@@ -30,6 +43,8 @@ window.SR = window.SR || {};
     dlg.querySelector('#run-tag').value = b.dataset.runTag;
     dlg.querySelector('#run-tag-label').textContent = b.dataset.runTag;
     dlg.querySelector('#run-script').textContent = b.dataset.runScript;
+    const dist = dlg.querySelector('input[name=distributed]');
+    if (dist) dist.checked = false;   // Master only unless the engineer asks for the Slaves
     dlg.showModal();
   });
 
@@ -179,9 +194,15 @@ window.SR = window.SR || {};
     try {
       const d = await SR.getJSON(box.dataset.url);
       if (d.error) t.textContent = 'AWS: ' + d.error;
-      else if (d.active) t.textContent = `🔒 ${d.active.user} is running ${d.active.tag} (run ${d.active.run}). New runs wait until it ends.`;
+      else if (Array.isArray(d.active) && d.active.length) {
+        const max = d.max_runs || 3;
+        t.replaceChildren(document.createTextNode(`🔒 ${d.active.length}/${max} test slots in use on the Master (one per project):`));
+        const ul = document.createElement('ul');
+        d.active.forEach((a) => { const li = document.createElement('li'); li.textContent = `${a.user} · ${a.tag} · ${a.project || '?'}${a.distributed ? ' · using the Slaves' : ''} (run ${a.run})`; ul.append(li); });
+        t.append(ul);
+      }
       else if (d.active_error) t.textContent = d.active_error;
-      else if (d.instances.some((i) => i.role === 'master' && i.state === 'running' && i.ssm)) t.textContent = '✓ The Master is free: no test is running.';
+      else if (d.instances.some((i) => i.role === 'master' && i.state === 'running' && i.ssm)) t.textContent = `✓ The Master is free: 0/${d.max_runs || 3} test slots in use.`;
       else t.textContent = 'The Master is not running.';
     } catch (e) { t.textContent = e.message; }
   };
@@ -363,6 +384,8 @@ window.SR = window.SR || {};
       const props = new URLSearchParams(location.search).get('props');
       const dlg = document.getElementById('dlg-run');
       if (props && dlg) dlg.querySelector('input[name=props]').value = props;
+      const dist = dlg && dlg.querySelector('input[name=distributed]');
+      if (dist) dist.checked = new URLSearchParams(location.search).get('dist') === '1';
       const start = dlg && dlg.querySelector('.dlg-foot .btn.primary');
       if (start) setTimeout(() => start.focus(), 50);
     }

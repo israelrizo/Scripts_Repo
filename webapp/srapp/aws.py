@@ -60,6 +60,16 @@ def validate(c):
         raise ValueError("Invalid branch name")
     if c.get("auto_off") and not re.match(r"^([01]\d|2[0-3]):[0-5]\d$", c["auto_off"]):
         raise ValueError("Auto-off time must be HH:MM")
+    if (c.get("sync_method") or "push") not in ("push", "git"):
+        raise ValueError("Sync method must be push or git")
+    key = c.get("ssh_key") or ""
+    if key and (len(key) > 300 or re.search(r'[\x00-\x1f"\x7f]', key)):
+        raise ValueError("Invalid SSH key path")
+    try:
+        if not 1 <= int(c.get("max_runs") or 3) <= 10:
+            raise ValueError
+    except (TypeError, ValueError):
+        raise ValueError("Tests at the same time must be between 1 and 10")
     return c
 
 

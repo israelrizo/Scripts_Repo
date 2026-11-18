@@ -8,7 +8,7 @@ repository, launches the tests on the Master, streams the console and downloads 
 | Feature | Where |
 |---------|-------|
 | Browse every client project, its tags (`run_by_tag.sh`), scripts, data files | Projects → project |
-| Run a tag (optional `-J/-G` overrides, distributed on the slaves), live console, graceful stop / kill | Tags → ▶ Run |
+| Run a tag (optional `-J/-G` overrides, Master only or distributed on the slaves), live console, graceful stop / kill · up to 3 projects at the same time, one execution per project | Tags → ▶ Run |
 | Upload `.jmx` (validated, scanned for bad CSV paths) into any `tests/` sub-folder, register its tag | Scripts |
 | Upload CSV/TXT/… to `data/`, rsync `data/` + `tests/` to the slaves | Data files · Sync to slaves |
 | Create a new project with the standard structure (template from `blacklist-jmeter-framework`) | Projects → ＋ New project |
@@ -29,7 +29,7 @@ repository, launches the tests on the Master, streams the console and downloads 
 | **Remote runs** on the Master via SSM: repo sync on every server, live console, report download, optional auto start / stop | Tags → ▶ Run |
 | **Tunnels** (SSM port forwarding) to Grafana 3000, InfluxDB 8086 or any port; Live monitor opens InfluxDB by itself | Servers |
 | **Repository as source of truth**: runs blocked until local changes are committed & pushed; sync / force-sync servers | Git · Servers |
-| E-mail **from your own Gmail** (OAuth, send-only) with the HTML report attached | Settings → E-mail |
+| E-mail **from your own account** (SMTP; Gmail with an App Password) with the HTML report attached | Settings → E-mail |
 | **Google Chat** messages (start / end, same thread) to default spaces + per-project spaces | Settings → Google Chat |
 | **New Relic** (shared account): APM services behind each script found from its hosts/paths; their metrics for every run in the run page, e-mail, Chat, Jira and the Confluence report | Settings → New Relic · Tags → New Relic |
 | **Background service** on macOS (LaunchAgent) and Windows (Task Scheduler): schedules fire without opening the app, keep-awake + wake timers | `tools/service/` · Schedules |
@@ -48,7 +48,7 @@ powershell -ExecutionPolicy Bypass -File webapp\tools\service\install_windows.ps
 Scripting standards (Spanish, ready for Confluence): **[docs/Guia_Scripting_JMeter_Control_Center.md](docs/Guia_Scripting_JMeter_Control_Center.md)**.
 
 Open **JMeter Control Center** (creates the Python environment and your login the first time), then
-*Settings → AWS* (profile, region, instance ids) and *Settings → E-mail* (link your Gmail). Full guide:
+*Settings → AWS* (profile, region, instance ids, SSH key) and *Settings → E-mail* (address + App Password). Full guide:
 **[DEPLOYMENT.md](DEPLOYMENT.md)**. Without the launcher:
 
 ```bash
@@ -62,7 +62,7 @@ SR_MODE=aws ./.venv/bin/python run.py      # → http://localhost:8090
 
 **AWS mode** (default with the launcher): the app checks that your clone is committed and pushed, starts the servers
 if needed, fast-forwards Master and Slaves to the same commit with `aws ssm send-command`, verifies `jmeter-server` on
-the Slaves, takes the Master lock and starts `run_by_tag.sh <tag>` detached on the Master. The console is mirrored
+the Slaves (copying the project from this computer over SSH through SSM), takes a Master slot and starts `run_by_tag.sh <tag>` detached on the Master. The console is mirrored
 every few seconds; at the end the result folder is downloaded through an SSM tunnel into your clone, notifications
 go out, and the servers can be stopped. Closing the app does not stop the test; the app re-attaches on next start.
 
@@ -81,7 +81,7 @@ webapp/
 ├── manage_users.py       # CLI user management
 ├── bin/jmeter            # PATH shim (distributed + overrides)
 ├── srapp/                # Flask app: app.py, projects.py, runner.py, influx.py, users.py, report.py, ...
-│                         #   aws.py (EC2/SSM), remote_run.py (remote pipeline), tunnels.py, google.py (Gmail/Chat)
+│                         #   aws.py (EC2/SSM), remote_run.py (remote pipeline), tunnels.py, push_sync.py (rsync/tar over SSM), google.py (Chat)
 ├── project_template/     # base for new *-jmeter-framework folders
 ├── tools/launcher/       # laptop launcher (macOS app / Linux menu entry) with icon
 ├── deploy/               # jmeter-server unit for the slaves (+ legacy Master install)

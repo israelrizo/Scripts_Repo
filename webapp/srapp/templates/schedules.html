@@ -72,7 +72,7 @@
     <div class="field"><label>Notes</label><input type="text" name="notes" maxlength="500" placeholder="Nightly regression"></div>
     <div class="field"><label>Also notify</label><input type="text" name="extra_emails" placeholder="dev.lead@bancobase.com"></div>
   </div>
-  {% if slaves %}<label class="check field"><input type="checkbox" name="distributed" value="1" checked> Distributed on the slaves</label>{% endif %}
+  {% if slaves %}<label class="check field"><input type="checkbox" name="distributed" value="1"> Distributed on the slaves</label>{% endif %}
   {% if aws_mode %}
   <label class="check field"><input type="checkbox" name="stop_after" value="1" checked> Stop the servers when the run ends</label>
   <p class="hint">Scheduled runs start the servers by themselves. Schedules only fire while this app is running on your computer (keep it awake), and the servers are shut down every day at {{ auto_off or '—' }}: a run still going at that time is interrupted.</p>
@@ -83,7 +83,7 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-<script>
+<script nonce="{{ csp_nonce() }}">
 (async function () {
   const box = document.getElementById('sched-power'); if (!box) return;
   const set = (id, t) => { document.getElementById(id).textContent = t; };
@@ -103,7 +103,7 @@
   } catch (e) { document.getElementById('svc-hint').textContent = e.message; }
 })();
 </script>
-<script>
+<script nonce="{{ csp_nonce() }}">
 (function () {
   const data = document.getElementById('sch-tags'); if (!data) return;
   const tags = JSON.parse(data.textContent), p = document.getElementById('sch-project'), t = document.getElementById('sch-tag');

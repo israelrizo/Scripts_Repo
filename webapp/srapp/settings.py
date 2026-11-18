@@ -27,9 +27,9 @@ DEFAULTS = {
         "extra": "",                                    # e.g. &var-measurement_name=jmeter&orgId=1
     },
     "smtp": {
-        "provider": "gmail",                            # gmail (linked account) | smtp
+        "provider": "smtp",                             # SMTP only (Gmail: smtp.gmail.com + App Password)
         "attach_report": True, "attach_max_mb": 15,
-        "enabled": False, "host": "", "port": 587, "security": "starttls", "user": "", "password_enc": "",
+        "enabled": False, "host": "smtp.gmail.com", "port": 587, "security": "starttls", "user": "", "password_enc": "",
         "from_addr": "", "always_to": "qaperformance@bancobase.com",
         "notify_start": True, "notify_end": True,
     },
@@ -47,6 +47,11 @@ DEFAULTS = {
         "rmi_port": 1099,
         "slave_start_cmd": "sudo systemctl restart jmeter-server",
         "jtl_max_mb": 200,                              # bigger .jtl files stay on the Master
+        # push = this computer copies its clone to the servers (rsync/tar over SSH through SSM; the servers do not
+        # need to reach the repository host). git = the servers pull origin/<branch> themselves.
+        "sync_method": "push",
+        "ssh_key": "",                                  # empty = ~/.ssh/id_ed25519 (or id_ecdsa / id_rsa)
+        "max_runs": 3,                                  # tests at the same time on the Master (1 per project)
     },
     "tunnels": {
         "auto_influx": True,
@@ -54,7 +59,6 @@ DEFAULTS = {
                   {"name": "influx", "label": "InfluxDB", "remote_port": 8086, "local_port": 8086}],
     },
     # E-mail from the engineer's own Gmail account (OAuth) and Google Chat webhooks
-    "google": {"client_id": "", "client_secret_enc": "", "refresh_enc": "", "email": ""},
     "chat": {"enabled": False, "notify_start": True, "notify_end": True, "spaces": []},  # {id,name,url_enc,default}
     # Shared New Relic account of the performance team (NerdGraph User API key, encrypted)
     "newrelic": {"enabled": False, "region": "us", "account_id": "", "api_key_enc": "", "lookback_hours": 24,
@@ -123,7 +127,11 @@ def _global_path():
 
 def get():
     p = _global_path()
-    return _merge(DEFAULTS, json.loads(p.read_text()) if p.exists() else {})
+    data = json.loads(p.read_text()) if p.exists() else {}
+    data.pop("google", None)                      # Gmail OAuth was removed: SMTP + App Password only
+    if (data.get("smtp") or {}).get("provider") == "gmail":
+        data["smtp"]["provider"] = "smtp"
+    return _merge(DEFAULTS, data)
 
 
 def save(data):

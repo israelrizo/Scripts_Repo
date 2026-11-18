@@ -44,7 +44,7 @@ def admin_settings():
                                       app_var=f.get("app_var", "").strip(), extra=f.get("extra", "").strip())
             elif section == "smtp":
                 s = cfg["smtp"]
-                s.update(provider="smtp" if f.get("provider") == "smtp" else "gmail",
+                s.update(provider="smtp",
                          attach_report=bool(f.get("attach_report")),
                          enabled=bool(f.get("enabled")), host=f.get("host", "").strip(),
                          port=int(f.get("port") or 587), security=f.get("security", "starttls"),
@@ -52,7 +52,14 @@ def admin_settings():
                          always_to=", ".join(settings.parse_emails(f.get("always_to", ""))),
                          notify_start=bool(f.get("notify_start")), notify_end=bool(f.get("notify_end")))
                 if f.get("password"):
-                    s["password_enc"] = settings.encrypt(f.get("password"))
+                    pw = f.get("password").strip()
+                    if s["host"].lower().endswith(("gmail.com", "googlemail.com")):
+                        pw = pw.replace(" ", "")      # Google shows App Passwords as "abcd efgh ijkl mnop"
+                    s["password_enc"] = settings.encrypt(pw)
+                if s["security"] not in ("starttls", "ssl", "none"):
+                    raise ValueError("Invalid SMTP security")
+                if s["security"] == "none" and s["user"] and s["host"] not in ("localhost", "127.0.0.1"):
+                    raise ValueError("Refusing to send the password without TLS: choose starttls or ssl")
                 if s["from_addr"]:
                     settings.parse_emails(s["from_addr"])
             elif section == "smtp_test":
@@ -79,8 +86,7 @@ def admin_settings():
         diag = influx.diagnostics(request.args.get("db", ""), request.args.get("app", ""),
                                   request.args.get("measurement", "jmeter") or "jmeter",
                                   request.args.get("minutes", 60, type=int))
-    return render_template("settings.html", s=cfg, diag=diag, glink=google.linked(), spaces=google.spaces(),
-                           google_redirect=google.redirect_uri(), influx_url=('SSM tunnel → Master :8086' if settings.aws_mode() else influx.INFLUX_URL),
+    return render_template("settings.html", s=cfg, diag=diag, spaces=google.spaces(), influx_url=('SSM tunnel → Master :8086' if settings.aws_mode() else influx.INFLUX_URL),
                            smtp_has_password=bool(cfg["smtp"].get("password_enc")),
                            tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"))
 

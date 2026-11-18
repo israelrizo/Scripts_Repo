@@ -9,7 +9,7 @@
   {{ csrf() }}
   <div class="field">
     <label for="slug">Project id</label>
-    <input id="slug" type="text" name="slug" required pattern="[a-z0-9][a-z0-9\-]{1,40}" placeholder="e.g. tesoreria" oninput="document.getElementById('pv').textContent=(this.value||'&lt;id&gt;')+'{{ suffix }}'">
+    <input id="slug" type="text" name="slug" required pattern="[a-z0-9][a-z0-9\-]{1,40}" placeholder="e.g. tesoreria" data-preview="pv" data-suffix="{{ suffix }}">
     <div class="hint">Folder: <code id="pv">&lt;id&gt;{{ suffix }}</code></div>
   </div>
   <div class="field">

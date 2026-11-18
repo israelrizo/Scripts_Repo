@@ -8,7 +8,7 @@
 {% set running = inst|selectattr('state', 'equalto', 'running')|list %}
 <div class="page-head">
   <div><h1>Servers</h1>
-    <p class="sub">Master and Slaves are driven from this computer with the AWS CLI (profile <b>{{ c.profile or 'default' }}</b>{% if c.region %} · {{ c.region }}{% endif %}) through SSM. No inbound ports, no SSH.</p></div>
+    <p class="sub">Master and Slaves are driven from this computer with the AWS CLI (profile <b>{{ c.profile or 'default' }}</b>{% if c.region %} · {{ c.region }}{% endif %}) through SSM. No inbound ports: scripts are copied over SSH <i>inside</i> SSM.</p></div>
   {% if can('operator') %}
   <div class="actions">
     {{ action('start', '▶ Start servers', 'primary' if inst and running|length < inst|length else '') }}
@@ -48,18 +48,28 @@
 
 <div class="panel mt" id="master-lock" data-url="{{ url_for('api_servers', detail=1) }}">
   <h2>Master activity</h2>
-  <p class="muted" id="lock-text">Checking who is using the Master…</p>
+  <div class="muted" id="lock-text" role="status">Checking who is using the Master…</div>
 </div>
 
 <div class="grid two mt">
   <div class="panel">
-    <h2>Repository sync</h2>
+    <h2>Scripts sync</h2>
+    {% if (c.sync_method or 'push') == 'push' %}
+    <p class="muted">Each run copies <b>its project folder from this computer</b> to the Master (and the Slaves when distributed) over SSH through SSM, uncommitted changes included. Projects with a test running are never touched. Keep your work committed and pushed on the <a href="{{ url_for('git_page') }}">Git</a> page so the team shares it.</p>
+    {% if git %}<p class="mono">this computer: {{ git.branch }} @ {{ git.sha }}</p>{% endif %}
+    {% else %}
     <p class="muted">The repository is the single source of truth. Every run pulls <b>origin/{{ c.branch or (git.branch if git else '?') }}</b> on the Master and the Slaves first; uploads and tag edits must be committed &amp; pushed from the <a href="{{ url_for('git_page') }}">Git</a> page.</p>
     {% if git %}<p class="mono">this computer: {{ git.branch }} @ {{ git.sha }}</p>{% endif %}
+    {% endif %}
     {% if can('operator') %}
     <div class="actions" style="justify-content:flex-start">
+      {% if (c.sync_method or 'push') == 'push' %}
+      {{ action('sync', '⇄ Copy all projects to the servers') }}
+      {{ action('force_sync', 'Mirror (delete extra files)', 'danger', 'Mirror deletes files on the servers that do not exist on this computer (results, locks and running projects are kept). Continue?') }}
+      {% else %}
       {{ action('sync', '⇄ Sync servers now') }}
       {{ action('force_sync', 'Force sync', 'danger', 'Force sync discards any local change made directly on the servers (git reset --hard). Continue?') }}
+      {% endif %}
     </div>
     {% endif %}
   </div>
@@ -108,4 +118,4 @@
 </div>
 {% endif %}
 {% endblock %}
-{% block scripts %}<script>SR.masterLock();</script>{% endblock %}
+{% block scripts %}<script nonce="{{ csp_nonce() }}">SR.masterLock();</script>{% endblock %}

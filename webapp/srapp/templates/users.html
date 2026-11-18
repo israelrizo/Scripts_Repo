@@ -11,7 +11,7 @@
       <tr>
         <td><b>{{ u.username }}</b>{% if u.email %}<br><span class="hint">{{ u.email }}</span>{% endif %}</td>
         <td><form method="post" style="margin:0">{{ csrf() }}<input type="hidden" name="action" value="role"><input type="hidden" name="username" value="{{ u.username }}">
-          <select name="role" onchange="this.form.submit()" style="width:auto">{% for r in roles %}<option {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}</select></form></td>
+          <select name="role" data-autosubmit style="width:auto">{% for r in roles %}<option {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}</select></form></td>
         <td>{{ '✓' if u.has_2fa else '—' }}</td>
         <td class="nowrap">{{ u.created|dt }}</td>
         <td><div class="actions">

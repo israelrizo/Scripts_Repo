@@ -62,5 +62,5 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
 <script src="{{ url_for('static', filename='live.js') }}"></script>
-<script>SR.followRun(document.getElementById('console'));</script>
+<script nonce="{{ csp_nonce() }}">SR.followRun(document.getElementById('console'));</script>
 {% endblock %}

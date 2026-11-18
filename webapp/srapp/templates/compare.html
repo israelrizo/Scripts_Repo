@@ -73,5 +73,5 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
 <script src="{{ url_for('static', filename='live.js') }}"></script>
-<script>SR.compareCharts();</script>
+<script nonce="{{ csp_nonce() }}">SR.compareCharts();</script>
 {% endblock %}
