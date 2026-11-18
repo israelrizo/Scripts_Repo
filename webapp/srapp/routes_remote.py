@@ -1,5 +1,6 @@
 """Routes for the "runs on the engineer's computer" mode: servers (EC2 via AWS CLI), SSM tunnels,
 AWS settings / SSO, Google Chat spaces and fetching reports from the Master."""
+import json
 import shlex
 
 from flask import abort, flash, g, jsonify, redirect, render_template, request, url_for
@@ -146,7 +147,8 @@ def aws_settings():
             flash(f"SSH key created: {k}. The app adds its public part to the servers on the next copy.", "ok")
         elif f.get("action") == "identity":
             ident = aws.identity()
-            flash(f"AWS identity: {ident['arn']} (account {ident['account']})", "ok")
+            who = ident["email"] or ident["arn"].rsplit("/", 1)[-1]
+            flash(f"AWS identity: {who} (account {ident['account']})", "ok")
         elif f.get("action") == "test":
             inst = aws.instances(use_cache=False)
             flash("Instances: " + ", ".join(f"{i['role']} {i['state']}{' · SSM online' if i['ssm'] else ''}"
@@ -211,6 +213,81 @@ def google_settings():
     except (google.GoogleError, StopIteration, ValueError) as exc:
         flash(str(exc) or "Unknown space", "error")
     return redirect(url_for("admin_settings", _anchor="chat"))
+
+
+# --------------------------------------------------------------------------- team history / team settings
+@app.post("/team/sync")
+@login_required("operator")
+def team_sync():
+    r = _require_aws()
+    if r:
+        return r
+    return _op("Team sync", remote_run.op_team_sync)
+
+
+@app.post("/team/fetch")
+@login_required("operator")
+def team_fetch():
+    name, rd = request.form.get("project", ""), request.form.get("result", "")
+    _project_or_404(name)
+    if not rd.startswith("Ejecucion_") or not aws.safe_name(rd):
+        abort(400)
+    return _op(f"Fetch {rd}", remote_run.op_fetch(name, rd))
+
+
+@app.get("/admin/setup-file")
+@login_required("admin")
+def setup_file_download():
+    from . import team
+    body = json.dumps(team.setup_file(), indent=2, ensure_ascii=False)
+    return app.response_class(body, mimetype="application/json",
+                              headers={"Content-Disposition": "attachment; filename=jmcc-setup.json"})
+
+
+@app.post("/admin/setup-file")
+@login_required("admin")
+def setup_file_import():
+    from . import team
+    up = request.files.get("file")
+    try:
+        if not up:
+            raise ValueError("Choose the jmcc-setup.json file")
+        raw = up.read(256 * 1024 + 1)
+        if len(raw) > 256 * 1024:
+            raise ValueError("File too large")
+        team.import_setup(json.loads(raw))
+        flash("Setup imported: servers, paths, Grafana and tunnels configured. Now sign in (AWS SSO login): the "
+              "first sync brings the team settings, criteria and history.", "ok")
+    except (ValueError, team.TeamError) as exc:
+        flash(f"Setup not imported: {exc}", "error")
+    return redirect(url_for("admin_settings", _anchor="aws"))
+
+
+@app.post("/admin/team")
+@login_required("admin")
+def team_settings():
+    from . import team
+    f = request.form
+    action = f.get("action")
+    try:
+        if action == "save":
+            cfg = settings.get()
+            cfg["team"].update(auto_sync=bool(f.get("auto_sync")), auto_fetch_reports=bool(f.get("auto_fetch_reports")),
+                               fetch_days=max(1, min(90, int(f.get("fetch_days") or 7))),
+                               fetch_max=max(1, min(50, int(f.get("fetch_max") or 10))))
+            settings.save(cfg)
+            flash("Team sync settings saved.", "ok")
+        elif action == "publish":
+            data = team.publish_shared(aws.sso_email() or g.user["username"])
+            what = [w for w, k in (("New Relic", "newrelic"), ("Google Chat default spaces", "chat"),
+                                   ("infrastructure", "infra")) if k in data]
+            flash(f"Published to the team: {', '.join(what)}. Every installation applies it on its next sync.", "ok")
+        elif action == "pull":
+            by = team.pull_shared(force=True)
+            flash(f"Team settings applied (published by {by})." if by else "No team settings published yet.", "ok")
+    except (team.TeamError, aws.AwsError, ValueError) as exc:
+        flash(str(exc), "error")
+    return redirect(url_for("admin_settings", _anchor="team"))
 
 
 # --------------------------------------------------------------------------- reports stored on the Master
@@ -292,6 +369,8 @@ def newrelic_pin(name):
     ps = settings.project(name)
     ps["nr_apps"] = apps
     settings.save_project(name, ps)
+    from . import team
+    team.profile_changed(name, "project_settings", g.user["username"])
     flash(f"New Relic services for this project: {', '.join(apps) or 'auto-discovery'}.", "ok")
     return redirect(request.referrer or url_for("project", name=name, tab="settings"))
 

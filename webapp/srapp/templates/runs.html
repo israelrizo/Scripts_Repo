@@ -1,10 +1,53 @@
 {% extends "base.html" %}
-{% from "_macros.html" import run_row %}
+{% from "_macros.html" import run_row, csrf %}
 {% block title %}Executions{% endblock %}
 {% block content %}
-<div class="page-head"><div><h1>Executions</h1><p class="sub">Every run launched from the web app (logs in <code>webapp/instance/runs</code>).</p></div></div>
+<div class="page-head"><div><h1>Executions</h1>
+  <p class="sub">{% if scope == 'team' %}Every execution launched on the Master by the team (shared in <code>.jmcc/history</code> on the Master, cached on this computer).{% else %}Every run launched from this computer (logs in <code>webapp/instance/runs</code>).{% endif %}</p></div>
+  {% if scope == 'team' and can('operator') %}<form method="post" action="{{ url_for('team_sync') }}">{{ csrf() }}<button class="btn">⟳ Sync from Master</button></form>{% endif %}
+</div>
+<nav class="tabs" aria-label="Executions">
+  <a href="{{ url_for('runs') }}" class="{{ 'active' if scope != 'team' }}" {{ 'aria-current=page' if scope != 'team' }}>This computer</a>
+  {% if aws_mode %}<a href="{{ url_for('runs', scope='team') }}" class="{{ 'active' if scope == 'team' }}" {{ 'aria-current=page' if scope == 'team' }}>Team (Master)</a>{% endif %}
+</nav>
+
+{% if scope == 'team' %}
+<form class="panel toolbar" method="get">
+  <input type="hidden" name="scope" value="team">
+  <div class="field"><label for="f-project">Project</label>
+    <select name="project" id="f-project"><option value="">All</option>{% for p in team_projects %}<option {{ 'selected' if p == f_project }}>{{ p }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="f-who">Engineer</label>
+    <select name="who" id="f-who"><option value="">Everyone</option>{% for p in team_people %}<option {{ 'selected' if p == f_who }}>{{ p }}</option>{% endfor %}</select></div>
+  <button class="btn">Filter</button>
+  <span class="muted">{% if team_state.last_sync %}Last sync {{ team_state.last_sync|dt }}{% else %}Never synced: sign in (AWS SSO) or start the servers, or use “Sync from Master”.{% endif %}</span>
+</form>
+<div class="panel mt"><div class="table-wrap"><table>
+  <thead><tr><th>Started</th><th>Project</th><th>Tag</th><th>Engineer</th><th>Status</th><th>Verdict</th><th class="num">Error %</th><th class="num">p95</th><th></th></tr></thead>
+  <tbody>
+  {% for r in team_rows %}
+    <tr>
+      <td class="nowrap">{{ r.started|dt if r.started else '—' }}</td>
+      <td>{{ r.project }}</td>
+      <td><code>{{ r.tag }}</code>{% if r.slaves %} <span class="chip">{{ r.slaves }} slaves</span>{% endif %}{% if r.legacy %} <span class="chip" title="Result folder on the Master without an execution record (before the team history, or launched outside the Control Center)">folder only</span>{% endif %}</td>
+      <td>{% if r.email %}{{ r.email }}{% if r.mine %} <span class="chip">you</span>{% endif %}{% elif r.legacy %}<span class="muted">unknown</span>{% else %}{{ r.user }}{% endif %}{% if r.host and not r.legacy %}<div class="muted" style="font-size:12px">{{ r.host }}</div>{% endif %}</td>
+      <td><span class="badge {{ r.status }}">{{ r.status }}</span></td>
+      <td>{% if r.verdict %}<span class="badge {{ 'finished' if r.verdict == 'SATISFACTORIA' else 'failed' }}">{{ r.verdict|lower }}</span>{% endif %}
+        {% if r.jira_bug %} <a class="chip" href="{{ r.jira_bug.url }}" target="_blank" rel="noopener">🐞 {{ r.jira_bug.key }}</a>{% endif %}</td>
+      <td class="num">{{ r.totals.error_pct ~ ' %' if r.totals and r.totals.error_pct is not none else '' }}</td>
+      <td class="num">{{ '{:,.0f} ms'.format(r.totals.p95) if r.totals and r.totals.p95 is not none else '' }}</td>
+      <td class="right"><div class="actions">
+        {% if r.result and r.local %}<a class="btn sm" href="{{ url_for('report', name=r.project, run_name=r.result) }}" target="_blank">Report</a>
+        {% elif r.result and can('operator') %}<form method="post" action="{{ url_for('team_fetch') }}">{{ csrf() }}<input type="hidden" name="project" value="{{ r.project }}"><input type="hidden" name="result" value="{{ r.result }}"><button class="btn sm" title="Download this report from the Master">⇣ Fetch</button></form>{% endif %}
+        {% if r.here %}<a class="btn sm" href="{{ url_for('run_detail', run_id=r.id) }}">Run</a>{% endif %}
+      </div></td>
+    </tr>
+  {% else %}<tr><td colspan="9" class="empty">No team executions yet{% if f_project or f_who %} for this filter{% endif %}.</td></tr>{% endfor %}
+  </tbody>
+</table></div></div>
+{% else %}
 <div class="panel"><div class="table-wrap"><table>
   <thead><tr><th>Run</th><th>Project</th><th>Tag</th><th>Status</th><th>Started</th><th class="num">Duration</th><th>User</th><th></th></tr></thead>
   <tbody>{% for r in runs %}{{ run_row(r) }}{% else %}<tr><td colspan="8" class="empty">Nothing yet.</td></tr>{% endfor %}</tbody>
 </table></div></div>
+{% endif %}
 {% endblock %}

@@ -127,7 +127,7 @@ def _headers(resp):
 @app.context_processor
 def _ctx():
     return {"me": g.get("user"), "can": can, "cfg": Config, "grafana_url": settings.get()["grafana"].get("url"),
-            "grafana_link": settings.grafana_link}
+            "grafana_link": settings.grafana_link, "crit_presets": rpt.CRITERIA_PRESETS}
 
 
 def can(role):
@@ -348,7 +348,9 @@ def project(name):
     elif tab == "monitor":
         ctx.update(targets=_safe_targets(name))
     elif tab == "settings":
-        ctx.update(ps=settings.project(name))
+        from . import team
+        ctx.update(ps=settings.project(name), crit=rpt.load_defaults(name), crit_info=team.profile_info(name),
+                   ps_info=team.profile_info(name, "project_settings"))
     elif tab == "quality":
         from . import quality
         res = quality.review_project(projects.project_dir(name))
@@ -540,7 +542,9 @@ def compare(name):
 def set_baseline(name, run_name):
     _project_or_404(name)
     cmp.set_baseline(name, run_name)
-    flash(f"{run_name} is now the baseline for its script.", "ok")
+    from . import team
+    team.profile_changed(name, "baselines", g.user["username"])
+    flash(f"{run_name} is now the baseline for its script (shared with the team).", "ok")
     return redirect(request.referrer or url_for("project", name=name, tab="results"))
 
 
@@ -556,7 +560,16 @@ def _result_window(run_name):
 @app.get("/runs")
 @login_required()
 def runs():
-    return render_template("runs.html", runs=runner.list_runs(limit=200))
+    if request.args.get("scope") == "team":
+        from . import team
+        project, who = request.args.get("project") or None, request.args.get("who") or None
+        rows = team.history(project=project, who=who)
+        everyone = team.history()
+        return render_template("runs.html", scope="team", team_rows=rows, team_state=team.state(),
+                               team_projects=sorted({r["project"] for r in everyone if r.get("project")}),
+                               team_people=sorted({r["email"] for r in everyone if r.get("email")}),
+                               f_project=project or "", f_who=who or "")
+    return render_template("runs.html", scope="mine", runs=runner.list_runs(limit=200))
 
 
 @app.get("/runs/<run_id>")
@@ -571,7 +584,14 @@ def run_detail(run_id):
             targets = influx.listener_targets(projects.project_dir(meta["project"]) / meta["script"])
         except projects.ProjectError:
             targets = []
-    return render_template("run.html", run=meta, targets=targets)
+    verdict = ""
+    if meta["kind"] == "test" and meta.get("status") == "finished" and meta.get("result_dir"):
+        try:
+            from . import notify
+            verdict = notify.run_summary(meta).get("verdict") or ""
+        except Exception:  # noqa: BLE001 - the page renders without the verdict
+            app.logger.exception("run verdict failed")
+    return render_template("run.html", run=meta, targets=targets, verdict=verdict)
 
 
 @app.get("/api/runs/<run_id>/log")

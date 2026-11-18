@@ -30,8 +30,19 @@ IMAGE_NAMES = {
 }
 MAX_IMAGE_BYTES = 3 * 1024 * 1024
 MAX_ATTACH_MB = int(_env("SR_CONFLUENCE_MAX_ATTACH_MB", "80"))
-DEFAULT_KEYS = ("app_name", "scenario", "tool", "base_url", "alcance", "crit_avg", "crit_p95", "crit_err",
-                "crit_tps", "stakeholders", "link_docs", "link_docs_desc", "space_key", "parent_id")
+DEFAULT_KEYS = ("app_name", "scenario", "tool", "base_url", "alcance", "crit_preset", "crit_p95", "crit_err",
+                "stakeholders", "link_docs", "link_docs_desc", "space_key", "parent_id")
+# Acceptance criteria presets by layer: p95 <= ms and error rate <= % (average and throughput are not evaluated)
+CRITERIA_PRESETS = {
+    "backend": {"label": "Backend", "p95": 1000, "err": 5},
+    "middleware": {"label": "Middleware", "p95": 5000, "err": 5},
+    "frontend": {"label": "Front end", "p95": 10000, "err": 5},
+}
+
+
+def preset_label(fields):
+    p = CRITERIA_PRESETS.get((fields or {}).get("crit_preset") or "")
+    return p["label"] if p else ""
 TEST_TYPES = [("SMOKE", "Prueba de Humo"), ("UNIT", "Prueba Unitaria"), ("DRY", "Prueba Dry Run"),
               ("SCALAB", "Prueba de Escalabilidad"), ("ESCALAB", "Prueba de Escalabilidad"),
               ("STRESS", "Prueba de Estrés"), ("ESTRES", "Prueba de Estrés"), ("SPIKE", "Prueba de Picos"),
@@ -222,10 +233,8 @@ def evaluate(fields, totals):
         ok = actual <= limit if cmp == "<=" else actual >= limit
         checks.append((name, f"{cmp} {limit:g} {unit}", f"{actual:,.2f} {unit}", ok))
 
-    crit("Tiempo de respuesta promedio", "crit_avg", totals.get("avg"), "<=", "ms")
     crit("Percentil 95", "crit_p95", totals.get("p95"), "<=", "ms")
     crit("Tasa de error", "crit_err", totals.get("error_pct"), "<=", "%")
-    crit("Throughput", "crit_tps", totals.get("tps"), ">=", "req/s")
     if not checks:
         return "", checks
     return ("SATISFACTORIA" if all(c[3] for c in checks) else "INSATISFACTORIA"), checks
@@ -370,8 +379,8 @@ def initial_fields(project, run_name, g, user_settings):
                                                           f"{len(meta['remote_hosts'])} Slaves)" if meta.get("remote_hosts") else ""),
         "scenario": d.get("scenario") or (meta.get("tag") or ""), "script": script_name,
         "execution": run_name, "status": "auto",
-        "crit_avg": d.get("crit_avg", ""), "crit_p95": d.get("crit_p95", ""),
-        "crit_err": d.get("crit_err", "1"), "crit_tps": d.get("crit_tps", ""),
+        "crit_preset": d.get("crit_preset", ""), "crit_p95": d.get("crit_p95", ""),
+        "crit_err": d.get("crit_err", "5"),
         "base_url": d.get("base_url", ""),
         "alcance": d.get("alcance") or "\n".join(f"API | {x['name']} | {{GET / POST}} | {{Descripción}} | Media"
                                                  for x in g["transactions"]),
@@ -490,4 +499,9 @@ def publish(project, run_name, username, g, fields, images, storage, attachments
     _record(project, run_name, {"page_id": page_id, "url": url, "title": title, "user": username,
                                 "ts": time.time(), "space": space, "version": page.get("version", {}).get("number")})
     save_defaults(project, fields)
+    try:
+        from . import team
+        team.profile_changed(project, "report_defaults", username)   # criteria + publication, shared in the background
+    except Exception:  # noqa: BLE001 - the report is published; sharing catches up on the next sync
+        pass
     return url

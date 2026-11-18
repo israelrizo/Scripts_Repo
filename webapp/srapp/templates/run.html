@@ -6,10 +6,11 @@
   <div>
     <p class="sub">{% if run.kind == 'ops' %}<a href="{{ url_for('servers_page') }}">Servers</a> / jobs{% else %}<a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / executions{% endif %}</p>
     <h1><code>{{ run.tag }}</code> <span class="badge {{ run.status }}" id="run-status" role="status" aria-live="polite">{{ run.status }}</span></h1>
-    <p class="sub">{{ run.script or '' }} · by {{ run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
+    <p class="sub">{{ run.script or '' }} · by {{ run.email or run.user }} · started {{ run.started|dt }} · <span id="run-elapsed">{{ run|duration }}</span>
       {% if run.remote_hosts and run.kind == 'test' %} · distributed on <span class="mono">{{ run.remote_hosts|join(', ') }}</span>{% endif %}
       {% if run.props %} · <span class="mono">{{ run.props|join(' ') }}</span>{% endif %}
       {% if run.jira %} · <span class="chip">{{ run.jira }}</span>{% endif %}
+      {% if verdict %} · <span class="badge {{ 'finished' if verdict == 'SATISFACTORIA' else 'failed' }}">{{ verdict|lower }}</span>{% endif %}
       {% if run.source and run.source != 'web' %} · <span class="chip">{{ run.source.split(':')[0] }}</span>{% endif %}</p>
     {% if run.notes %}<p class="sub">📝 {{ run.notes }}</p>{% endif %}
   </div>
@@ -22,6 +23,8 @@
       {% set t0 = targets[0] if targets else None %}
       {% set gl = grafana_link(run.project, t0.application if t0 else None, ((run.started or run.created) * 1000 - 5000)|int, ((run.ended * 1000 + 15000)|int) if run.ended else None) %}
       {% if gl %}<a class="btn" href="{{ url_for('tunnel_go', name='grafana', next=gl) if aws_mode else gl }}" target="_blank" rel="noopener">Grafana ↗</a>{% endif %}
+      {% if run.jira_bug %}<a class="btn" href="{{ run.jira_bug.url }}" target="_blank" rel="noopener">🐞 {{ run.jira_bug.key }}</a>
+      {% elif verdict == 'INSATISFACTORIA' and can('operator') %}<a class="btn danger" href="{{ url_for('run_jira_bug', run_id=run.id) }}" title="Failed the acceptance criteria: file a non-functional bug">🐞 Create Jira bug</a>{% endif %}
       <a class="btn" href="{{ url_for('run_email', run_id=run.id) }}" target="_blank" title="Preview the quick report e-mail">✉ Preview</a>
       {% if can('operator') and run.status not in ('running','starting','stopping') %}<form method="post" action="{{ url_for('run_notify', run_id=run.id) }}" data-confirm="Send the quick report e-mail again?">{{ csrf() }}<button class="btn">✉ Send</button></form>{% endif %}
     {% endif %}

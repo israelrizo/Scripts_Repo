@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import csrf %}
+{% block title %}Jira bug · {{ run.tag }}{% endblock %}
+{% block content %}
+<div class="page-head"><div>
+  <p class="sub"><a href="{{ url_for('project', name=run.project) }}">{{ run.project }}</a> / <a href="{{ url_for('run_detail', run_id=run.id) }}">{{ run.tag }}</a> / Jira bug</p>
+  <h1>Reporte de bug no funcional</h1>
+  <p class="sub">Prefilled from this execution. Review it, complete <b>Contexto</b> and <b>Impacto</b>, then create it in
+    {% if jira_key %}<span class="chip">{{ jira_key }}</span> as <span class="chip">{{ issue_type }}</span>{% else %}<b>no board yet</b>{% endif %}
+    {% if labels %} · labels {% for l in labels %}<span class="chip">{{ l }}</span> {% endfor %}{% endif %}.</p>
+</div></div>
+{% if not jira_key %}<div class="flash warn">No Jira project for bugs: set the default board in <a href="{{ url_for('admin_settings', _anchor='jira') }}">Settings → Jira</a> or this project's settings.</div>{% endif %}
+{% if not eligible %}<div class="flash warn">This execution {{ 'passed its acceptance criteria' if s.verdict == 'SATISFACTORIA' else 'has no acceptance-criteria verdict' }}. You can still file a bug.</div>{% endif %}
+{% if run.jira_bug %}<div class="flash warn">This run already has <a href="{{ run.jira_bug.url }}" target="_blank" rel="noopener">{{ run.jira_bug.key }}</a>. Submitting creates another issue.</div>{% endif %}
+
+<form method="post" class="panel" id="bug-form">
+  {{ csrf() }}
+  {% for key, label, kind in specs %}
+    <div class="field">
+      <label for="f-{{ key }}">{{ label }}{% if key in required %} <span class="muted">(required)</span>{% endif %}{% if kind == 'list' %} <span class="muted">· one per line</span>{% endif %}</label>
+      {% if kind == 'line' %}
+        <input type="text" id="f-{{ key }}" name="{{ key }}" value="{{ f[key] }}" {{ 'required' if key in required }} {{ 'maxlength=250' if key == 'resumen' }}>
+      {% elif kind == 'text' %}
+        <textarea id="f-{{ key }}" name="{{ key }}" rows="3" {{ 'required' if key in required }} placeholder="{{ 'Usuarios / procesos afectados, riesgo para la liberación…' if key == 'impacto' else '' }}">{{ f[key] }}</textarea>
+      {% else %}
+        <textarea id="f-{{ key }}" name="{{ key }}" rows="{{ [3, (f[key]|length) + 1]|max }}">{{ f[key]|join('\n') }}</textarea>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <label class="check field"><input type="checkbox" name="attach" value="1" {{ 'checked' if run.result_dir }} {{ 'disabled' if not run.result_dir }}> Attach the HTML report (zip) as evidence</label>
+  <div class="actions">
+    <button class="btn primary" {{ 'disabled' if not jira_key }}>🐞 Create bug in Jira</button>
+    <a class="btn" href="{{ url_for('run_detail', run_id=run.id) }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -25,7 +25,13 @@ def set_baseline(project, run_name):
     projects.result_dir(project, run_name)
     b = baselines(project)
     b[_script_name(run_name)] = run_name
-    _bpath(project).write_text(json.dumps(b, indent=2))
+    save_baselines(project, b)
+
+
+def save_baselines(project, data):
+    """Baseline execution per script ({script: Ejecucion_...}); shared with the team as part of the project profile."""
+    clean = {str(k): str(v) for k, v in (data or {}).items() if str(v).startswith("Ejecucion_") and "/" not in str(v)}
+    _bpath(project).write_text(json.dumps(clean, indent=2))
 
 
 def default_selection(project):

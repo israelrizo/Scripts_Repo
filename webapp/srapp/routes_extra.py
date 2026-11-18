@@ -5,8 +5,9 @@ import time
 from flask import abort, flash, g, jsonify, redirect, render_template, request, url_for
 
 from . import (atlassian, connectivity, gitops, google, influx, notify, projects, runner, scheduler, settings,
-               shiftleft, users)
+               shiftleft, team, users)
 from .app import _project_or_404, app, can, login_required
+from . import report as rpt
 from .config import Config
 
 
@@ -21,6 +22,8 @@ def _with_ctx(fn):
 
 runner.HOOKS["start"].append(_with_ctx(notify.on_start))
 runner.HOOKS["end"].append(_with_ctx(notify.on_end))
+runner.HOOKS["start"].append(_with_ctx(team.on_start))
+runner.HOOKS["end"].append(_with_ctx(team.on_end))
 
 
 # --------------------------------------------------------------------------- admin settings
@@ -72,7 +75,12 @@ def admin_settings():
                 flash(f"Test e-mail sent to {', '.join(to)}.", "ok")
                 return redirect(url_for("admin_settings", _anchor="smtp"))
             elif section == "jira":
-                cfg["jira"]["url"] = settings.safe_http_url(f.get("url"))
+                key = f.get("bug_project", "").strip().upper()
+                if key and not atlassian.PROJECT_RE.match(key):
+                    raise ValueError("The Jira project key looks like PERF (letters, digits, _)")
+                cfg["jira"].update(url=settings.safe_http_url(f.get("url")), bug_project=key,
+                                   bug_issue_type=(f.get("bug_issue_type") or "Bug").strip()[:40],
+                                   bug_labels=f.get("bug_labels", "").strip()[:200])
             elif section == "bitbucket":
                 cfg["bitbucket"].update(api=settings.safe_http_url(f.get("api"), allow_empty=False),
                                         workspace=f.get("workspace", "").strip())
@@ -88,10 +96,29 @@ def admin_settings():
                                   request.args.get("minutes", 60, type=int))
     return render_template("settings.html", s=cfg, diag=diag, spaces=google.spaces(), influx_url=('SSM tunnel → Master :8086' if settings.aws_mode() else influx.INFLUX_URL),
                            smtp_has_password=bool(cfg["smtp"].get("password_enc")),
-                           tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"))
+                           tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), team_state=team.state())
 
 
 # --------------------------------------------------------------------------- project settings + shift-left
+@app.post("/p/<name>/criteria")
+@login_required("operator")
+def project_criteria(name):
+    _project_or_404(name)
+    f = request.form
+    try:
+        if f.get("crit_preset") and f.get("crit_preset") not in rpt.CRITERIA_PRESETS:
+            raise ValueError
+        for key in ("crit_p95", "crit_err"):
+            v = (f.get(key) or "").strip()
+            if v:
+                float(v)
+        status = team.save_profile(name, f.to_dict(), g.user["username"])
+        flash(f"Acceptance criteria {status}.", "ok" if "shared with" in status else "warn")
+    except ValueError:
+        flash("Criteria must be numbers (empty = not evaluated).", "error")
+    return redirect(url_for("project", name=name, tab="settings", _anchor="criteria"))
+
+
 @app.post("/p/<name>/settings")
 @login_required("operator")
 def project_settings(name):
@@ -107,6 +134,10 @@ def project_settings(name):
         if repo and not atlassian.REPO_RE.match(repo):
             raise ValueError("Repository must be <workspace>/<repo-slug>")
         s["bitbucket_repo"] = repo
+        jp = f.get("jira_project", "").strip().upper()
+        if jp and not atlassian.PROJECT_RE.match(jp):
+            raise ValueError("The Jira project key looks like PERF (letters, digits, _)")
+        s["jira_project"] = jp
         sl = s["shiftleft"]
         sl.update(tag=f.get("sl_tag", ""), threads=int(f.get("sl_threads") or 5),
                   duration=int(f.get("sl_duration") or 120), sla_p95=float(f.get("sl_p95") or 1500),
@@ -115,7 +146,8 @@ def project_settings(name):
         if sl["tag"] and not projects.get_tag(name, sl["tag"]):
             raise ValueError("Unknown tag for shift-left")
         settings.save_project(name, s)
-        flash("Project settings saved.", "ok")
+        status = team.profile_changed(name, "project_settings", g.user["username"], wait=True)
+        flash(f"Project settings {status}.", "ok" if "shared with" in status or "AWS mode" in status else "warn")
     except ValueError as exc:
         flash(str(exc), "error")
     return redirect(url_for("project", name=name, tab="settings"))
@@ -217,6 +249,7 @@ def schedules():
                 flash("Schedule deleted.", "ok")
         except (ValueError, StopIteration, projects.ProjectError) as exc:
             flash(str(exc) or "Unknown schedule", "error")
+        team.schedules_changed()
         return redirect(url_for("schedules"))
     items = scheduler.load()
     for s in items:
@@ -225,7 +258,9 @@ def schedules():
         s["next"] = nr.strftime("%Y-%m-%d %H:%M") if nr else "—"
     plist = projects.list_projects()
     tags = {p["name"]: [t["tag"] for t in projects.parse_tags(p["name"]) if t["exists"]] for p in plist}
+    conflicts = team.schedule_conflicts(items) if settings.aws_mode() else {}
     return render_template("schedules.html", items=items, tags=tags, days=scheduler.DAYS,
+                           team_items=team.team_schedules() if settings.aws_mode() else [], conflicts=conflicts,
                            sched_cfg=settings.get()["scheduler"],
                            tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), slaves=runner.slave_list(),
                            preset_project=request.args.get("project", ""), preset_tag=request.args.get("tag", ""))
@@ -249,6 +284,38 @@ def run_email(run_id):
     event = "start" if meta["status"] in ("running", "starting") else "end"
     subject, html, _ = notify.render(event, notify.run_summary(meta))
     return html
+
+
+@app.route("/runs/<run_id>/jira-bug", methods=["GET", "POST"])
+@login_required("operator")
+def run_jira_bug(run_id):
+    from . import bugs
+    meta = runner.get(run_id)
+    if not meta or meta["kind"] != "test":
+        abort(404)
+    if meta.get("jira_bug") and request.method == "GET" and not request.args.get("again"):
+        flash(f"This run already has bug {meta['jira_bug']['key']}.", "warn")
+    summary = notify.run_summary(meta)
+    jira_key, issue_type, labels = bugs.target(meta["project"])
+    if request.method == "POST":
+        fields = bugs.from_form(request.form)
+        try:
+            issue = bugs.create(g.user["username"], meta, fields, attach_report=bool(request.form.get("attach")))
+            flash(f"Jira bug {issue['key']} created in {jira_key}" + (f" with {issue['attached']} attached" if issue["attached"] else "")
+                  + ".", "ok")
+            if issue.get("attach_error"):
+                flash(f"The report was not attached: {issue['attach_error']}", "warn")
+            try:
+                team.republish(run_id)
+            except Exception:  # noqa: BLE001 - the bug exists; the team record catches up on the next run
+                pass
+            return redirect(url_for("run_detail", run_id=run_id))
+        except atlassian.AtlassianError as exc:
+            flash(f"Bug not created: {exc}", "error")
+    else:
+        fields = bugs.prefill(meta, summary)
+    return render_template("jira_bug.html", run=meta, s=summary, f=fields, specs=bugs.FIELDS, required=bugs.REQUIRED,
+                           jira_key=jira_key, issue_type=issue_type, labels=labels, eligible=bugs.eligible(summary))
 
 
 @app.post("/runs/<run_id>/notify")

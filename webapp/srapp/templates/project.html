@@ -336,8 +336,29 @@
 
 {# ============================== SETTINGS ============================== #}
 {% if tab == 'settings' %}
-<form method="post" action="{{ url_for('project_settings', name=name) }}">
+<form method="post" action="{{ url_for('project_criteria', name=name) }}" class="panel" id="criteria">
   {{ csrf() }}
+  <div class="page-head" style="margin-bottom:6px"><h2 style="margin:0">Acceptance criteria &amp; report data</h2>
+    <span class="muted">{% if crit_info.by %}{{ 'Shared' if not crit_info.pending else 'Saved here, not shared yet' }} · last change by {{ crit_info.by }} on {{ crit_info.at }}{% elif crit %}On this computer only (shared on the next sync){% else %}Not defined yet{% endif %}</span></div>
+  <p class="hint">Used for the SATISFACTORIA / INSATISFACTORIA verdict (e-mail, Chat, Jira bug, Confluence report). Shared with the team through the Master{{ '' if aws_mode else ' (AWS mode only)' }}, so whoever picks up this project gets the same criteria. Empty = not evaluated.</p>
+  {% from "_macros.html" import crit_preset_select %}
+  <div class="row">
+    {{ crit_preset_select(crit.crit_preset, crit_presets) }}
+    <div class="field"><label for="c-p95">95th percentile ≤ (ms)</label><input id="c-p95" type="number" step="any" min="0" name="crit_p95" value="{{ crit.crit_p95 }}"></div>
+    <div class="field"><label for="c-err">Error rate ≤ (%)</label><input id="c-err" type="number" step="any" min="0" name="crit_err" value="{{ crit.crit_err }}"></div>
+  </div>
+  <div class="row">
+    <div class="field"><label for="c-app">Application name</label><input id="c-app" type="text" name="app_name" value="{{ crit.app_name }}"></div>
+    <div class="field"><label for="c-url">Base URL / service</label><input id="c-url" type="text" name="base_url" value="{{ crit.base_url }}"></div>
+    <div class="field"><label for="c-tool">Tool</label><input id="c-tool" type="text" name="tool" value="{{ crit.tool }}" placeholder="Apache JMeter"></div>
+  </div>
+  <div class="field"><label for="c-scn">Scenario / context</label><textarea id="c-scn" name="scenario" rows="2">{{ crit.scenario }}</textarea></div>
+  <div class="field"><label for="c-alc">Scope / objective</label><textarea id="c-alc" name="alcance" rows="2">{{ crit.alcance }}</textarea></div>
+  {% if can('operator') %}<button class="btn primary">Save{{ ' and share' if aws_mode }}</button>{% endif %}
+</form>
+<form method="post" action="{{ url_for('project_settings', name=name) }}" class="mt">
+  {{ csrf() }}
+  {% if aws_mode %}<p class="muted">Project settings below are shared with the team{% if ps_info.by %} · last change by {{ ps_info.by }} on {{ ps_info.at }}{% if ps_info.pending %} (not shared yet){% endif %}{% endif %}.</p>{% endif %}
   <div class="grid two">
     <div class="panel">
       <h2>Notifications</h2>
@@ -355,6 +376,9 @@
       {% endif %}
       <h2 class="mt">Grafana</h2>
       <div class="field"><label>Dashboard for this project</label><input type="text" name="grafana_dashboard" value="{{ ps.grafana_dashboard }}" placeholder="/d/abc123/baseinet-jmeter  (empty = global default)"></div>
+      <h2 class="mt">Jira</h2>
+      <div class="field"><label>Jira project for bugs (board)</label><input type="text" name="jira_project" value="{{ ps.jira_project }}" placeholder="empty = default in Settings → Jira" pattern="[A-Z][A-Z0-9_]{1,19}" title="Jira project key, e.g. PERF">
+        <div class="hint">Where “Create Jira bug” files the performance bugs of this project.</div></div>
     </div>
     <div class="panel">
       <h2>Shift-left · Bitbucket</h2>

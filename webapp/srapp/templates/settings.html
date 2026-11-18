@@ -28,6 +28,14 @@
 <div class="panel" id="aws">
   <h2>AWS · remote execution <span class="badge {{ 'up' if s.aws.enabled else '' }}">{{ 'enabled' if s.aws.enabled else 'local mode' }}</span></h2>
   <p class="hint">When enabled, this app runs on <b>your computer</b> and drives the Master and Slaves with your AWS CLI session (SSM): start/stop instances, sync the repository, launch tests, stream the console, download reports and open tunnels.</p>
+  <div class="actions" style="margin-bottom:12px">
+    <form method="post" action="{{ url_for('setup_file_import') }}" enctype="multipart/form-data" class="row" style="align-items:flex-end">
+      {{ csrf() }}
+      <div class="field" style="margin:0"><label for="setup-file">New engineer? Import the team setup file</label><input type="file" id="setup-file" name="file" accept="application/json,.json" required></div>
+      <button class="btn">⇡ Import setup</button>
+    </form>
+    {% if s.aws.master %}<a class="btn" href="{{ url_for('setup_file_download') }}" title="Servers, paths, ports, Grafana, tunnels and team sync options. No keys, tokens or passwords.">⇣ Download setup file</a>{% endif %}
+  </div>
   <form method="post" action="{{ url_for('aws_settings') }}">
     {{ csrf() }}
     <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.aws.enabled }}> Run tests on the AWS servers (Master + Slaves) instead of this machine</label>
@@ -152,6 +160,13 @@
       {{ csrf() }}<input type="hidden" name="section" value="jira">
       <h2>Jira</h2>
       <div class="field"><label>Default Jira URL</label><input type="text" name="url" value="{{ s.jira.url }}" placeholder="https://bancobase.atlassian.net"></div>
+      <h3 class="mt">Performance bugs</h3>
+      <p class="hint">When a run ends <b>INSATISFACTORIA</b>, its page offers “Create Jira bug” with the non-functional bug template prefilled. A project can use another board (project → Settings → Jira project for bugs).</p>
+      <div class="row">
+        <div class="field"><label>Default project key (board)</label><input type="text" name="bug_project" value="{{ s.jira.bug_project }}" placeholder="PERF" pattern="[A-Z][A-Z0-9_]{1,19}" title="Jira project key, e.g. PERF"></div>
+        <div class="field"><label>Issue type</label><input type="text" name="bug_issue_type" value="{{ s.jira.bug_issue_type }}" placeholder="Bug"></div>
+        <div class="field" style="flex:2"><label>Labels (comma separated)</label><input type="text" name="bug_labels" value="{{ s.jira.bug_labels }}"></div>
+      </div>
       <button class="btn primary">Save</button>
     </form>
     <form method="post" id="bitbucket" class="mt">
@@ -178,7 +193,7 @@
       <thead><tr><th>Space</th><th>Default (every run)</th><th></th></tr></thead>
       <tbody>
       {% for sp in spaces %}
-        <tr><td><b>{{ sp.name }}</b></td>
+        <tr><td><b>{{ sp.name }}</b>{% if sp.shared %} <span class="chip" title="Published to the team from the Master (Settings → Team sharing)">team</span>{% endif %}</td>
           <td><form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_default"><input type="hidden" name="id" value="{{ sp.id }}"><input type="hidden" name="value" value="{{ '0' if sp.default else '1' }}"><button class="btn sm">{{ '★ default' if sp.default else '☆ per project' }}</button></form></td>
           <td><div class="actions">
             <form method="post" action="{{ url_for('google_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="space_test"><input type="hidden" name="id" value="{{ sp.id }}"><button class="btn sm">Test</button></form>
@@ -198,5 +213,29 @@
       <p class="hint">In Google Chat: space → <i>Apps &amp; integrations</i> → <i>Webhooks</i> → add → copy the URL. Non-default spaces are chosen per project (project → Settings).</p>
     </form>
   </div>
+
+  {% if s.aws.enabled %}
+  <div class="panel" id="team">
+    <h2>Team sharing <span class="muted" style="font-weight:400">· through the Master</span></h2>
+    <p class="hint">Every execution launched from any Control Center is recorded on the Master (<code>.jmcc/history</code>) with the engineer's AWS SSO e-mail. This computer pulls the team history after <i>aws sso login</i> and when the servers start (Executions → Team).</p>
+    <form method="post" action="{{ url_for('team_settings') }}">
+      {{ csrf() }}<input type="hidden" name="action" value="save">
+      <label class="check"><input type="checkbox" name="auto_sync" value="1" {{ 'checked' if s.team.auto_sync }}> Sync the team history automatically (after SSO login and server start)</label>
+      <label class="check"><input type="checkbox" name="auto_fetch_reports" value="1" {{ 'checked' if s.team.auto_fetch_reports }}> Also download the team's recent reports (HTML only, the .jtl stays on the Master)</label>
+      <div class="row">
+        <div class="field"><label>Reports from the last (days)</label><input type="number" name="fetch_days" value="{{ s.team.fetch_days }}" min="1" max="90"></div>
+        <div class="field"><label>At most per sync</label><input type="number" name="fetch_max" value="{{ s.team.fetch_max }}" min="1" max="50"></div>
+      </div>
+      <button class="btn">Save</button>
+    </form>
+    <h3 class="mt">Team settings (shared by every installation)</h3>
+    <p class="hint">Publishes this computer's <b>New Relic</b> account + API key, the <b>default Google Chat spaces</b> (e.g. Performance Testing Team) and the <b>infrastructure</b> (Master/Slaves ids, paths, ports, auto-off, Grafana, tunnels, time zone, Jira board for bugs) to the Master. Every installation applies them on its next sync, so engineers do not need the key or the webhook themselves. Stored on the Master readable only by the scripts owner.</p>
+    <p class="muted">{% if team_state.shared_at %}Applied here: published {{ team_state.shared_at }} by {{ team_state.shared_by }}.{% else %}Nothing applied from the team yet.{% endif %}</p>
+    <div class="actions">
+      <form method="post" action="{{ url_for('team_settings') }}" data-confirm="Publish this computer's New Relic key, default Google Chat spaces and infrastructure settings to every installation?">{{ csrf() }}<input type="hidden" name="action" value="publish"><button class="btn primary">⇡ Publish to the team</button></form>
+      <form method="post" action="{{ url_for('team_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="pull"><button class="btn">⇣ Apply team settings now</button></form>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

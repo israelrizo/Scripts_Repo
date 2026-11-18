@@ -391,3 +391,28 @@ window.SR = window.SR || {};
     }
   }
 })(window.SR);
+
+/* Acceptance-criteria presets (Backend / Middleware / Front end): choosing one fills p95 and error % of its form;
+   editing those values by hand switches the preset back to Custom. */
+(function () {
+  document.querySelectorAll('select[data-crit-preset]').forEach((sel) => {
+    const form = sel.form;
+    if (!form) return;
+    const p95 = form.querySelector('[name="crit_p95"]'), err = form.querySelector('[name="crit_err"]');
+    if (!p95 || !err) return;
+    let filling = false;
+    sel.addEventListener('change', () => {
+      const o = sel.selectedOptions[0];
+      if (!o || !o.dataset.p95) return;
+      filling = true;
+      p95.value = o.dataset.p95; err.value = o.dataset.err;
+      [p95, err].forEach((el) => el.dispatchEvent(new Event('input', { bubbles: true })));
+      filling = false;
+    });
+    [p95, err].forEach((el) => el.addEventListener('input', () => {
+      if (filling) return;
+      const o = sel.selectedOptions[0];
+      if (o && o.dataset.p95 && (String(p95.value) !== o.dataset.p95 || String(err.value) !== o.dataset.err)) sel.value = '';
+    }));
+  });
+})();

@@ -49,8 +49,9 @@
     </div>
     <div class="panel">
       <h2>Criterios de aceptación</h2>
-      <div class="row">{{ inp('crit_avg', 'Promedio máx. (ms)', '', 'number') }}{{ inp('crit_p95', 'p95 máx. (ms)', '', 'number') }}</div>
-      <div class="row">{{ inp('crit_err', 'Tasa de error máx. (%)', '', 'number') }}{{ inp('crit_tps', 'Throughput mín. (req/s)', '', 'number') }}</div>
+      {% from "_macros.html" import crit_preset_select %}
+      <div class="row">{{ crit_preset_select(f.crit_preset, crit_presets) }}</div>
+      <div class="row">{{ inp('crit_p95', 'p95 máx. (ms)', '', 'number') }}{{ inp('crit_err', 'Tasa de error máx. (%)', '', 'number') }}</div>
       <table class="mt"><thead><tr><th>Medido</th><th class="num">Valor</th></tr></thead><tbody>
         <tr><td>Promedio</td><td class="num">{{ d.totals.avg|round(1) if d.totals.avg is not none else '—' }} ms</td></tr>
         <tr><td>p95</td><td class="num">{{ d.totals.p95|round(1) if d.totals.p95 is not none else '—' }} ms</td></tr>

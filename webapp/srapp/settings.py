@@ -33,7 +33,11 @@ DEFAULTS = {
         "from_addr": "", "always_to": "qaperformance@bancobase.com",
         "notify_start": True, "notify_end": True,
     },
-    "jira": {"url": ""},
+    "jira": {"url": "",
+             # Non-functional (performance) bugs raised from a run that fails its acceptance criteria
+             "bug_project": "", "bug_issue_type": "Bug", "bug_labels": "performance, bug-no-funcional"},
+    # Shared team history on the Master (Executions → Team), synced after aws sso login / server start
+    "team": {"auto_sync": True, "auto_fetch_reports": True, "fetch_days": 7, "fetch_max": 10},
     "bitbucket": {"api": "https://api.bitbucket.org/2.0", "workspace": ""},
     # Remote execution: the app runs on the engineer's computer and drives the generators with the AWS CLI
     "aws": {
