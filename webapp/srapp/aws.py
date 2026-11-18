@@ -15,6 +15,7 @@ import socket
 import subprocess
 import threading
 import time
+import urllib.parse
 import urllib.request
 import uuid
 
@@ -331,10 +332,17 @@ def terminate(proc):
             proc.kill()
 
 
+def safe_name(name):
+    """A single file/folder name that is safe once shell-quoted: no path separators, no '..',
+    no leading '-' or '.', no control characters. Allows report names such as ACCTS&MVMTS."""
+    return bool(name) and len(name) <= 255 and "/" not in name and "\\" not in name and ".." not in name \
+        and name[0] not in "-." and all(ch.isprintable() and not ch.isspace() for ch in name)
+
+
 def fetch_file(instance_id, remote_dir, filename, local_path, log=lambda m: None):
     """Download remote_dir/filename through an SSM tunnel (loopback-only one-shot HTTP server on the server)."""
-    if not re.match(r"^[A-Za-z0-9_.\-]+$", filename):
-        raise AwsError("Invalid file name")
+    if not safe_name(filename):
+        raise AwsError(f"Invalid file name: {filename!r}")
     rport = 20000 + int(uuid.uuid4().int % 9000)
     q = shlex.quote
     rc, out, err = run(instance_id, f"cd {q(remote_dir)} && "
@@ -348,7 +356,7 @@ def fetch_file(instance_id, remote_dir, filename, local_path, log=lambda m: None
         proc = port_forward(instance_id, rport, lport)
         log(f"downloading {filename} through SSM (localhost:{lport})")
         tmp = str(local_path) + ".part"
-        with urllib.request.urlopen(f"http://127.0.0.1:{lport}/{filename}", timeout=120) as resp, open(tmp, "wb") as fh:
+        with urllib.request.urlopen(f"http://127.0.0.1:{lport}/{urllib.parse.quote(filename)}", timeout=120) as resp, open(tmp, "wb") as fh:
             total = 0
             while True:
                 chunk = resp.read(1024 * 256)
