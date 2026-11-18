@@ -48,7 +48,7 @@
   <input type="hidden" name="img_bug_errores" id="img_bug_errores">
   <label class="check field mt"><input type="checkbox" name="attach_charts" value="1" checked> Attach the response time and errors charts</label>
   {% else %}
-  <div class="flash warn">No time series for this execution (the HTML report has no graph data{{ ' and InfluxDB: ' ~ series.error if series.error else '' }}). The bug can still be filed with the table.</div>
+  <div class="flash warn">No time series for this execution ({{ series.error ~ '; ' if series.error else '' }}the HTML report has no graph data either). The bug can still be filed with the table.</div>
   {% endif %}
   <label class="check field"><input type="checkbox" name="attach" value="1" {{ 'checked' if run.result_dir }} {{ 'disabled' if not run.result_dir }}> Attach the HTML report (zip) as evidence</label>
   <div class="actions">

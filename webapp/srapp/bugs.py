@@ -156,7 +156,7 @@ def prefill(meta, summary=None, reporter=""):
 
 
 # --------------------------------------------------------------------------- charts and slowest transactions
-CHARTS = {"bug_tiempo_respuesta.png": "Tiempo de respuesta", "bug_errores.png": "Errores por segundo"}
+CHARTS = {"bug_tiempo_respuesta.png": "Tiempo de respuesta (promedio y percentil 95)", "bug_errores.png": "Errores y hits por segundo"}
 MAX_CHART_BYTES = 3 * 1024 * 1024
 
 
@@ -192,41 +192,50 @@ def slowest(summary, n=5):
 
 
 def chart_series(meta, summary):
-    """What the bug charts draw: {source, rt: [{label, pts, dash}], err: [{label, pts}]} (empty lists = no data).
-    Source: the JMeter HTML report (works offline); InfluxDB for the run window as a fallback."""
+    """What the bug charts draw: {source, rt: [{label, pts, dash?, color?, fill?}], err: [...]} (empty = no data).
+    Source: InfluxDB for the run window first — the same data as the run page and the Live monitor —, then the
+    JMeter HTML report (content/js/graph.js) when InfluxDB is not reachable or has nothing for this run."""
     top = [w["name"] for w in slowest(summary)]
     out = {"source": "", "rt": [], "err": []}
-    g = _graph_js(meta["project"], meta.get("result_dir")) if meta.get("result_dir") else {}
+    errors = []
+    try:
+        targets = report.influx.listener_targets(projects.project_dir(meta["project"]) / meta["script"]) \
+            if meta.get("script") else []
+        if targets and meta.get("result_dir"):
+            start, end = report._window(meta["project"], meta["result_dir"], meta if meta.get("started") else None)
+            t = targets[0]
+            d = report.influx.dashboard(t["db"], t["application"], start, end, t.get("measurement", "jmeter"))
+            if (d.get("totals") or {}).get("req"):
+                out["rt"] = [{"label": "Promedio", "pts": d["avg"], "color": "#1868db"},
+                             {"label": "Percentil 95", "pts": d["p95"], "dash": True, "color": "#c9372c"}]
+                out["err"] = [{"label": "Errores por segundo", "pts": d["eps"], "color": "#c9372c", "fill": True},
+                              {"label": "Hits por segundo", "pts": d["hps"], "color": "#1f845a"}]
+                out["source"] = "InfluxDB (las mismas gráficas de la ejecución)"
+            else:
+                errors.append("InfluxDB has no samples for this execution window")
+        elif not targets:
+            errors.append("the script has no InfluxDB Backend Listener")
+    except Exception as exc:  # noqa: BLE001 - fall back to the HTML report
+        errors.append(f"InfluxDB: {exc}")
+    g = {} if out["source"] or not meta.get("result_dir") else _graph_js(meta["project"], meta["result_dir"])
     if g:
         rt = g.get("responseTimesOverTime") or {}
         out["rt"] = [{"label": f"{n} (promedio)", "pts": rt[n]} for n in top if n in rt]
         pct = g.get("responseTimePercentilesOverTime") or {}
         p95 = next((v for k, v in pct.items() if "95" in k), None)
         if p95:
-            out["rt"].append({"label": "Percentil 95 (general)", "pts": p95, "dash": True})
+            out["rt"].append({"label": "Percentil 95 (general)", "pts": p95, "dash": True, "color": "#c9372c"})
         tps = g.get("totalTPS") or {}
         fail = next((v for k, v in tps.items() if k.lower().endswith("failure")), None)
         if fail:
-            out["err"].append({"label": "Errores por segundo", "pts": fail})
+            out["err"].append({"label": "Errores por segundo", "pts": fail, "color": "#c9372c", "fill": True})
         for code, pts in (g.get("codesPerSecond") or {}).items():
             if not code[:1] in ("2", "3"):
                 out["err"].append({"label": f"Código {code}", "pts": pts})
         if out["rt"] or out["err"]:
-            out["source"] = "Reporte HTML de JMeter"
-    if not out["rt"] and not out["err"]:
-        try:
-            targets = report.influx.listener_targets(projects.project_dir(meta["project"]) / meta["script"]) \
-                if meta.get("script") else []
-            if targets and meta.get("result_dir"):
-                start, end = report._window(meta["project"], meta["result_dir"], meta if meta.get("started") else None)
-                t = targets[0]
-                d = report.influx.dashboard(t["db"], t["application"], start, end, t.get("measurement", "jmeter"))
-                out["rt"] = [{"label": "Promedio", "pts": d["avg"]}, {"label": "Percentil 95", "pts": d["p95"], "dash": True}]
-                out["rt"] += [{"label": n, "pts": d["p95_by_tx"][n]} for n in top if n in d.get("p95_by_tx", {})]
-                out["err"] = [{"label": "Errores por segundo", "pts": d["eps"]}]
-                out["source"] = "InfluxDB"
-        except Exception as exc:  # noqa: BLE001 - the bug can still be filed without charts
-            out["error"] = str(exc)
+            out["source"] = "Reporte HTML de JMeter (InfluxDB no disponible)"
+    if not out["source"] and errors:
+        out["error"] = "; ".join(errors)
     # Keep the points of this execution only: a report can carry samples far from the run (a reused .jtl,
     # clock skew between generators), which stretches the time axis until the lines are invisible.
     try:
@@ -243,6 +252,9 @@ def chart_series(meta, summary):
                 out["window"] = [lo, hi]
     out["rt"] = [x for x in out["rt"] if x["pts"]]
     out["err"] = [x for x in out["err"] if x["pts"]]
+    xs = [pt[0] for x in out["rt"] + out["err"] for pt in x["pts"]]
+    if xs and "window" in out:   # axis from the first to the last sample of the run (no empty margins)
+        out["window"] = [min(xs), max(xs)] if max(xs) > min(xs) else [min(xs) - 60000, max(xs) + 60000]
     out["points"] = max([len(x["pts"]) for x in out["rt"] + out["err"]] or [0])
     return out
 
