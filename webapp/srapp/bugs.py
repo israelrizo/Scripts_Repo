@@ -155,6 +155,101 @@ def prefill(meta, summary=None, reporter=""):
     }
 
 
+# --------------------------------------------------------------------------- charts and slowest transactions
+CHARTS = {"bug_tiempo_respuesta.png": "Tiempo de respuesta", "bug_errores.png": "Errores por segundo"}
+MAX_CHART_BYTES = 3 * 1024 * 1024
+
+
+def _graph_js(project, result_dir):
+    """Time series of the JMeter HTML report (html_report/content/js/graph.js): {graph: {label: [[ms, value]]}}."""
+    import json
+    try:
+        f = projects.result_dir(project, result_dir) / "html_report" / "content" / "js" / "graph.js"
+        text = f.read_text(errors="replace")
+    except (projects.ProjectError, OSError):
+        return {}
+    dec, out = json.JSONDecoder(), {}
+    for m in re.finditer(r"var\s+(\w+)Infos\s*=\s*\{\s*data\s*:\s*", text):
+        try:
+            obj, _ = dec.raw_decode(text, m.end())
+        except ValueError:
+            continue
+        series = ((obj or {}).get("result") or {}).get("series") or [] if isinstance(obj, dict) else []
+        graph = {}
+        for sr in series:
+            pts = sorted([float(p[0]), float(p[1])] for p in sr.get("data") or []
+                         if isinstance(p, list) and len(p) >= 2 and p[0] is not None and p[1] is not None)
+            if pts:
+                graph[str(sr.get("label") or "")] = pts
+        if graph:
+            out[m.group(1)] = graph
+    return out
+
+
+def slowest(summary, n=5):
+    """Top n transactions by p95 (statistics.json of the report)."""
+    return [w for w in summary.get("worst") or [] if w.get("p95") is not None][:n]
+
+
+def chart_series(meta, summary):
+    """What the bug charts draw: {source, rt: [{label, pts, dash}], err: [{label, pts}]} (empty lists = no data).
+    Source: the JMeter HTML report (works offline); InfluxDB for the run window as a fallback."""
+    top = [w["name"] for w in slowest(summary)]
+    out = {"source": "", "rt": [], "err": []}
+    g = _graph_js(meta["project"], meta.get("result_dir")) if meta.get("result_dir") else {}
+    if g:
+        rt = g.get("responseTimesOverTime") or {}
+        out["rt"] = [{"label": f"{n} (promedio)", "pts": rt[n]} for n in top if n in rt]
+        pct = g.get("responseTimePercentilesOverTime") or {}
+        p95 = next((v for k, v in pct.items() if "95" in k), None)
+        if p95:
+            out["rt"].append({"label": "Percentil 95 (general)", "pts": p95, "dash": True})
+        tps = g.get("totalTPS") or {}
+        fail = next((v for k, v in tps.items() if k.lower().endswith("failure")), None)
+        if fail:
+            out["err"].append({"label": "Errores por segundo", "pts": fail})
+        for code, pts in (g.get("codesPerSecond") or {}).items():
+            if not code[:1] in ("2", "3"):
+                out["err"].append({"label": f"Código {code}", "pts": pts})
+        if out["rt"] or out["err"]:
+            out["source"] = "Reporte HTML de JMeter"
+    if not out["rt"] and not out["err"]:
+        try:
+            targets = report.influx.listener_targets(projects.project_dir(meta["project"]) / meta["script"]) \
+                if meta.get("script") else []
+            if targets and meta.get("result_dir"):
+                start, end = report._window(meta["project"], meta["result_dir"], meta if meta.get("started") else None)
+                t = targets[0]
+                d = report.influx.dashboard(t["db"], t["application"], start, end, t.get("measurement", "jmeter"))
+                out["rt"] = [{"label": "Promedio", "pts": d["avg"]}, {"label": "Percentil 95", "pts": d["p95"], "dash": True}]
+                out["rt"] += [{"label": n, "pts": d["p95_by_tx"][n]} for n in top if n in d.get("p95_by_tx", {})]
+                out["err"] = [{"label": "Errores por segundo", "pts": d["eps"]}]
+                out["source"] = "InfluxDB"
+        except Exception as exc:  # noqa: BLE001 - the bug can still be filed without charts
+            out["error"] = str(exc)
+    out["rt"] = [x for x in out["rt"] if x["pts"]]
+    out["err"] = [x for x in out["err"] if x["pts"]]
+    return out
+
+
+def charts_from_form(form):
+    """PNG charts rendered by the bug form ({filename: bytes}); anything that is not a small PNG is ignored."""
+    import base64
+    import binascii
+    out = {}
+    for name in CHARTS:
+        raw = form.get("img_" + name.split(".")[0], "")
+        if not raw.startswith("data:image/png;base64,"):
+            continue
+        try:
+            data = base64.b64decode(raw.split(",", 1)[1], validate=True)
+        except (binascii.Error, ValueError):
+            continue
+        if data[:8] == b"\x89PNG\r\n\x1a\n" and len(data) <= MAX_CHART_BYTES:
+            out[name] = data
+    return out
+
+
 def from_form(form):
     out = {}
     for key, _, kind in FIELDS:
@@ -176,7 +271,11 @@ def _items(values, box=False):
     return "\n".join(f"* {'☐ ' if box else ''}{_w(v)}" for v in values) if values else "* —"
 
 
-def render_wiki(f):
+def _ms(v):
+    return f"{v:,.0f}" if isinstance(v, (int, float)) else "—"
+
+
+def render_wiki(f, slow=(), charts=()):
     rows = [("Tipo", "Bug no funcional - Rendimiento"), ("Resumen", f["resumen"]), ("Ambiente", f["ambiente"]),
             ("Aplicación", f["aplicacion"]), ("Fecha de ejecución", f["fecha"]), ("Reportado por", f["reportado_por"])]
     scen = [("Operaciones simultáneas", f["operaciones"]), ("Endpoint / servicio evaluado", f["endpoint"]),
@@ -189,15 +288,25 @@ def render_wiki(f):
            "h2. Escenario de escalabilidad", "||Parámetro||Valor esperado / observado||",
            *[f"|{k}|{_cell(v)}|" for k, v in scen], "",
            "h2. Resultado esperado", _items(f["esperado"]), "",
-           "h2. Resultado actual", _items(f["actual"]), "",
-           "h2. Evidencia", _items(f["evidencia"]), "",
+           "h2. Resultado actual", _items(f["actual"]), ""]
+    if slow:
+        out += ["h3. Transacciones más lentas (top 5 por percentil 95)",
+                "||Transacción||Peticiones||Error %||Promedio (ms)||p95 (ms)||p99 (ms)||Máximo (ms)||",
+                *[f"|{_cell(w['name'])}|{w.get('samples') or 0:,}|{w.get('error_pct', 0)} %|{_ms(w.get('avg'))}|"
+                  f"{_ms(w.get('p95'))}|{_ms(w.get('p99'))}|{_ms(w.get('max'))}|" for w in slow], ""]
+    if charts:
+        out += ["h3. Gráficas de la ejecución"]
+        for name in charts:
+            out += [f"*{CHARTS.get(name, name)}*", f"!{name}|width=900!", ""]
+    out += ["h2. Evidencia", _items(f["evidencia"]), "",
            "h2. Impacto", _w(f["impacto"]) or "—", "",
            "h2. Criterios de aceptación para cierre", _items(f["cierre"], box=True)]
     return "\n".join(out)
 
 
-def create(username, meta, fields, attach_report=True, by=""):
-    """Create the issue in the project's board; returns {key, url, attached}."""
+def create(username, meta, fields, attach_report=True, by="", charts=None, slow=()):
+    """Create the issue in the project's board; returns {key, url, attached, charts}.
+    `charts` ({filename: png bytes}) are attached and shown in the description; `slow` is the top 5 table."""
     missing = [label for key, label, _ in FIELDS if key in REQUIRED and not fields.get(key)]
     if missing:
         raise atlassian.AtlassianError(f"Complete: {', '.join(missing)}")
@@ -205,8 +314,15 @@ def create(username, meta, fields, attach_report=True, by=""):
     if not key:
         raise atlassian.AtlassianError("No Jira project for bugs: set it in Settings → Jira (or the project's settings)")
     jira = atlassian.Jira(username)
-    issue = jira.create_issue(key, itype, fields["resumen"], render_wiki(fields), labels)
-    issue["attached"] = ""
+    charts = charts or {}
+    issue = jira.create_issue(key, itype, fields["resumen"], render_wiki(fields, slow, list(charts)), labels)
+    issue["attached"], issue["charts"] = "", []
+    for name, data in charts.items():    # the description shows them once attached (!name!)
+        try:
+            jira.attach(issue["key"], name, data, "image/png")
+            issue["charts"].append(name)
+        except atlassian.AtlassianError as exc:
+            issue["attach_error"] = str(exc)
     if attach_report and meta.get("result_dir"):
         att = _report_zip(meta["project"], meta["result_dir"])
         if att:

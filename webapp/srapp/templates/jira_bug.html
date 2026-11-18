@@ -27,10 +27,37 @@
       {% endif %}
     </div>
   {% endfor %}
+  <h2 class="mt">Gráficas y transacciones más lentas</h2>
+  <p class="hint">Se adjuntan al bug como imágenes y se muestran en la descripción, junto con la tabla.{% if series.source %} Fuente: {{ series.source }}.{% endif %}</p>
+  {% if slow %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Transacción (top 5 por p95)</th><th class="num">Peticiones</th><th class="num">Error %</th><th class="num">Promedio</th><th class="num">p95</th><th class="num">p99</th><th class="num">Máximo</th></tr></thead>
+    <tbody>{% for w in slow %}<tr><td>{{ w.name }}</td><td class="num">{{ '{:,}'.format(w.samples or 0) }}</td><td class="num {{ 'delta-up' if w.error_pct > 1 }}">{{ w.error_pct }} %</td>
+      <td class="num">{{ '{:,.0f}'.format(w.avg) if w.avg is not none else '—' }} ms</td><td class="num">{{ '{:,.0f}'.format(w.p95) }} ms</td>
+      <td class="num">{{ '{:,.0f}'.format(w.p99) if w.p99 is not none else '—' }} ms</td><td class="num">{{ '{:,.0f}'.format(w.max) if w.max is not none else '—' }} ms</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <label class="check field"><input type="checkbox" name="slow_table" value="1" checked> Include this table in the description</label>
+  {% endif %}
+  {% if series.rt or series.err %}
+  <div class="grid two mt" id="bug-charts">
+    {% if series.rt %}<div><canvas data-bug-chart="rt" width="900" height="380" aria-label="Tiempo de respuesta" style="max-width:100%;height:auto;background:#fff;border-radius:8px"></canvas></div>{% endif %}
+    {% if series.err %}<div><canvas data-bug-chart="err" width="900" height="380" aria-label="Errores por segundo" style="max-width:100%;height:auto;background:#fff;border-radius:8px"></canvas></div>{% endif %}
+  </div>
+  <script type="application/json" id="bug-series">{{ series|tojson }}</script>
+  <input type="hidden" name="img_bug_tiempo_respuesta" id="img_bug_tiempo_respuesta">
+  <input type="hidden" name="img_bug_errores" id="img_bug_errores">
+  <label class="check field mt"><input type="checkbox" name="attach_charts" value="1" checked> Attach the response time and errors charts</label>
+  {% else %}
+  <div class="flash warn">No time series for this execution (the HTML report has no graph data{{ ' and InfluxDB: ' ~ series.error if series.error else '' }}). The bug can still be filed with the table.</div>
+  {% endif %}
   <label class="check field"><input type="checkbox" name="attach" value="1" {{ 'checked' if run.result_dir }} {{ 'disabled' if not run.result_dir }}> Attach the HTML report (zip) as evidence</label>
   <div class="actions">
     <button class="btn primary" {{ 'disabled' if not jira_key }}>🐞 Create bug in Jira</button>
     <a class="btn" href="{{ back_url }}">Cancel</a>
   </div>
 </form>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bug.js') }}"></script>
 {% endblock %}
