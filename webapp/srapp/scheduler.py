@@ -202,6 +202,12 @@ def tick():
                 changed = True
         if changed:
             _save(items)
+    if changed:
+        try:
+            from . import team
+            team.schedules_changed()   # the team sees the next occurrence
+        except Exception:  # noqa: BLE001
+            pass
 
 
 def upcoming_slots(days=7):

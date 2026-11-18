@@ -127,7 +127,7 @@ def _headers(resp):
 @app.context_processor
 def _ctx():
     return {"me": g.get("user"), "can": can, "cfg": Config, "grafana_url": settings.get()["grafana"].get("url"),
-            "grafana_link": settings.grafana_link}
+            "grafana_link": settings.grafana_link, "crit_presets": rpt.CRITERIA_PRESETS}
 
 
 def can(role):
@@ -349,7 +349,8 @@ def project(name):
         ctx.update(targets=_safe_targets(name))
     elif tab == "settings":
         from . import team
-        ctx.update(ps=settings.project(name), crit=rpt.load_defaults(name), crit_info=team.profile_info(name))
+        ctx.update(ps=settings.project(name), crit=rpt.load_defaults(name), crit_info=team.profile_info(name),
+                   ps_info=team.profile_info(name, "project_settings"))
     elif tab == "quality":
         from . import quality
         res = quality.review_project(projects.project_dir(name))
@@ -541,7 +542,9 @@ def compare(name):
 def set_baseline(name, run_name):
     _project_or_404(name)
     cmp.set_baseline(name, run_name)
-    flash(f"{run_name} is now the baseline for its script.", "ok")
+    from . import team
+    team.profile_changed(name, "baselines", g.user["username"])
+    flash(f"{run_name} is now the baseline for its script (shared with the team).", "ok")
     return redirect(request.referrer or url_for("project", name=name, tab="results"))
 
 

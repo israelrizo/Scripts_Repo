@@ -325,11 +325,15 @@ def sync(log=print, fetch_reports=None):
     log(f"team history: {len(recs)} new/updated execution(s), {legacy} older result folder(s), "
         f"{len(remote)} shared in total")
 
-    # 3. project profiles (acceptance criteria and report data)
+    # 3. project profiles (criteria, baselines, project settings, Confluence publications) and schedules
     try:
-        log("project criteria: " + sync_profiles())
+        log("projects: " + sync_profiles())
     except (TeamError, aws.AwsError) as exc:
-        log(f"project criteria: not synced ({exc})")
+        log(f"projects: not synced ({exc})")
+    try:
+        log("schedules: " + sync_schedules())
+    except (TeamError, aws.AwsError) as exc:
+        log(f"schedules: not synced ({exc})")
 
     # 4. team settings (New Relic, default Chat spaces)
     try:
@@ -380,6 +384,65 @@ def sync_quietly():
 
 
 # --------------------------------------------------------------------------- team settings
+# Infrastructure every installation must agree on (no secrets): servers, paths, ports, Grafana, tunnels, time zone.
+# The AWS CLI profile name stays local (each engineer names it as they like).
+INFRA_AWS = ("region", "master", "slaves", "remote_user", "remote_root", "branch", "auto_off", "rmi_port",
+             "slave_start_cmd", "jtl_max_mb", "sync_method", "max_runs")
+
+
+def infra_snapshot(cfg=None):
+    cfg = cfg or settings.get()
+    return {"aws": {k: cfg["aws"].get(k) for k in INFRA_AWS},
+            "grafana": {k: cfg["grafana"].get(k, "") for k in ("url", "dashboard", "app_var", "extra")},
+            "tunnels": cfg["tunnels"], "timezone": cfg["app"].get("timezone", ""),
+            "jira_url": cfg["jira"].get("url", ""),
+            "jira_bugs": {k: cfg["jira"].get(k, "") for k in ("bug_project", "bug_issue_type", "bug_labels")},
+            "smtp_always_to": cfg["smtp"].get("always_to", "")}
+
+
+def apply_infra(cfg, infra):
+    a = infra.get("aws") or {}
+    for k in INFRA_AWS:
+        if k in a and a[k] is not None:
+            cfg["aws"][k] = a[k]
+    if not isinstance(cfg["aws"].get("slaves"), list):
+        cfg["aws"]["slaves"] = []
+    if a.get("master"):
+        cfg["aws"]["enabled"] = True
+    g = infra.get("grafana") or {}
+    cfg["grafana"].update({k: g[k] for k in ("url", "dashboard", "app_var", "extra") if k in g})
+    if isinstance(infra.get("tunnels"), dict) and infra["tunnels"].get("items"):
+        cfg["tunnels"] = infra["tunnels"]
+    if infra.get("timezone") is not None:
+        cfg["app"]["timezone"] = infra["timezone"]
+    if infra.get("jira_url"):
+        cfg["jira"]["url"] = infra["jira_url"]
+    cfg["jira"].update({k: v for k, v in (infra.get("jira_bugs") or {}).items() if v})
+    if infra.get("smtp_always_to"):
+        cfg["smtp"]["always_to"] = infra["smtp_always_to"]
+    return cfg
+
+
+def setup_file():
+    """Onboarding file for a new engineer (no secrets): import it, sign in with AWS SSO, and the first sync
+    brings the team settings, criteria and history."""
+    return {"kind": "jmcc-setup", "version": 1, "exported": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "by": _me(), "infra": infra_snapshot(), "team": settings.get()["team"]}
+
+
+def import_setup(data):
+    from . import aws as _aws
+    if not isinstance(data, dict) or data.get("kind") != "jmcc-setup":
+        raise TeamError("Not a Control Center setup file")
+    cfg = apply_infra(settings.get(), data.get("infra") or {})
+    if isinstance(data.get("team"), dict):
+        cfg["team"].update({k: v for k, v in data["team"].items() if k in cfg["team"]})
+    _aws.validate(cfg["aws"])
+    settings.save(cfg)
+    _aws.invalidate()
+    return cfg
+
+
 def publish_shared(by):
     """Publish this computer's New Relic key and default Chat spaces to every installation."""
     cfg = settings.get()
@@ -396,8 +459,7 @@ def publish_shared(by):
         ch = cfg["chat"]
         data["chat"] = {"enabled": bool(ch.get("enabled")), "notify_start": bool(ch.get("notify_start")),
                         "notify_end": bool(ch.get("notify_end")), "spaces": spaces}
-    if "newrelic" not in data and "chat" not in data:
-        raise TeamError("Nothing to publish: save the New Relic key and/or a default Google Chat space first")
+    data["infra"] = infra_snapshot(cfg)
     ok, why = master_ready()
     if not ok:
         raise TeamError(f"cannot publish: {why}")
@@ -427,6 +489,13 @@ def pull_shared(force=False):
 def apply_shared(data):
     from . import google
     cfg = settings.get()
+    if data.get("infra"):
+        trial = apply_infra(json.loads(json.dumps(cfg)), data["infra"])
+        try:
+            aws.validate(trial["aws"])
+            cfg = trial
+        except ValueError:
+            pass   # unsafe/incomplete infrastructure values are ignored, the rest still applies
     nr = data.get("newrelic")
     if nr and nr.get("api_key") and nr.get("account_id"):
         cfg["newrelic"].update(enabled=bool(nr.get("enabled", True)), region=nr.get("region", "us"),
@@ -455,21 +524,72 @@ def apply_shared(data):
 
 
 # --------------------------------------------------------------------------- project profiles
-# Acceptance criteria and report data of a project (report defaults: application, scenario, scope, base URL, tool,
-# avg / p95 / error % / TPS criteria, Confluence space...). Shared so whoever picks up a project gets the same
-# criteria and the same INSATISFACTORIA verdicts. Last change wins; each profile says who changed it and when.
+# What a project needs so whoever picks it up continues with the same setup. One file per project on the Master,
+# .jmcc/projects/<project>.json, with independent sections (each with its own who/when; last change wins per
+# section, so a criteria change and a baseline change made at the same time by two engineers both survive):
+#   report_defaults   acceptance criteria (preset, p95, error %) and report data (application, scenario, scope...)
+#   baselines         baseline execution per script (comparisons)
+#   project_settings  staff e-mails, Jira board, pinned New Relic services, Grafana dashboard, extra Chat spaces...
+# plus "publications": Confluence pages already published per execution (merged, never overwritten).
 PROJECT_RE = re.compile(r"^[a-z0-9][a-z0-9\-]{1,60}$")
+SECTIONS = ("report_defaults", "baselines", "project_settings")
+SECTION_LABELS = {"report_defaults": "criteria", "baselines": "baselines", "project_settings": "settings"}
 
 
-def profile_info(project):
-    return (state().get("profiles") or {}).get(project) or {}
+def _get_section(project, section):
+    from . import compare, report
+    if section == "report_defaults":
+        return report.load_defaults(project)
+    if section == "baselines":
+        return compare.baselines(project)
+    ps = settings.project(project)
+    names = {s["id"]: s["name"] for s in settings.get()["chat"]["spaces"]}
+    ps = dict(ps, chat_spaces=[names[i] for i in ps.get("chat_spaces") or [] if i in names])  # ids are per computer
+    return ps
 
 
-def _set_profile(project, **changes):
+def _has_data(project, section):
+    from . import compare, report
+    if section == "report_defaults":
+        return bool(report.load_defaults(project))
+    if section == "baselines":
+        return bool(compare.baselines(project))
+    return settings._project_path(project).exists()
+
+
+def _put_section(project, section, data):
+    from . import compare, report
+    if section == "report_defaults":
+        report.save_defaults(project, data or {})
+    elif section == "baselines":
+        compare.save_baselines(project, data or {})
+    else:
+        ids = {s["name"].strip().lower(): s["id"] for s in settings.get()["chat"]["spaces"]}
+        data = dict(data or {})
+        data["chat_spaces"] = [ids[n.strip().lower()] for n in data.get("chat_spaces") or [] if n.strip().lower() in ids]
+        settings.save_project(project, data)
+
+
+def _local_file(project, section):
+    from . import compare
+    if section == "report_defaults":
+        return Config.INSTANCE_DIR / "report_defaults" / f"{project}.json"
+    if section == "baselines":
+        return compare._bpath(project)
+    return settings._project_path(project)
+
+
+def profile_info(project, section="report_defaults"):
+    return ((state().get("profiles") or {}).get(project) or {}).get(section) or {}
+
+
+def _set_profile(project, section, **changes):
     with _lock:
         st = state()
-        prof = st.setdefault("profiles", {})
-        prof[project] = dict(prof.get(project) or {}, **changes)
+        prof = st.setdefault("profiles", {}).setdefault(project, {})
+        if not isinstance(prof.get(section), dict):
+            prof[section] = {}
+        prof[section].update(changes)
         _store("state.json", st)
 
 
@@ -478,20 +598,21 @@ def _me(fallback=""):
 
 
 def save_profile(project, fields, by=""):
-    """Save the project's report defaults here and share them. Returns a short status for the UI."""
+    """Acceptance criteria editor: save the project's report defaults here and share them."""
     from . import report
     cur = report.load_defaults(project)
     cur.update({k: (fields.get(k) or "").strip() for k in report.DEFAULT_KEYS if k in fields})
     report.save_defaults(project, cur)
-    return profile_changed(project, by, wait=True)
+    return profile_changed(project, "report_defaults", by, wait=True)
 
 
-def profile_changed(project, by="", wait=False):
-    """Mark the local profile as newer than the Master's and publish it (now, or in the background)."""
+def profile_changed(project, section="report_defaults", by="", wait=False):
+    """A section was changed on this computer: mark it newer than the Master's and share it."""
     if not PROJECT_RE.match(project or ""):
         return "saved"
-    who = _me(by)
-    _set_profile(project, rev=time.time(), by=who, at=datetime.now().strftime("%Y-%m-%d %H:%M"), pending=True)
+    if section in SECTIONS:
+        _set_profile(project, section, rev=time.time(), by=_me(by), at=datetime.now().strftime("%Y-%m-%d %H:%M"),
+                     pending=True)
     if not settings.aws_mode():
         return "saved on this computer (AWS mode is off: not shared)"
 
@@ -500,7 +621,7 @@ def profile_changed(project, by="", wait=False):
             ok, why = master_ready()
             if not ok:
                 return f"saved on this computer; shared on the next sync ({why})"
-            publish_profile(project)
+            reconcile(project)
             return "saved and shared with the team"
         except (TeamError, aws.AwsError) as exc:
             return f"saved on this computer; not shared yet ({exc})"
@@ -510,18 +631,74 @@ def profile_changed(project, by="", wait=False):
     return "saved"
 
 
-def publish_profile(project):
+def _read_profile(project):
+    rc, out, err = aws.run(aws.cfg()["master"],
+                           f"f={q(_jdir() + '/projects/' + project + '.json')}; [ -f \"$f\" ] || {{ echo @@NONE@@; exit 0; }}; "
+                           "printf '@@J@@ '; base64 -w0 < \"$f\"; echo", timeout=60)
+    if "@@NONE@@" in out:
+        return {}
+    m = re.search(r"@@J@@ (\S+)", out)
+    if not m:
+        raise TeamError((err or out).strip()[-200:] or "empty answer")
+    return json.loads(base64.b64decode(m.group(1)))
+
+
+def reconcile(project, remote=None):
+    """Merge this computer's profile of `project` with the Master's. Returns (pulled sections, pushed sections)."""
     from . import report
-    info = profile_info(project)
-    data = {"project": project, "rev": info.get("rev") or time.time(), "by": info.get("by") or _me(),
-            "at": info.get("at") or datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "report_defaults": report.load_defaults(project)}
-    _write_remote(f"{_jdir()}/projects/{project}.json", data)
-    _set_profile(project, rev=data["rev"], by=data["by"], at=data["at"], pending=False)
+    if remote is None:
+        remote = _read_profile(project)
+    if remote and "sections" not in remote:             # first version of the format: criteria only
+        remote = {"project": project, "sections": {"report_defaults": {k: remote.get(k) for k in ("rev", "by", "at")}
+                                                   | {"data": remote.get("report_defaults") or {}}}}
+    rsec = dict(remote.get("sections") or {})
+    pulled, pushed = [], []
+    for section in SECTIONS:
+        L, R = profile_info(project, section), rsec.get(section) or {}
+        lrev, rrev = L.get("rev") or 0, R.get("rev") or 0
+        if L.get("pending") and lrev >= rrev:
+            rsec[section] = {"rev": lrev, "by": L.get("by", ""), "at": L.get("at", ""), "data": _get_section(project, section)}
+            _set_profile(project, section, pending=False)
+            pushed.append(section)
+        elif R and rrev > lrev:
+            f = _local_file(project, section)
+            if f.exists() and not lrev:                  # data from before sharing: keep a copy
+                f.with_name(f"{f.stem}.local-backup.json").write_text(f.read_text())
+            _put_section(project, section, R.get("data"))
+            _set_profile(project, section, rev=rrev, by=R.get("by", ""), at=R.get("at", ""), pending=False)
+            pulled.append(section)
+        elif not R and _has_data(project, section):
+            mtime = _local_file(project, section).stat().st_mtime
+            info = {"rev": lrev or mtime, "by": L.get("by") or _me(),
+                    "at": L.get("at") or datetime.fromtimestamp(mtime).strftime("%Y-%m-%d %H:%M")}
+            rsec[section] = dict(info, data=_get_section(project, section))
+            _set_profile(project, section, pending=False, **info)
+            pushed.append(section)
+    # Confluence publications: union (keep the newest entry per execution)
+    local_pub, remote_pub = report.history(project), dict(remote.get("publications") or {})
+    merged = dict(remote_pub)
+    for k, v in local_pub.items():
+        if k not in merged or (v.get("ts") or 0) > (merged[k].get("ts") or 0):
+            merged[k] = v
+    if merged != local_pub:
+        report._history_path(project).write_text(json.dumps(merged, indent=2, ensure_ascii=False))
+        pulled.append("publications")
+    if merged != remote_pub:
+        pushed.append("publications")
+    if pushed:
+        _write_remote(f"{_jdir()}/projects/{project}.json",
+                      {"project": project, "sections": rsec, "publications": merged, "updated": time.time()})
+    return pulled, pushed
+
+
+def _local_projects():
+    try:
+        return [p["name"] for p in projects.list_projects()]
+    except OSError:
+        return []
 
 
 def sync_profiles():
-    from . import report
     rc, out, err = aws.run(aws.cfg()["master"],
                            f"cd {q(_jdir() + '/projects')} 2>/dev/null || exit 0\n"
                            "for f in *.json; do [ -f \"$f\" ] && echo \"@@P@@ ${f%.json}\"; done", timeout=60)
@@ -530,37 +707,118 @@ def sync_profiles():
     for n in range(0, len(names), BATCH):
         for rec in _fetch_remote(names[n:n + BATCH], "projects", PROJECT_RE):
             remote[rec["project"]] = rec
+    here = set(_local_projects())
     pulled, pushed = [], []
-    for project, rec in remote.items():
-        try:
-            projects.project_dir(project)
-        except projects.ProjectError:
-            continue                       # project not cloned on this computer
-        local = profile_info(project)
-        has_local = bool(report.load_defaults(project))
-        if local.get("pending") and (local.get("rev") or 0) > (rec.get("rev") or 0):
-            publish_profile(project)
-            pushed.append(project)
-        elif (rec.get("rev") or 0) > (local.get("rev") or 0) or not has_local:
-            src = Config.INSTANCE_DIR / "report_defaults" / f"{project}.json"
-            if has_local and not local.get("rev") and src.exists():   # criteria from before sharing: keep a copy
-                src.with_name(f"{project}.local-backup.json").write_text(src.read_text())
-            report.save_defaults(project, rec.get("report_defaults") or {})
-            _set_profile(project, rev=rec.get("rev"), by=rec.get("by", ""), at=rec.get("at", ""), pending=False)
-            pulled.append(f"{project} ({rec.get('by') or '?'})")
-    # profiles that exist only here (saved offline, or before sharing existed)
-    for f in sorted((Config.INSTANCE_DIR / "report_defaults").glob("*.json")):
-        project = f.stem
-        if project in remote or not PROJECT_RE.match(project):
+    for project in sorted(here):
+        if not PROJECT_RE.match(project):
             continue
-        if not profile_info(project).get("rev"):
-            _set_profile(project, rev=f.stat().st_mtime, by=_me(), at=datetime.fromtimestamp(f.stat().st_mtime)
-                         .strftime("%Y-%m-%d %H:%M"), pending=True)
-        publish_profile(project)
-        pushed.append(project)
+        pl, ps = reconcile(project, remote.get(project) or {})
+        label = project.replace(Config.PROJECT_SUFFIX, "")
+        if pl:
+            pulled.append(f"{label} ({', '.join(SECTION_LABELS.get(x, x) for x in pl)})")
+        if ps:
+            pushed.append(f"{label} ({', '.join(SECTION_LABELS.get(x, x) for x in ps)})")
     parts = []
     if pulled:
-        parts.append("updated from the team: " + ", ".join(pulled))
+        parts.append("updated from the team: " + "; ".join(pulled))
     if pushed:
-        parts.append("shared from this computer: " + ", ".join(pushed))
-    return "; ".join(parts) or f"up to date ({len(remote)} project(s) shared)"
+        parts.append("shared from this computer: " + "; ".join(pushed))
+    return " · ".join(parts) or f"up to date ({len(remote)} project(s) shared)"
+
+
+# --------------------------------------------------------------------------- schedules (read-only view of the team's)
+# Schedules fire only on the computer that created them; the team sees each other's to avoid fighting for the Master
+# and the Slaves. One file per installation: .jmcc/schedules/<install id>.json
+INSTALL_RE = re.compile(r"^[0-9a-f]{16}$")
+
+
+def install_id():
+    sid = state().get("install_id")
+    if not sid:
+        import uuid
+        sid = uuid.uuid4().hex[:16]
+        _set_state(install_id=sid)
+    return sid
+
+
+def _schedule_payload():
+    from . import scheduler
+    items = []
+    for s in scheduler.load():
+        nr = scheduler.next_run(s)
+        items.append({"project": s["project"], "tag": s["tag"], "describe": scheduler.describe(s),
+                      "enabled": bool(s.get("enabled")), "distributed": bool(s.get("distributed")),
+                      "stop_after": bool(s.get("stop_after")), "next": nr.isoformat() if nr else None})
+    return {"id": install_id(), "by": _me(), "host": _host(), "updated": time.time(),
+            "tz": str(scheduler.tz()), "items": items}
+
+
+def schedules_changed():
+    if not settings.aws_mode():
+        return
+
+    def push():
+        try:
+            if master_ready()[0]:
+                publish_schedules()
+        except (TeamError, aws.AwsError):
+            pass
+    threading.Thread(target=push, daemon=True).start()
+
+
+def publish_schedules():
+    data = _schedule_payload()
+    _write_remote(f"{_jdir()}/schedules/{data['id']}.json", data)
+
+
+def sync_schedules():
+    publish_schedules()
+    rc, out, err = aws.run(aws.cfg()["master"],
+                           f"cd {q(_jdir() + '/schedules')} 2>/dev/null || exit 0\n"
+                           "for f in *.json; do [ -f \"$f\" ] && echo \"@@S@@ ${f%.json}\"; done", timeout=60)
+    names = [n for n in re.findall(r"@@S@@ (\S+)", out) if INSTALL_RE.match(n) and n != install_id()]
+    others = []
+    for n in range(0, len(names), BATCH):
+        others += _fetch_remote(names[n:n + BATCH], "schedules", INSTALL_RE)
+    _store("schedules.json", {r["id"]: r for r in others})
+    return f"{sum(len(r.get('items') or []) for r in others)} schedule(s) from {len(others)} other computer(s)"
+
+
+def team_schedules():
+    """Schedules of the other installations, next run first: [{project, tag, describe, next, by, host, ...}]."""
+    from . import scheduler
+    now = scheduler.now()
+    out = []
+    for inst in _load("schedules.json", {}).values():
+        for it in inst.get("items") or []:
+            nxt = None
+            if it.get("next"):
+                try:
+                    nxt = datetime.fromisoformat(it["next"])
+                except ValueError:
+                    nxt = None
+            if nxt and nxt < now:
+                nxt = None   # already fired (the owner's computer publishes the next one on its next sync)
+            out.append(dict(it, by=inst.get("by") or "unknown", host=inst.get("host", ""), next_dt=nxt,
+                            updated=inst.get("updated")))
+    out.sort(key=lambda r: (r["next_dt"] is None, r["next_dt"] or now))
+    return out
+
+
+def schedule_conflicts(mine):
+    """Warnings for my schedules that start within 2 h of a team schedule that needs the same project or the Slaves."""
+    from . import scheduler
+    warn = {}
+    team = [t for t in team_schedules() if t["next_dt"] and t.get("enabled")]
+    for s in mine:
+        nr = scheduler.next_run(s)
+        if not nr:
+            continue
+        for t in team:
+            if abs((t["next_dt"] - nr).total_seconds()) > 2 * 3600:
+                continue
+            if t["project"] == s["project"]:
+                warn[s["id"]] = f"{t['by']} runs {t['project'].replace(Config.PROJECT_SUFFIX, '')} at {t['next_dt']:%H:%M}"
+            elif t["distributed"] and s.get("distributed"):
+                warn[s["id"]] = f"{t['by']} uses the Slaves at {t['next_dt']:%H:%M}"
+    return warn

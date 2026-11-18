@@ -1,5 +1,6 @@
 """Routes for the "runs on the engineer's computer" mode: servers (EC2 via AWS CLI), SSM tunnels,
 AWS settings / SSO, Google Chat spaces and fetching reports from the Master."""
+import json
 import shlex
 
 from flask import abort, flash, g, jsonify, redirect, render_template, request, url_for
@@ -234,6 +235,34 @@ def team_fetch():
     return _op(f"Fetch {rd}", remote_run.op_fetch(name, rd))
 
 
+@app.get("/admin/setup-file")
+@login_required("admin")
+def setup_file_download():
+    from . import team
+    body = json.dumps(team.setup_file(), indent=2, ensure_ascii=False)
+    return app.response_class(body, mimetype="application/json",
+                              headers={"Content-Disposition": "attachment; filename=jmcc-setup.json"})
+
+
+@app.post("/admin/setup-file")
+@login_required("admin")
+def setup_file_import():
+    from . import team
+    up = request.files.get("file")
+    try:
+        if not up:
+            raise ValueError("Choose the jmcc-setup.json file")
+        raw = up.read(256 * 1024 + 1)
+        if len(raw) > 256 * 1024:
+            raise ValueError("File too large")
+        team.import_setup(json.loads(raw))
+        flash("Setup imported: servers, paths, Grafana and tunnels configured. Now sign in (AWS SSO login): the "
+              "first sync brings the team settings, criteria and history.", "ok")
+    except (ValueError, team.TeamError) as exc:
+        flash(f"Setup not imported: {exc}", "error")
+    return redirect(url_for("admin_settings", _anchor="aws"))
+
+
 @app.post("/admin/team")
 @login_required("admin")
 def team_settings():
@@ -250,7 +279,8 @@ def team_settings():
             flash("Team sync settings saved.", "ok")
         elif action == "publish":
             data = team.publish_shared(aws.sso_email() or g.user["username"])
-            what = [w for w, k in (("New Relic", "newrelic"), ("Google Chat default spaces", "chat")) if k in data]
+            what = [w for w, k in (("New Relic", "newrelic"), ("Google Chat default spaces", "chat"),
+                                   ("infrastructure", "infra")) if k in data]
             flash(f"Published to the team: {', '.join(what)}. Every installation applies it on its next sync.", "ok")
         elif action == "pull":
             by = team.pull_shared(force=True)
@@ -339,6 +369,8 @@ def newrelic_pin(name):
     ps = settings.project(name)
     ps["nr_apps"] = apps
     settings.save_project(name, ps)
+    from . import team
+    team.profile_changed(name, "project_settings", g.user["username"])
     flash(f"New Relic services for this project: {', '.join(apps) or 'auto-discovery'}.", "ok")
     return redirect(request.referrer or url_for("project", name=name, tab="settings"))
 

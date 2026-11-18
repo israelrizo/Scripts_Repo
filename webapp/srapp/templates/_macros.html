@@ -22,3 +22,12 @@
     <td class="num">{{ s.tps }}</td>
   {% else %}<td colspan="5" class="muted">no statistics.json</td>{% endif %}
 {% endmacro %}
+
+{# Acceptance-criteria preset: fills p95 / error % of the same form (static/app.js → [data-crit-preset]) #}
+{% macro crit_preset_select(current, presets) %}
+<div class="field"><label for="crit-preset">Criteria preset (layer)</label>
+  <select name="crit_preset" id="crit-preset" data-crit-preset>
+    <option value="" {{ 'selected' if not current }}>Custom</option>
+    {% for key, p in presets.items() %}<option value="{{ key }}" data-p95="{{ p.p95 }}" data-err="{{ p.err }}" {{ 'selected' if current == key }}>{{ p.label }} · p95 ≤ {{ '{:,}'.format(p.p95) }} ms · error ≤ {{ p.err }} %</option>{% endfor %}
+  </select></div>
+{% endmacro %}

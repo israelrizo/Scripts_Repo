@@ -28,6 +28,14 @@
 <div class="panel" id="aws">
   <h2>AWS · remote execution <span class="badge {{ 'up' if s.aws.enabled else '' }}">{{ 'enabled' if s.aws.enabled else 'local mode' }}</span></h2>
   <p class="hint">When enabled, this app runs on <b>your computer</b> and drives the Master and Slaves with your AWS CLI session (SSM): start/stop instances, sync the repository, launch tests, stream the console, download reports and open tunnels.</p>
+  <div class="actions" style="margin-bottom:12px">
+    <form method="post" action="{{ url_for('setup_file_import') }}" enctype="multipart/form-data" class="row" style="align-items:flex-end">
+      {{ csrf() }}
+      <div class="field" style="margin:0"><label for="setup-file">New engineer? Import the team setup file</label><input type="file" id="setup-file" name="file" accept="application/json,.json" required></div>
+      <button class="btn">⇡ Import setup</button>
+    </form>
+    {% if s.aws.master %}<a class="btn" href="{{ url_for('setup_file_download') }}" title="Servers, paths, ports, Grafana, tunnels and team sync options. No keys, tokens or passwords.">⇣ Download setup file</a>{% endif %}
+  </div>
   <form method="post" action="{{ url_for('aws_settings') }}">
     {{ csrf() }}
     <label class="check field"><input type="checkbox" name="enabled" value="1" {{ 'checked' if s.aws.enabled }}> Run tests on the AWS servers (Master + Slaves) instead of this machine</label>
@@ -221,10 +229,10 @@
       <button class="btn">Save</button>
     </form>
     <h3 class="mt">Team settings (shared by every installation)</h3>
-    <p class="hint">Publishes this computer's <b>New Relic</b> account + API key and the <b>default Google Chat spaces</b> (e.g. Performance Testing Team) to the Master. Every installation applies them on its next sync, so engineers do not need the key or the webhook themselves. Stored on the Master readable only by the scripts owner.</p>
+    <p class="hint">Publishes this computer's <b>New Relic</b> account + API key, the <b>default Google Chat spaces</b> (e.g. Performance Testing Team) and the <b>infrastructure</b> (Master/Slaves ids, paths, ports, auto-off, Grafana, tunnels, time zone, Jira board for bugs) to the Master. Every installation applies them on its next sync, so engineers do not need the key or the webhook themselves. Stored on the Master readable only by the scripts owner.</p>
     <p class="muted">{% if team_state.shared_at %}Applied here: published {{ team_state.shared_at }} by {{ team_state.shared_by }}.{% else %}Nothing applied from the team yet.{% endif %}</p>
     <div class="actions">
-      <form method="post" action="{{ url_for('team_settings') }}" data-confirm="Publish this computer's New Relic key and default Google Chat spaces to every installation?">{{ csrf() }}<input type="hidden" name="action" value="publish"><button class="btn primary">⇡ Publish to the team</button></form>
+      <form method="post" action="{{ url_for('team_settings') }}" data-confirm="Publish this computer's New Relic key, default Google Chat spaces and infrastructure settings to every installation?">{{ csrf() }}<input type="hidden" name="action" value="publish"><button class="btn primary">⇡ Publish to the team</button></form>
       <form method="post" action="{{ url_for('team_settings') }}">{{ csrf() }}<input type="hidden" name="action" value="pull"><button class="btn">⇣ Apply team settings now</button></form>
     </div>
   </div>

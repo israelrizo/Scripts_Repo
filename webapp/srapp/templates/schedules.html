@@ -33,7 +33,8 @@
       <tr>
         <td><a href="{{ url_for('project', name=s.project) }}">{{ s.project.replace('-jmeter-framework','')|upper }}</a> · <code>{{ s.tag }}</code></td>
         <td>{{ s.describe }}</td>
-        <td class="nowrap">{% if s.enabled %}{{ s.next }}{% else %}<span class="badge">paused</span>{% endif %}</td>
+        <td class="nowrap">{% if s.enabled %}{{ s.next }}{% else %}<span class="badge">paused</span>{% endif %}
+          {% if conflicts[s.id] %}<div class="hint" style="color:var(--warn)" title="Team schedule within 2 h that needs the same project or the Slaves">⚠ {{ conflicts[s.id] }}</div>{% endif %}</td>
         <td class="muted">{% if s.distributed %}<span class="chip">slaves</span> {% endif %}{% if s.jira %}<span class="chip">{{ s.jira }}</span> {% endif %}<span class="mono">{{ s.props }}</span></td>
         <td>{% set h = s.history[0] if s.history else None %}{% if h %}{% if h.result.startswith('run ') %}<a href="{{ url_for('run_detail', run_id=h.result[4:]) }}">{{ h.result }}</a>{% else %}<span class="muted">{{ h.result }}</span>{% endif %}<br><span class="hint">{{ h.slot[:16].replace('T',' ') }}</span>{% else %}—{% endif %}</td>
         <td>{{ s.created_by }}</td>
@@ -46,6 +47,27 @@
     </tbody>
   </table></div>
 </div>
+
+{% if team_items is defined and (team_items or aws_mode) %}
+<div class="panel mt" id="team-schedules">
+  <h2>Team schedules <span class="muted" style="font-weight:400">· read-only, they fire on their owner's computer</span></h2>
+  <p class="hint">Published on the Master by each engineer's Control Center and pulled on every team sync (Executions → Team → Sync from Master). Use it to avoid two tests fighting for the same project or the Slaves.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Project · tag</th><th>When</th><th>Next run</th><th>Options</th><th>Engineer</th></tr></thead>
+    <tbody>
+    {% for t in team_items %}
+      <tr>
+        <td>{{ t.project.replace('-jmeter-framework','')|upper }} · <code>{{ t.tag }}</code></td>
+        <td>{{ t.describe }}</td>
+        <td class="nowrap">{% if not t.enabled %}<span class="badge">paused</span>{% elif t.next_dt %}{{ t.next_dt.strftime('%Y-%m-%d %H:%M') }}{% else %}—{% endif %}</td>
+        <td>{% if t.distributed %}<span class="chip">slaves</span> {% endif %}{% if t.stop_after %}<span class="chip">stops servers</span>{% endif %}</td>
+        <td>{{ t.by }}{% if t.host %}<div class="muted" style="font-size:12px">{{ t.host }}</div>{% endif %}</td>
+      </tr>
+    {% else %}<tr><td colspan="5" class="empty">No schedules from other engineers (or not synced yet).</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% endif %}
 
 {% if can('operator') %}
 <form class="panel mt" method="post" id="new-schedule">

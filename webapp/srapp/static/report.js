@@ -76,13 +76,11 @@
   const val = (n) => { const v = form.querySelector(`[name="${n}"]`).value.trim(); return v === '' ? null : Number(v); };
   const recompute = () => {
     const checks = [];
-    if (val('crit_avg') !== null && totals.avg != null) checks.push(totals.avg <= val('crit_avg'));
     if (val('crit_p95') !== null && totals.p95 != null) checks.push(totals.p95 <= val('crit_p95'));
     if (val('crit_err') !== null) checks.push(totals.error_pct <= val('crit_err'));
-    if (val('crit_tps') !== null) checks.push(totals.tps >= val('crit_tps'));
     opt.textContent = 'Automático según criterios → ' + (checks.length ? (checks.every(Boolean) ? 'SATISFACTORIA' : 'INSATISFACTORIA') : 'sin criterios');
   };
-  ['crit_avg', 'crit_p95', 'crit_err', 'crit_tps'].forEach((n) => form.querySelector(`[name="${n}"]`).addEventListener('input', recompute));
+  ['crit_p95', 'crit_err'].forEach((n) => form.querySelector(`[name="${n}"]`).addEventListener('input', recompute));
 
   render();
 })();

@@ -7,6 +7,7 @@ from flask import abort, flash, g, jsonify, redirect, render_template, request, 
 from . import (atlassian, connectivity, gitops, google, influx, notify, projects, runner, scheduler, settings,
                shiftleft, team, users)
 from .app import _project_or_404, app, can, login_required
+from . import report as rpt
 from .config import Config
 
 
@@ -105,7 +106,9 @@ def project_criteria(name):
     _project_or_404(name)
     f = request.form
     try:
-        for key in ("crit_avg", "crit_p95", "crit_err", "crit_tps"):
+        if f.get("crit_preset") and f.get("crit_preset") not in rpt.CRITERIA_PRESETS:
+            raise ValueError
+        for key in ("crit_p95", "crit_err"):
             v = (f.get(key) or "").strip()
             if v:
                 float(v)
@@ -143,7 +146,8 @@ def project_settings(name):
         if sl["tag"] and not projects.get_tag(name, sl["tag"]):
             raise ValueError("Unknown tag for shift-left")
         settings.save_project(name, s)
-        flash("Project settings saved.", "ok")
+        status = team.profile_changed(name, "project_settings", g.user["username"], wait=True)
+        flash(f"Project settings {status}.", "ok" if "shared with" in status or "AWS mode" in status else "warn")
     except ValueError as exc:
         flash(str(exc), "error")
     return redirect(url_for("project", name=name, tab="settings"))
@@ -245,6 +249,7 @@ def schedules():
                 flash("Schedule deleted.", "ok")
         except (ValueError, StopIteration, projects.ProjectError) as exc:
             flash(str(exc) or "Unknown schedule", "error")
+        team.schedules_changed()
         return redirect(url_for("schedules"))
     items = scheduler.load()
     for s in items:
@@ -253,7 +258,9 @@ def schedules():
         s["next"] = nr.strftime("%Y-%m-%d %H:%M") if nr else "—"
     plist = projects.list_projects()
     tags = {p["name"]: [t["tag"] for t in projects.parse_tags(p["name"]) if t["exists"]] for p in plist}
+    conflicts = team.schedule_conflicts(items) if settings.aws_mode() else {}
     return render_template("schedules.html", items=items, tags=tags, days=scheduler.DAYS,
+                           team_items=team.team_schedules() if settings.aws_mode() else [], conflicts=conflicts,
                            sched_cfg=settings.get()["scheduler"],
                            tz_now=scheduler.now().strftime("%Y-%m-%d %H:%M %Z"), slaves=runner.slave_list(),
                            preset_project=request.args.get("project", ""), preset_tag=request.args.get("tag", ""))

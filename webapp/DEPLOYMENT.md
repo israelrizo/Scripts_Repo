@@ -261,12 +261,25 @@ Each engineer runs their own Control Center, so the Master is where the team mee
   Testing Team*) once, then *Settings → Team sharing → Publish to the team*. They are stored in
   `.jmcc/shared/team.json` on the Master (mode 600, scripts owner) and every installation applies them on its next
   sync. Never commit these values to the repository.
-* **Acceptance criteria per project** — *project → Settings → Acceptance criteria & report data* (avg, p95,
-  error %, TPS, application, scenario, scope, base URL, tool). Saved in `.jmcc/projects/<project>.json` on the
-  Master with who changed it and when, and pulled by every installation on sync; publishing a Confluence report also
-  updates them. Last change wins; edits made with the Master off are shared on the next sync. Criteria that existed
-  only on a computer before sharing are kept as `instance/report_defaults/<project>.local-backup.json` when the
-  team's version replaces them.
+* **Project profiles** — everything a project needs so whoever picks it up continues with the same setup, in
+  `.jmcc/projects/<project>.json` on the Master, pulled on every sync. Each section keeps who changed it and when,
+  and the last change wins per section (two engineers editing different sections at the same time keep both):
+  * *Acceptance criteria* (*project → Settings*): presets by layer — **Backend p95 ≤ 1000 ms**, **Middleware
+    p95 ≤ 5000 ms**, **Front end p95 ≤ 10000 ms**, all with **error rate ≤ 5 %** — or custom values. Only p95 and
+    error rate are evaluated (average and throughput are no longer criteria). Plus application, scenario, scope,
+    base URL and tool for the reports.
+  * *Baselines* (comparison baseline per script) and *project settings* (staff e-mails, Jira board, pinned New
+    Relic services, Grafana dashboard, extra Chat spaces — matched by name on each computer).
+  * *Confluence publications*: merged, so everyone sees which executions were already published and where.
+  Edits made with the Master off are shared on the next sync; data that existed only on a computer before sharing is
+  kept as `*.local-backup.json` when the team's version replaces it.
+* **Team schedules** — each installation publishes its schedules to `.jmcc/schedules/` and *Schedules* shows the
+  other engineers' ones (read-only: they fire only on their owner's computer), warning when one of yours starts
+  within 2 h of a team schedule on the same project or the Slaves.
+* **Infrastructure** — *Publish to the team* also shares Master/Slaves ids, region, paths, ports, auto-off,
+  `max_runs`, Grafana, tunnels, time zone and the Jira board for bugs. A new engineer uses *Settings → AWS → Import
+  setup* with the `jmcc-setup.json` an admin downloads there (no keys, tokens or passwords), signs in with AWS SSO,
+  and the first sync brings the rest.
 * **Performance bugs** — a run that ends **INSATISFACTORIA** (acceptance criteria of the project's report
   defaults) shows **Create Jira bug**: the non-functional bug template prefilled from the run (scenario, criteria,
   results by transaction, evidence, HTML report attached). The engineer completes *Contexto* and *Impacto* and

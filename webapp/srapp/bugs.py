@@ -74,6 +74,7 @@ def prefill(meta, summary=None):
                         + (f" · CPU {a['cpu']} %" if a.get("cpu") is not None else "") + (f" · {a['link']}" if a.get("link") else ""))
 
     slaves = len(meta.get("remote_hosts") or [])
+    layer = report.preset_label(d)
     names = ", ".join(c[0].lower() for c in failed) or "los criterios de aceptación"
     return {
         "resumen": f"[Rendimiento] {app} no cumple {names} en {ttype.lower()} ({meta.get('tag')})"[:250],
@@ -90,7 +91,7 @@ def prefill(meta, summary=None):
         "duracion": s.get("duration") or "",
         "herramienta": (d.get("tool") or "Apache JMeter") + (f" (distribuida: Master + {slaves} slave{'s' if slaves != 1 else ''})" if slaves else ""),
         "script": meta.get("script") or "",
-        "esperado": [f"{name} {exp}" for name, exp, act, ok in checks],
+        "esperado": [f"{name} {exp}" + (f" (capa {layer})" if layer else "") for name, exp, act, ok in checks],
         "actual": actual,
         "evidencia": evidence,
         "impacto": "",
