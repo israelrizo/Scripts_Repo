@@ -23,7 +23,6 @@
 </form>
 {% if db and app_name %}
   <div class="mt"></div>
-  {% set rng = request.args.get('range', type=int) %}
   {% with db=db, app=app_name, start=(None if rng else start), end=(None if rng else end), live=(rng or not start) %}
     {% include "_live.html" %}
   {% endwith %}
