@@ -4,17 +4,37 @@ window.SR = window.SR || {};
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   const PALETTE = ['#4f8cff', '#f0545b', '#3fb768', '#e3a33b', '#a76cf5', '#22b8cf', '#f06595', '#94a3b8', '#fab005', '#12b886'];
   const fmtTime = (ms) => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const fmtDay = (ms) => new Date(ms).toLocaleString([], { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const pad = (n) => String(n).padStart(2, '0');
+  const toLocalInput = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; };
   const fmtNum = (n, d = 0) => (n === null || n === undefined) ? '—' : Number(n).toLocaleString(undefined, { maximumFractionDigits: d });
 
-  function baseOptions(yTitle) {
+  // Grafana-style drag-to-zoom: draws the selection band while dragging (chart.$sel = {x0, x1} in CSS px).
+  const selectionPlugin = {
+    id: 'srSelection',
+    afterDraw(chart) {
+      const s = chart.$sel, a = chart.chartArea;
+      if (!s || !a) return;
+      const ctx = chart.ctx, x = Math.min(s.x0, s.x1), w = Math.abs(s.x1 - s.x0);
+      ctx.save();
+      ctx.fillStyle = (css('--accent') || PALETTE[0]) + '33';
+      ctx.strokeStyle = css('--accent') || PALETTE[0];
+      ctx.fillRect(x, a.top, w, a.bottom - a.top);
+      ctx.strokeRect(x + 0.5, a.top + 0.5, w, a.bottom - a.top - 1);
+      ctx.restore();
+    },
+  };
+
+  function baseOptions(yTitle, win) {
     const grid = css('--border'), text = css('--muted');
     return {
       responsive: true, maintainAspectRatio: false, animation: false, parsing: false, normalized: true,
       interaction: { mode: 'nearest', axis: 'x', intersect: false },
       plugins: { legend: { labels: { color: text, boxWidth: 12 } },
-        tooltip: { callbacks: { title: (items) => items.length ? fmtTime(items[0].parsed.x) : '' } } },
+        tooltip: { callbacks: { title: (items) => items.length ? new Date(items[0].parsed.x).toLocaleString() : '' } } },
       scales: {
-        x: { type: 'linear', ticks: { color: text, maxTicksLimit: 8, callback: (v) => fmtTime(v) }, grid: { color: grid } },
+        x: { type: 'linear', min: win && win[0], max: win && win[1], grid: { color: grid },
+          ticks: { color: text, maxTicksLimit: 8, callback(v) { return (this.max - this.min) > 20 * 3600e3 ? fmtDay(v) : fmtTime(v); } } },
         y: { beginAtZero: true, ticks: { color: text }, grid: { color: grid }, title: { display: !!yTitle, text: yTitle, color: text } },
       },
     };
@@ -31,43 +51,132 @@ window.SR = window.SR || {};
       this.to = root.dataset.to ? Number(root.dataset.to) : null;
       this.live = root.dataset.live === '1';
       this.range = Number(new URLSearchParams(location.search).get('range') || 900);
+      this.urlSync = root.dataset.urlSync === '1';
+      this.initial = { from: this.from, to: this.to, live: this.live };
+      this.zoomed = false;
+      this.depth = 0;  // history entries pushed by zooming
+      this.win = null;  // [start, end] ms of the data on screen
+      this.seq = 0;
       this.charts = {};
       this.timer = null;
+      const out = root.querySelector('[data-role="zoom-out"]'), reset = root.querySelector('[data-role="zoom-reset"]');
+      if (out) out.addEventListener('click', () => this.zoomOut());
+      if (reset) reset.addEventListener('click', () => this.resetZoom());
+    }
+    // ---- time range navigation (drag to zoom, double-click / button to zoom out) ----
+    setWindow(from, to, push = true) {
+      clearTimeout(this.timer);
+      const now = Date.now();
+      to = Math.min(to, now);
+      if (to - from < 10000) from = to - 10000;  // the smallest useful window (2 buckets of 5 s)
+      this.from = Math.round(from); this.to = Math.round(to); this.live = false; this.zoomed = true;
+      const reset = this.root.querySelector('[data-role="zoom-reset"]');
+      if (reset) reset.hidden = false;
+      if (this.urlSync && push) {
+        const u = new URL(location.href);
+        u.searchParams.delete('range'); u.searchParams.delete('result');
+        u.searchParams.set('from', this.from); u.searchParams.set('to', this.to);
+        history.pushState({ from: this.from, to: this.to }, '', u);
+        this.depth += 1;
+        SR.monitorSyncForm && SR.monitorSyncForm(this.from, this.to);
+      }
+      const gl = document.getElementById('mon-grafana');
+      if (gl) {
+        try {
+          const g = new URL(gl.href);
+          g.searchParams.set('from', this.from); g.searchParams.set('to', this.to); g.searchParams.delete('refresh');
+          gl.href = g.toString();
+        } catch (e) { /* not an absolute URL: leave it */ }
+      }
+      this.refresh();
+    }
+    zoomOut() {
+      const [a, b] = this.win || [Date.now() - this.range * 1000, Date.now()];
+      const span = b - a, mid = (a + b) / 2;
+      let to = mid + span, from = mid - span;
+      const now = Date.now();
+      if (to > now) { from -= to - now; to = now; }
+      this.setWindow(from, to);
+    }
+    resetZoom() {
+      if (this.urlSync && this.depth) { history.go(-this.depth); return; }  // popstate reloads the original URL
+      clearTimeout(this.timer);
+      Object.assign(this, this.initial, { zoomed: false });
+      this.root.querySelector('[data-role="zoom-reset"]').hidden = true;
+      this.refresh();
+    }
+    attachZoom(chart) {
+      const c = chart.canvas;
+      let sel = null;
+      const px = (ev) => ev.clientX - c.getBoundingClientRect().left;
+      const clamp = (x) => Math.min(Math.max(x, chart.chartArea.left), chart.chartArea.right);
+      c.style.cursor = 'crosshair';
+      c.style.touchAction = 'pan-y';
+      c.addEventListener('pointerdown', (ev) => {
+        if (ev.button !== 0 || !chart.chartArea) return;
+        const x = px(ev), a = chart.chartArea;
+        if (x < a.left || x > a.right) return;
+        sel = chart.$sel = { x0: x, x1: x };
+        c.setPointerCapture(ev.pointerId);
+        ev.preventDefault();
+      });
+      c.addEventListener('pointermove', (ev) => { if (!sel) return; sel.x1 = clamp(px(ev)); chart.draw(); });
+      const finish = (apply) => {
+        if (!sel) return;
+        const s = sel; sel = chart.$sel = null; chart.draw();
+        if (!apply || Math.abs(s.x1 - s.x0) < 6) return;
+        const xs = chart.scales.x;
+        this.setWindow(xs.getValueForPixel(Math.min(s.x0, s.x1)), xs.getValueForPixel(Math.max(s.x0, s.x1)));
+      };
+      c.addEventListener('pointerup', () => finish(true));
+      c.addEventListener('pointercancel', () => finish(false));
+      c.addEventListener('dblclick', () => this.zoomOut());
     }
     canvas(name) { return this.root.querySelector(`[data-chart="${name}"]`); }
     chart(name, config) {
-      if (this.charts[name]) {
-        this.charts[name].data = config.data;
-        this.charts[name].update('none');
+      const ch = this.charts[name];
+      if (ch) {
+        ch.data = config.data;
+        const x = config.options.scales && config.options.scales.x;
+        if (x) { ch.options.scales.x.min = x.min; ch.options.scales.x.max = x.max; }
+        ch.update('none');
       } else {
+        const timeSeries = config.type === 'line';
+        if (timeSeries) config.plugins = [selectionPlugin];
         this.charts[name] = new Chart(this.canvas(name), config);
+        if (timeSeries) this.attachZoom(this.charts[name]);
       }
     }
     url() {
       const p = new URLSearchParams({ db: this.db, app: this.app });
       if (this.from) p.set('from', this.from); else p.set('range', this.range);
       if (this.to && !this.live) p.set('to', this.to);
+      else if (this.from && !this.live) p.set('to', Date.now());
       return '/api/influx/dashboard?' + p.toString();
     }
     async refresh() {
       const state = this.root.querySelector('[data-role="state"]');
+      const seq = ++this.seq;
       try {
         const d = await SR.getJSON(this.url());
+        if (seq !== this.seq) return;  // a newer zoom/refresh superseded this response
+        this.win = [d.start, d.end];
         this.render(d);
         const errs = Object.entries(d.errors || {});
         state.className = 'badge ' + (errs.length ? 'stopped' : (this.live ? 'running' : 'finished'));
-        state.textContent = (this.live ? 'live · every 5 s' : 'execution window') + (errs.length ? ` · ${errs.length} panel(s) failed` : '');
+        state.textContent = (this.live ? 'live · every 5 s' : (this.zoomed ? 'zoomed' : 'fixed window')) + (errs.length ? ` · ${errs.length} panel(s) failed` : '');
         state.title = errs.map(([k, v]) => `${k}: ${v}`).join('\n');
         let note = this.root.querySelector('[data-role="panel-errors"]');
         if (!note) { note = document.createElement('div'); note.dataset.role = 'panel-errors'; note.className = 'flash warn'; state.parentElement.after(note); }
         note.style.display = errs.length ? '' : 'none';
         note.textContent = errs.length ? 'InfluxDB rejected: ' + errs.map(([k, v]) => `${k} → ${v}`).join(' | ') + ' (Settings → InfluxDB diagnostics)' : '';
         this.root.querySelector('[data-role="window"]').textContent =
-          `${new Date(d.start).toLocaleString()} → ${new Date(d.end).toLocaleTimeString()} · bucket ${d.bucket_s}s`;
+          `${new Date(d.start).toLocaleString()} → ${new Date(d.end)[new Date(d.start).toDateString() === new Date(d.end).toDateString() ? 'toLocaleTimeString' : 'toLocaleString']()} · bucket ${d.bucket_s}s`;
       } catch (e) {
+        if (seq !== this.seq) return;
         state.className = 'badge failed'; state.textContent = e.message;
       }
-      if (this.live) this.timer = setTimeout(() => this.refresh(), 5000);
+      if (this.live && seq === this.seq) this.timer = setTimeout(() => this.refresh(), 5000);
     }
     stop() { this.live = false; clearTimeout(this.timer); setTimeout(() => this.refresh(), 6000); }
     kpi(key, value, cls) {
@@ -86,12 +195,13 @@ window.SR = window.SR || {};
       this.kpi('vu', fmtNum(peak(d.vusers)));
       this.kpi('hps', fmtNum(peak(d.hps), 1));
 
+      const win = [d.start, d.end];
       const accent = css('--accent') || PALETTE[0], err = css('--err') || PALETTE[1];
-      this.chart('vusers', { type: 'line', options: baseOptions('users'),
+      this.chart('vusers', { type: 'line', options: baseOptions('users', win),
         data: { datasets: [line('Active threads', d.vusers, accent, { fill: true, stepped: true, tension: 0 })] } });
-      this.chart('hits', { type: 'line', options: baseOptions('per second'),
+      this.chart('hits', { type: 'line', options: baseOptions('per second', win),
         data: { datasets: [line('Hits/s', d.hps, PALETTE[2]), line('Errors/s', d.eps, err)] } });
-      this.chart('rt', { type: 'line', options: baseOptions('ms'),
+      this.chart('rt', { type: 'line', options: baseOptions('ms', win),
         data: { datasets: [line('Average', d.avg, accent), line('95th percentile', d.p95, PALETTE[3], { borderDash: [6, 3] })] } });
 
       const codes = d.codes.length ? d.codes : [{ code: 'no data', count: 1 }];
@@ -105,7 +215,7 @@ window.SR = window.SR || {};
       this.chart('codes', pieCfg);
 
       const txSets = Object.entries(d.p95_by_tx).map(([name, pts], i) => line(name, pts, PALETTE[i % PALETTE.length]));
-      this.chart('p95tx', { type: 'line', options: baseOptions('ms'), data: { datasets: txSets } });
+      this.chart('p95tx', { type: 'line', options: baseOptions('ms', win), data: { datasets: txSets } });
 
       const tbody = this.root.querySelector('[data-role="tx"]');
       tbody.innerHTML = '';
@@ -144,6 +254,40 @@ window.SR = window.SR || {};
     };
     db.addEventListener('change', load);
     load();
+
+    // Window: a live range, or a custom From/To (datetime-local, browser time zone) sent as epoch ms.
+    const form = document.getElementById('monitor-form'), rng = document.getElementById('mon-range');
+    const fIn = document.getElementById('mon-from'), tIn = document.getElementById('mon-to');
+    const fMs = document.getElementById('mon-from-ms'), tMs = document.getElementById('mon-to-ms');
+    const showCustom = () => form.querySelectorAll('.mon-custom').forEach((el) => { el.hidden = rng.value !== 'custom'; });
+    SR.monitorSyncForm = (from, to) => {
+      rng.value = 'custom'; fIn.value = toLocalInput(from); tIn.value = to ? toLocalInput(to) : '';
+      fMs.value = from; tMs.value = to || ''; showCustom();
+    };
+    if (fMs.value) { fIn.value = toLocalInput(Number(fMs.value)); if (tMs.value) tIn.value = toLocalInput(Number(tMs.value)); }
+    rng.addEventListener('change', () => {
+      if (rng.value === 'custom' && !fIn.value) {
+        const now = Date.now(); fIn.value = toLocalInput(now - 3600e3); tIn.value = toLocalInput(now);
+      }
+      showCustom();
+    });
+    form.addEventListener('submit', (ev) => {
+      if (rng.value !== 'custom') { fMs.disabled = tMs.disabled = true; return; }
+      const from = fIn.value ? new Date(fIn.value).getTime() : NaN;
+      const to = tIn.value ? new Date(tIn.value).getTime() : Date.now();
+      if (Number.isNaN(from) || Number.isNaN(to) || from >= to) {
+        ev.preventDefault();
+        fIn.setCustomValidity('From must be a valid date before To'); fIn.reportValidity();
+        return;
+      }
+      fIn.setCustomValidity('');
+      fMs.value = from; tMs.value = to; fMs.disabled = tMs.disabled = false;
+      rng.disabled = true;  // the range select must not be sent with a custom window
+    });
+    fIn.addEventListener('input', () => fIn.setCustomValidity(''));
+    window.addEventListener('pageshow', () => { rng.disabled = false; fMs.disabled = tMs.disabled = false; });
+    window.addEventListener('popstate', () => location.reload());
+    showCustom();
   };
 
   // ---- report comparison charts ----

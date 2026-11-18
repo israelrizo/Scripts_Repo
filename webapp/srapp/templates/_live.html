@@ -1,8 +1,11 @@
 {# Live metrics block. Needs: db, app, start (ms|None), end (ms|None), live (bool) #}
-<div class="live" data-db="{{ db }}" data-app="{{ app }}" data-from="{{ start or '' }}" data-to="{{ end or '' }}" data-live="{{ 1 if live else 0 }}">
+<div class="live" data-db="{{ db }}" data-app="{{ app }}" data-from="{{ start or '' }}" data-to="{{ end or '' }}" data-live="{{ 1 if live else 0 }}" data-url-sync="{{ 1 if url_sync else 0 }}">
   <div class="status-strip" style="margin-bottom:12px">
     <span class="badge" data-role="state">loading…</span>
     <span class="muted" data-role="window"></span>
+    <button type="button" class="btn sm" data-role="zoom-out" title="Double-click a chart does the same">⊖ Zoom out</button>
+    <button type="button" class="btn sm" data-role="zoom-reset" hidden>⟲ Reset zoom</button>
+    <span class="muted zoom-hint">Drag across a chart to zoom into that time range</span>
     <span class="muted mono">db={{ db }} · application={{ app }}</span>
   </div>
   <div class="grid kpis">

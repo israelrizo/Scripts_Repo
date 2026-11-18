@@ -176,10 +176,10 @@ def project_targets(project):
 # --------------------------------------------------------------------------- dashboard
 def _bucket(start_ms, end_ms):
     span = max(1, (end_ms - start_ms) / 1000)
-    for b in (5, 10, 15, 30, 60, 120, 300, 600):
+    for b in (5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 10800, 21600, 43200):
         if span / b <= 240:
             return b
-    return 900
+    return 86400
 
 
 def _points(res, col=1):

@@ -149,7 +149,9 @@ input[type=file] { width: 100%; padding: 18px; border: 1.5px dashed var(--border
 .console .hl-meta { color: #8aa4c8; }
 
 /* ---------- charts ---------- */
+[hidden] { display: none !important; }
 .chart-box { position: relative; height: 240px; }
+.zoom-hint { font-size: 12px; }
 .chart-box.tall { height: 300px; }
 .empty { color: var(--muted); text-align: center; padding: 26px; }
 .toolbar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
