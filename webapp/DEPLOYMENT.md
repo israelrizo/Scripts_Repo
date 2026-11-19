@@ -73,6 +73,14 @@ Creates the Python environment, your login, the background service (Task Schedul
 **JMeter Control Center** shortcut (Start menu + Desktop) with the icon. Use `-NoService` to only run it manually
 (`tools\launcher\jmeter-control-center.bat`). Git for Windows keeps `.sh` files with LF endings (`.gitattributes`).
 
+**Corporate certificate (office network with TLS inspection).** If `aws sso login` fails with
+`SSL validation failed ... self-signed certificate in certificate chain`, the installer asks for the corporate
+certificate (`.crt`, `.cer` or `.pem`; DER is converted) or takes it directly:
+`install_windows.cmd -CaBundle "C:\path\to\corp-ca.crt"`. It copies it to `%USERPROFILE%\.aws\corp-ca.pem` and sets
+`ca_bundle` on your AWS profiles (and the one in Settings → AWS), so it works in every window and in the background
+service. `$env:AWS_CA_BUNDLE = "..."` only lasts for that PowerShell window and the service never sees it. Manual
+equivalent: `aws configure set ca_bundle "C:\path\to\corp-ca.pem" --profile <profile>`.
+
 ### Background service and scheduled runs
 
 | | macOS | Windows |

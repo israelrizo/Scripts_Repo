@@ -19,12 +19,18 @@
   Only prepare the environment and shortcuts; start the app manually with the shortcut.
 .PARAMETER Yes
   Answer "yes" to the prerequisite installation questions.
+.PARAMETER CaBundle
+  Corporate certificate (.crt / .cer / .pem) for networks that inspect TLS ("self-signed certificate in certificate
+  chain" on aws sso login). Copied to %USERPROFILE%\.aws\corp-ca.pem and set as ca_bundle in your AWS profiles.
+  Without it the installer asks (once, while no certificate is configured).
 .EXAMPLE
   install_windows.cmd
 .EXAMPLE
+  install_windows.cmd -CaBundle "C:\Users\me\Documents\corp-ca.crt"
+.EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File webapp\tools\service\install_windows.ps1
 #>
-param([switch]$NoService, [switch]$Yes, [switch]$AllowAdmin)
+param([switch]$NoService, [switch]$Yes, [switch]$AllowAdmin, [string]$CaBundle)
 $ErrorActionPreference = 'Stop'
 $WebApp = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $Port = 8090
@@ -136,6 +142,73 @@ if ($LASTEXITCODE) {
   $u = Read-Host 'Username'
   & $VenvPy manage_users.py add $u --role admin
   if ($LASTEXITCODE) { throw 'User not created' }
+}
+
+# ---- 2b. corporate certificate for the AWS CLI (TLS inspection on the office network) ---------------------
+# Symptom: "SSL validation failed ... self-signed certificate in certificate chain" on aws sso login / SSM.
+# The certificate is copied to %USERPROFILE%\.aws\corp-ca.pem and saved as ca_bundle in the AWS profiles, so it
+# works in every window AND in the background service (unlike $env:AWS_CA_BUNDLE, which lives in one window).
+function Read-CaPem($Path) {
+  $bytes = [IO.File]::ReadAllBytes($Path)
+  $text = [Text.Encoding]::ASCII.GetString($bytes)
+  if ($text -match '-----BEGIN CERTIFICATE-----') { return $text }
+  try {  # DER (.cer exported from Windows) -> PEM
+    $cert = New-Object Security.Cryptography.X509Certificates.X509Certificate2(, $bytes)
+    $b64 = [Convert]::ToBase64String($cert.RawData, 'InsertLineBreaks')
+    return "-----BEGIN CERTIFICATE-----`r`n$b64`r`n-----END CERTIFICATE-----`r`n"
+  } catch { return $null }
+}
+function Get-AwsProfiles {
+  $names = @()
+  try { $names = @(& aws configure list-profiles | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim() }) } catch { }
+  $appProfile = ''
+  try { $appProfile = "$(& $VenvPy -c "from srapp import settings; print(settings.get()['aws'].get('profile') or '')")".Trim() } catch { }
+  if ($appProfile -and $names -notcontains $appProfile) { $names += $appProfile }
+  if (-not $appProfile -and $names -notcontains 'default') { $names += 'default' }  # the app then uses the default profile
+  if (-not $names.Count) { $names = @('default') }
+  return , $names
+}
+if (Test-Cmd 'aws') {
+  $CaDest = Join-Path $env:USERPROFILE '.aws\corp-ca.pem'
+  $profiles = Get-AwsProfiles
+  $current = ''
+  $first = $profiles[0]
+  # child scope with 'Continue': Windows PowerShell 5.1 turns redirected stderr into a terminating error under 'Stop'
+  $current = "$(& { $ErrorActionPreference = 'Continue'; & aws configure get ca_bundle --profile $first 2>$null })".Trim()
+  $haveCa = $current -and (Test-Path $current)
+  $wantCa = [bool]$CaBundle
+  if (-not $wantCa -and -not $Yes) {
+    if ($haveCa) {
+      Say "AWS CLI certificate already configured ($current)"
+    } else {
+      Write-Host ''
+      Write-Host 'On the office network the AWS CLI may fail with "SSL validation failed ... self-signed certificate in'
+      Write-Host 'certificate chain". If so, the corporate certificate (.crt / .cer / .pem) must be configured once.'
+      $a = Read-Host 'Configure the corporate certificate for AWS now? [y/N]'
+      $wantCa = $a -match '^[YySs]'
+    }
+  }
+  if ($wantCa) {
+    $src = if ($CaBundle) { $CaBundle } else { Read-Host 'Path to the certificate file (you can drag the file here)' }
+    $src = "$src".Trim().Trim('"').Trim("'")
+    if (-not $src -or -not (Test-Path -LiteralPath $src -PathType Leaf)) {
+      Write-Warning "Certificate not found: '$src'. Skipped; run the installer again to configure it."
+    } else {
+      $pem = Read-CaPem (Resolve-Path -LiteralPath $src).Path
+      if (-not $pem) {
+        Write-Warning 'That file is not a certificate (PEM or DER). Skipped.'
+      } else {
+        New-Item -ItemType Directory -Force (Split-Path $CaDest) | Out-Null
+        [IO.File]::WriteAllText($CaDest, $pem, (New-Object Text.ASCIIEncoding))
+        foreach ($p in $profiles) {
+          & aws configure set ca_bundle $CaDest --profile $p
+          if ($LASTEXITCODE) { Write-Warning "Could not set ca_bundle on AWS profile '$p'" }
+        }
+        Say "Corporate certificate saved to $CaDest and set on AWS profile(s): $($profiles -join ', ')"
+        Write-Host '    Now "aws sso login" works without $env:AWS_CA_BUNDLE (also from the Control Center).'
+      }
+    }
+  }
 }
 
 # ---- 3. SSH key used to copy the scripts to the servers -------------------------------------------------
