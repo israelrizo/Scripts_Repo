@@ -49,15 +49,21 @@ def _dir():
 def _load(name, default):
     p = _dir() / name
     try:
-        return json.loads(p.read_text())
-    except (OSError, ValueError):
+        raw = p.read_bytes()
+    except OSError:
         return default
+    for enc in ("utf-8", "cp1252"):   # before the UTF-8 fix Windows wrote this cache in its ANSI code page
+        try:
+            return json.loads(raw.decode(enc))
+        except (UnicodeDecodeError, ValueError):
+            continue
+    return default
 
 
 def _store(name, data):
     p = _dir() / name
     tmp = p.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=1, ensure_ascii=False))
+    tmp.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     tmp.replace(p)
 
 
@@ -122,11 +128,13 @@ def _local_verdict(project, rd):
 
 
 def _local_result(project, rd):
+    """True when the report is on this computer AND complete: a folder copied while JMeter was still writing it
+    (no html_report) must stay fetchable."""
     try:
-        projects.result_dir(project, rd)
-        return True
+        d = projects.result_dir(project, rd)
     except projects.ProjectError:
         return False
+    return (d / "html_report" / "index.html").is_file() or (d / "html_report" / "statistics.json").is_file()
 
 
 # --------------------------------------------------------------------------- Master helpers
@@ -197,7 +205,7 @@ def publish(rec):
 
 def _log(meta, line):
     try:
-        with (runner._runs_dir() / f"{meta['id']}.log").open("a") as fh:
+        with (runner._runs_dir() / f"{meta['id']}.log").open("a", encoding="utf-8", errors="replace") as fh:
             fh.write(f"### {time.strftime('%H:%M:%S')} {line}\n")
     except OSError:
         pass
@@ -292,13 +300,14 @@ def _fetch_remote(ids, folder="history", name_re=RUN_ID_RE):
 def _remote_results():
     """Result folders on the Master for every project (covers runs made before the team history existed)."""
     script = (f"cd {q(aws.remote_root())} 2>/dev/null || exit 0\n"
-              "ls -1dt */results/Ejecucion_*/ 2>/dev/null | head -250 | sed 's#/$##; s#^#@@R@@ #'")
+              "ls -1dt */results/Ejecucion_*/ 2>/dev/null | head -250 | while read -r d; do d=${d%/}; "
+              'echo "@@R@@ $d $([ -f "$d/html_report/index.html" ] && echo 1 || echo 0)"; done')
     rc, out, err = aws.run(aws.cfg()["master"], script, timeout=60)
     found = []
-    for line in re.findall(r"@@R@@ (\S+)", out):
+    for line, has in re.findall(r"@@R@@ (\S+) ([01])", out):
         m = RESULT_RE.match(line)
         if m:
-            found.append((m.group(1), m.group(2)))
+            found.append((m.group(1), m.group(2), has == "1"))
     return found
 
 
@@ -333,17 +342,22 @@ def sync(log=print, fetch_reports=None):
         for r in recs:
             h[r["id"]] = r
         # 2. result folders without a record (older runs, or runs started outside the Control Center)
-        known = {(r.get("project"), r.get("result_dir") or r.get("result_remote_only")) for r in h.values()}
+        known = {(r.get("project"), r.get("result_dir") or r.get("result_remote_only"))
+                 for r in h.values() if not r.get("legacy")}
+        for key in [k for k, r in h.items() if r.get("legacy") and (r.get("project"), r.get("result_remote_only")) in known]:
+            del h[key]   # the execution record now points at this folder: no second "folder only" row
         legacy = 0
         try:
-            for proj, rd in _remote_results():
+            for proj, rd, has_report in _remote_results():
                 if (proj, rd) in known:
                     continue
                 key = f"r-{proj}-{rd}"
                 if key not in h:
                     legacy += 1
+                # no html_report yet: JMeter is still writing it (a running test whose record has no folder yet)
                 h[key] = {"id": key, "legacy": True, "project": proj, "result_remote_only": rd,
-                          "tag": rd.split("_", 3)[-1] if rd.count("_") >= 3 else rd, "status": "finished",
+                          "tag": rd.split("_", 3)[-1] if rd.count("_") >= 3 else rd,
+                          "status": "finished" if has_report else "incomplete",
                           "started": _started_from_name(rd), "user": "", "email": "", "host": "Master"}
         except aws.AwsError as exc:
             log(f"team sync: result folders not listed ({exc})")
