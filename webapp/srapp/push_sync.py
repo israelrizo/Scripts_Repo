@@ -52,15 +52,124 @@ def local_root():
 
 
 def key_path():
-    """Private key used for SSH: Settings → AWS, else the usual defaults in ~/.ssh."""
-    k = (aws.cfg().get("ssh_key") or "").strip()
+    """Private key used for SSH: Settings → AWS, else the usual defaults in ~/.ssh.
+    A PuTTY key (.ppk) is converted once to OpenSSH format next to it (see from_ppk): ssh cannot read .ppk."""
+    k = (aws.cfg().get("ssh_key") or "").strip().strip('"').strip("'")
     if k:
-        return Path(os.path.expanduser(k))
+        p = Path(os.path.expanduser(k))
+        return from_ppk(p) if is_ppk(p) else p
     for name in ("id_ed25519", "id_ecdsa", "id_rsa"):
         p = Path.home() / ".ssh" / name
         if p.is_file():
-            return p
+            return from_ppk(p) if is_ppk(p) else p
     return None
+
+
+# --------------------------------------------------------------------------- PuTTY keys (.ppk)
+PPK_HELP = ("Use an OpenSSH key instead: in Settings → AWS set 'SSH private key' to ~/.ssh/jmcc_ed25519, Save, then "
+            "'Create SSH key' (the app authorizes it on the servers by itself). Or in PuTTYgen: Load the .ppk → "
+            "Conversions → Export OpenSSH key, and set that file here.")
+
+
+def is_ppk(p):
+    try:
+        if not p.is_file():
+            return False
+        with p.open("rb") as fh:
+            return fh.read(64).lstrip(b"\xef\xbb\xbf").startswith(b"PuTTY-User-Key-File-")
+    except OSError:
+        return False
+
+
+def _ssh_fields(blob):
+    """Split an SSH wire blob into its length-prefixed fields."""
+    out, i = [], 0
+    while i + 4 <= len(blob):
+        n = int.from_bytes(blob[i:i + 4], "big")
+        if n > len(blob) - i - 4:
+            break
+        out.append(blob[i + 4:i + 4 + n])
+        i += 4 + n
+    return out
+
+
+def _read_ppk(p):
+    """Header dict + public and private blobs of a PuTTY v2/v3 key file."""
+    lines = _decode(p.read_bytes()).replace("\ufeff", "").splitlines()
+    head, blobs, i = {}, {}, 0
+    while i < len(lines):
+        key, _, val = lines[i].partition(":")
+        key, val = key.strip(), val.strip()
+        i += 1
+        if key in ("Public-Lines", "Private-Lines"):
+            n = int(val)
+            blobs[key] = base64.b64decode("".join(x.strip() for x in lines[i:i + n]))
+            i += n
+        elif key:
+            head[key] = val
+    version = next((k.rsplit("-", 1)[1] for k in head if k.startswith("PuTTY-User-Key-File-")), "")
+    head["_version"], head["_type"] = version, head.get(f"PuTTY-User-Key-File-{version}", "")
+    return head, blobs.get("Public-Lines", b""), blobs.get("Private-Lines", b"")
+
+
+def ppk_to_openssh(p):
+    """(private OpenSSH PEM bytes, public line) of an UNENCRYPTED PuTTY key (ed25519, rsa, ecdsa)."""
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import ec, ed25519, rsa
+    try:
+        head, pub, priv = _read_ppk(p)
+    except (OSError, ValueError) as exc:
+        raise SyncError(f"Cannot read the PuTTY key {p}: {exc}. " + PPK_HELP)
+    if head["_version"] not in ("2", "3") or not pub or not priv:
+        raise SyncError(f"{p} is not a PuTTY key file this app can read. " + PPK_HELP)
+    if head.get("Encryption", "none") != "none":
+        raise SyncError(f"{p} is a PuTTY key protected with a passphrase: ssh cannot use it from the app. " + PPK_HELP)
+    ktype, pf, sf = head["_type"], _ssh_fields(pub), _ssh_fields(priv)
+    mp = lambda b: int.from_bytes(b, "big")  # noqa: E731 - SSH mpint (positive)
+    try:
+        if ktype == "ssh-ed25519":
+            key = ed25519.Ed25519PrivateKey.from_private_bytes(sf[0][-32:])
+        elif ktype == "ssh-rsa":
+            e, n = mp(pf[1]), mp(pf[2])
+            d, pp, q, iqmp = (mp(x) for x in sf[:4])
+            key = rsa.RSAPrivateNumbers(pp, q, d, d % (pp - 1), d % (q - 1), iqmp,
+                                        rsa.RSAPublicNumbers(e, n)).private_key()
+        elif ktype.startswith("ecdsa-sha2-nistp"):
+            curve = {"nistp256": ec.SECP256R1, "nistp384": ec.SECP384R1, "nistp521": ec.SECP521R1}[pf[1].decode()]
+            key = ec.derive_private_key(mp(sf[0]), curve())
+        else:
+            raise SyncError(f"{p}: PuTTY key type {ktype or '?'} is not supported. " + PPK_HELP)
+    except SyncError:
+        raise
+    except (IndexError, KeyError, ValueError, UnicodeDecodeError) as exc:
+        raise SyncError(f"{p}: damaged PuTTY key ({exc}). " + PPK_HELP)
+    line = key.public_key().public_bytes(serialization.Encoding.OpenSSH, serialization.PublicFormat.OpenSSH).decode()
+    if base64.b64decode(line.split()[1]) != pub:
+        raise SyncError(f"{p}: the private part does not match the public key (damaged file?). " + PPK_HELP)
+    comment = re.sub(r"[^\w@.\-]+", "_", head.get("Comment", "")).strip("_")
+    pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.OpenSSH,
+                            serialization.NoEncryption())
+    return pem, line + (f" {comment}" if comment else "")
+
+
+def from_ppk(p):
+    """OpenSSH copy of a PuTTY key: <name>_openssh (+ .pub) in the same folder, refreshed when the .ppk changes."""
+    out = p.with_name(p.stem + "_openssh")
+    pub = Path(str(out) + ".pub")
+    try:
+        if out.is_file() and pub.is_file() and out.stat().st_mtime >= p.stat().st_mtime:
+            return out
+    except OSError:
+        pass
+    pem, line = ppk_to_openssh(p)
+    tmp = out.with_name(out.name + ".tmp")
+    tmp.unlink(missing_ok=True)
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "wb") as fh:
+        fh.write(pem)
+    os.replace(tmp, out)
+    pub.write_text(line + "\n")
+    return out
 
 
 def make_key(path=None):
