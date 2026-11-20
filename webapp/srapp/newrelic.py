@@ -276,7 +276,7 @@ def run_hook(meta):
     apps, source = apps_for(meta["project"], meta.get("script"), t.get("extra_args", ""))
     log = runner._runs_dir() / f"{meta['id']}.log"
     if not apps:
-        with log.open("a") as fh:
+        with log.open("a", encoding="utf-8", errors="replace") as fh:
             fh.write(f"### {time.strftime('%H:%M:%S')} newrelic: no APM service matched this script\n")
         return
     start = int(meta["started"] * 1000) - 60000
@@ -284,6 +284,6 @@ def run_hook(meta):
     summary = window_summary(apps, start, end)
     summary["source"] = source
     runner.update(meta["id"], newrelic=summary)
-    with log.open("a") as fh:
+    with log.open("a", encoding="utf-8", errors="replace") as fh:
         fh.write(f"### {time.strftime('%H:%M:%S')} newrelic: {len(summary['apps'])} service(s) ({source}): "
                  f"{', '.join(summary['apps'])}{' · ' + '; '.join(summary['errors']) if summary['errors'] else ''}\n")

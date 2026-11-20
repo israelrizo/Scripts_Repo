@@ -35,12 +35,12 @@ class Abort(RuntimeError):
 
 
 def _log(run_id, msg):
-    with (runner._runs_dir() / f"{run_id}.log").open("a") as fh:
+    with (runner._runs_dir() / f"{run_id}.log").open("a", encoding="utf-8", errors="replace") as fh:
         fh.write(f"### [{time.strftime('%H:%M:%S')}] {msg}\n")
 
 
 def _append(run_id, text):
-    with (runner._runs_dir() / f"{run_id}.log").open("a") as fh:
+    with (runner._runs_dir() / f"{run_id}.log").open("a", encoding="utf-8", errors="replace") as fh:
         fh.write(text)
 
 
@@ -238,19 +238,49 @@ echo "@@STARTED@@ $PID $REAL"
 
 # --------------------------------------------------------------------------- monitor
 def monitor(run_id):
-    """Mirror the remote console into the local log until the run ends (safe to call again after a restart)."""
+    """Mirror the remote console into the local log until the run ends (safe to call again after a restart).
+    Never dies silently: an unexpected error is logged and retried, otherwise the run would stay 'running'
+    (or 'stopping') forever on this computer and in the team history."""
+    errors, last_err = 0, ""
+    while True:
+        try:
+            _monitor(run_id)
+            return
+        except Exception as exc:  # noqa: BLE001
+            errors += 1
+            msg = f"{type(exc).__name__}: {exc}"[:300]
+            if msg != last_err:
+                try:
+                    _log(run_id, f"monitor error (retrying): {msg}")
+                except Exception:  # noqa: BLE001
+                    pass
+                last_err = msg
+            if errors >= 30:
+                try:
+                    _log(run_id, "INTERRUPTED: monitoring keeps failing; the test may still be running on the Master")
+                    meta = runner.update(run_id, status="interrupted", ended=time.time(), error=msg[:200])
+                    runner._fire("end", meta)
+                except Exception:  # noqa: BLE001
+                    pass
+                return
+            time.sleep(10)
+
+
+def _monitor(run_id):
     L = lambda m: _log(run_id, m)  # noqa: E731
     master = aws.cfg()["master"]
     j = _jdir()
-    fails, warned_auth = 0, False
+    fails, warned_auth, gone = 0, False, 0
     while True:
         meta = runner.get(run_id)
         if not meta or meta["status"] not in ("running", "stopping"):
             return
         off = int(meta.get("remote_offset") or 0)
+        pid = int(meta.get("remote_pid") or 0)
         script = (f'L={q(j)}/runs/{q(run_id)}.log; S=$(stat -c %s "$L" 2>/dev/null || stat -f %z "$L" 2>/dev/null || echo 0)\n'
                   f'tail -c +{off + 1} "$L" 2>/dev/null | head -c {CHUNK}\n'
-                  f'printf "\\n@@META@@ %s %s\\n" "$S" "$(cat {q(j)}/runs/{q(run_id)}.rc 2>/dev/null || echo -)"\n')
+                  f'A=up; [ {pid} -gt 0 ] && ! kill -0 {pid} 2>/dev/null && A=down\n'
+                  f'printf "\\n@@META@@ %s %s %s\\n" "$S" "$(cat {q(j)}/runs/{q(run_id)}.rc 2>/dev/null || echo -)" "$A"\n')
         try:
             rc, out, err = aws.run(master, script, timeout=60)
             fails = 0
@@ -284,7 +314,7 @@ def monitor(run_id):
                 return
             time.sleep(6)
             continue
-        m = re.search(r"\n@@META@@ (\d+) (\S+)\s*$", out)
+        m = re.search(r"\n@@META@@ (\d+) (\S+)(?: (up|down))?\s*$", out)
         if not m:
             time.sleep(POLL_SECONDS)
             continue
@@ -298,6 +328,12 @@ def monitor(run_id):
             runner.update(run_id, remote_offset=new_off)
         if rcval != "-" and new_off >= size:
             finish(run_id, int(rcval) if rcval.lstrip("-").isdigit() else 1)
+            return
+        # the process is gone but left no exit code (killed, Master rebooted, wrapper lost): end the run here too
+        gone = gone + 1 if (m.group(3) == "down" and new_off >= size) else 0
+        if gone >= 3:
+            L("the test process is no longer running on the Master and left no exit code: closing the run")
+            finish(run_id, 143 if meta["status"] == "stopping" else 1)
             return
         if new_off < size:
             continue  # more output waiting
@@ -484,7 +520,7 @@ def remote_results(project, limit=40):
     out_list = []
     for name, mb, has in re.findall(r"@@R@@ (\S+) (\d+) ([01])", out):
         out_list.append({"name": name, "mb": int(mb), "has_report": has == "1",
-                         "local": (pdir / "results" / name).is_dir()})
+                         "local": (pdir / "results" / name / "html_report" / "index.html").is_file()})
     return out_list
 
 

@@ -268,7 +268,7 @@ def send_chat(event, meta, summary):
 
 def _log(meta, line):
     p = runner._runs_dir() / f"{meta['id']}.log"
-    with p.open("a") as fh:
+    with p.open("a", encoding="utf-8", errors="replace") as fh:
         fh.write(f"### {time.strftime('%H:%M:%S')} {line}\n")
 
 

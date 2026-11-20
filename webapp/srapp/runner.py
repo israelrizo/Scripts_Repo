@@ -40,7 +40,7 @@ def _safe_hook(fn, meta):
         fn(meta)
     except Exception as exc:  # noqa: BLE001 - hooks must never break runs
         try:
-            with (_runs_dir() / f"{meta['id']}.log").open("a") as fh:
+            with (_runs_dir() / f"{meta['id']}.log").open("a", encoding="utf-8", errors="replace") as fh:
                 fh.write(f"### hook {getattr(fn, '__name__', fn)} failed: {exc}\n")
         except OSError:
             pass
@@ -134,7 +134,7 @@ def start_op(title, user, fn):
     log_path = _runs_dir() / f"{meta['id']}.log"
 
     def log(msg):
-        with log_path.open("a") as fh:
+        with log_path.open("a", encoding="utf-8", errors="replace") as fh:
             fh.write(f"[{time.strftime('%H:%M:%S')}] {msg}\n")
 
     def work():
@@ -285,7 +285,7 @@ def _start_remote(project, tag, t, user, props, distributed, jira, notes, extra_
                 "auto_start": bool(auto_start), "stop_after": bool(stop_after), "branch": branch, "sha": sha,
                 "local_changes": changes, "sync_method": c.get("sync_method") or "push"}
         _save(meta)
-    with (_runs_dir() / f"{meta['id']}.log").open("a") as fh:
+    with (_runs_dir() / f"{meta['id']}.log").open("a", encoding="utf-8", errors="replace") as fh:
         fh.write(f"### {time.strftime('%Y-%m-%d %H:%M:%S')}  user={user}  project={project}  tag={tag}\n"
                  f"### remote run on the Master through AWS SSM · {branch}@{sha[:8]}"
                  f"{f' + {changes} local change(s)' if changes else ''}"
