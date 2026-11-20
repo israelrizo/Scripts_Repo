@@ -10,8 +10,9 @@ from datetime import datetime, timedelta
 from urllib.parse import urlparse
 
 from flask import (Flask, abort, flash, g, jsonify, redirect, render_template, request,
-                   send_file, send_from_directory, session, url_for)
+                   send_file, session, url_for)
 from markupsafe import Markup
+from werkzeug.security import safe_join
 
 from . import confluence, influx, projects, runner, settings, totp, users
 from . import compare as cmp
@@ -496,8 +497,14 @@ def sync(name):
 @login_required()
 def report(name, run_name, filename="index.html"):
     _project_or_404(name)
-    d = projects.longpath(projects.result_dir(name, run_name)) / "html_report"
-    return send_from_directory(d, filename)
+    # not send_from_directory: it joins with "/", which a Windows \\?\ long path does not translate
+    parts = filename.split("/")
+    if safe_join("x", filename) is None or any(p in ("", ".", "..") for p in parts):
+        abort(404)
+    f = (projects.longpath(projects.result_dir(name, run_name)) / "html_report").joinpath(*parts)
+    if not f.is_file():
+        abort(404)
+    return send_file(f)
 
 
 @app.get("/p/<name>/results/<run_name>/download")
