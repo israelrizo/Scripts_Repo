@@ -394,7 +394,7 @@ def _report_zip(project, result_dir, max_mb=20):
     import io
     import zipfile
     try:
-        d = projects.result_dir(project, result_dir) / "html_report"
+        d = projects.longpath(projects.result_dir(project, result_dir)) / "html_report"
     except projects.ProjectError:
         return None
     if not d.is_dir():

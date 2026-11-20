@@ -411,15 +411,18 @@ tar -czf {q(outbox)}/{q(result_dir)}.tar.gz $EX {q(result_dir)} && echo "@@TAR@@
         L(f"the .jtl is {nojtl.group(1)} MB (> {limit} MB): left on the Master, report downloaded without it")
     dest = projects.project_dir(project) / "results"
     dest.mkdir(exist_ok=True)
-    tmpdir = Path(tempfile.mkdtemp(prefix="jmcc_", dir=str(Config.INSTANCE_DIR)))
+    # \\?\ paths on Windows: the HTML report's deepest files pass the 260-character limit
+    tmpdir = projects.longpath(tempfile.mkdtemp(prefix="jmcc_", dir=str(Config.INSTANCE_DIR)))
     try:
         local_tar = tmpdir / f"{result_dir}.tar.gz"
         aws.fetch_file(master, outbox, f"{result_dir}.tar.gz", local_tar, L)
         with tarfile.open(local_tar) as tf:
-            base = (tmpdir / "x").resolve()
+            base = tmpdir / "x"
             for member in tf.getmembers():
-                target = (base / member.name).resolve()
-                if base not in target.parents and target != base:
+                # lexical check (resolve() would drop the \\?\ prefix on Windows)
+                name = member.name.replace("\\", "/")
+                parts = [x for x in name.split("/") if x not in ("", ".")]
+                if name.startswith("/") or ":" in name or ".." in parts or not parts or parts[0] != result_dir:
                     raise Abort("unsafe path in archive")
                 if member.issym() or member.islnk() or member.isdev():
                     raise Abort("unsafe entry in archive")
@@ -427,7 +430,7 @@ tar -czf {q(outbox)}/{q(result_dir)}.tar.gz $EX {q(result_dir)} && echo "@@TAR@@
         src = base / result_dir
         if not src.is_dir():
             raise Abort("archive does not contain the result folder")
-        final = dest / result_dir
+        final = projects.longpath(dest / result_dir)
         if final.exists():
             shutil.rmtree(final)
         shutil.move(str(src), str(final))

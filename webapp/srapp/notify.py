@@ -146,7 +146,7 @@ def report_attachment(project, result_dir):
     if not cfg.get("attach_report") or not result_dir:
         return None
     try:
-        d = projects.result_dir(project, result_dir) / "html_report"
+        d = projects.longpath(projects.result_dir(project, result_dir)) / "html_report"
     except projects.ProjectError:
         return None
     if not d.is_dir():
