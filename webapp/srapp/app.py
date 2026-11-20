@@ -496,7 +496,7 @@ def sync(name):
 @login_required()
 def report(name, run_name, filename="index.html"):
     _project_or_404(name)
-    d = projects.result_dir(name, run_name) / "html_report"
+    d = projects.longpath(projects.result_dir(name, run_name)) / "html_report"
     return send_from_directory(d, filename)
 
 
@@ -510,7 +510,7 @@ def download_result(name, run_name):
         return send_file(tar, as_attachment=True)
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode="w:gz") as tf:
-        tf.add(str(d), arcname=run_name)
+        tf.add(str(projects.longpath(d)), arcname=run_name)
     buf.seek(0)
     return send_file(buf, as_attachment=True, download_name=f"{run_name}.tar.gz", mimetype="application/gzip")
 

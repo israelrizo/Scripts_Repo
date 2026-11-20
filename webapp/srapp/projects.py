@@ -423,6 +423,20 @@ def result_stats(project, run_name):
     return out
 
 
+def longpath(p):
+    """Windows: the \\\\?\\ form of a path so files deeper than 260 characters can be written and read (JMeter's
+    HTML report has fonts ~140 characters below the result folder, ~270 under a typical user folder). Unchanged
+    elsewhere. Use it for file operations only, never to display a path."""
+    if os.name != "nt":
+        return Path(p)
+    s = os.path.abspath(str(p))
+    if s.startswith("\\\\?\\"):
+        return Path(s)
+    if s.startswith("\\\\"):                     # UNC share \\\\server\\share -> \\\\?\\UNC\\server\\share
+        return Path("\\\\?\\UNC\\" + s[2:])
+    return Path("\\\\?\\" + s)
+
+
 def result_dir(project, run_name):
     if not run_name.startswith("Ejecucion_") or "/" in run_name:
         raise ProjectError("Unknown result")
