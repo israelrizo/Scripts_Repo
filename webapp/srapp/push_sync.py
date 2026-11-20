@@ -14,6 +14,7 @@ their own working copy, the same way as a manual
 * Results, local state and git metadata are never copied; files on the servers that are excluded here
   (results of other engineers, .jmcc locks) are never deleted, not even by a mirror sync.
 """
+import base64
 import os
 import re
 import shlex
@@ -87,22 +88,70 @@ def make_key(path=None):
     return p
 
 
+_PUB_RE = re.compile(r"^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp(?:256|384|521)|sk-ssh-ed25519@openssh\.com|"
+                     r"sk-ecdsa-sha2-nistp256@openssh\.com)\s+([A-Za-z0-9+/]+={0,3})(?:\s+(.*))?$")
+
+
+def _decode(raw):
+    """Text of a key file as Windows tools write it: UTF-8 (with or without BOM) or UTF-16 (PowerShell 5.1 '>' and
+    Out-File write UTF-16 LE with BOM)."""
+    if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        return raw.decode("utf-16", errors="replace")
+    if b"\x00" in raw[:200]:
+        return raw.decode("utf-16-le", errors="replace")
+    return raw.decode("utf-8-sig", errors="replace")
+
+
+def parse_public_key(text):
+    """One authorized_keys line from the text of a .pub file, or None. Tolerates BOMs, CRLF, blank lines and
+    Windows comments (DOMAIN\\user@HOST): a comment that is unsafe in a shell is rewritten; a safe one is kept as is
+    so a key already authorized on the servers still matches its line."""
+    for line in (text or "").replace("\ufeff", "").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        m = _PUB_RE.match(line)
+        if not m:
+            continue
+        ktype, b64, comment = m.group(1), m.group(2), (m.group(3) or "").strip()
+        try:
+            blob = base64.b64decode(b64, validate=True)
+            n = int.from_bytes(blob[:4], "big")
+            if blob[4:4 + n].decode("ascii") != ktype:
+                continue
+        except (ValueError, UnicodeDecodeError):
+            continue
+        if comment and not re.match(r"^[^\n'\"\\\\]*$", comment):
+            comment = re.sub(r"[^\w@.\-]+", "_", comment).strip("_")
+        return f"{ktype} {b64}" + (f" {comment}" if comment else "")
+    return None
+
+
 def public_key():
     k = key_path()
     if not k or not k.is_file():
         raise SyncError("No SSH key found. Create one with: ssh-keygen -t ed25519   (or set its path in Settings → AWS)")
     pub = Path(str(k) + ".pub")
+    key = None
     if pub.is_file():
-        text = pub.read_text(errors="replace").strip()
-    else:
         try:
-            text = subprocess.run([tool("ssh-keygen"), "-y", "-f", str(k)], capture_output=True, text=True,
-                                  timeout=20, stdin=subprocess.DEVNULL, **NOWIN).stdout.strip()
+            key = parse_public_key(_decode(pub.read_bytes()))
+        except OSError:
+            key = None
+    if not key:
+        # no usable .pub: derive the public key from the private key
+        try:
+            out = subprocess.run([tool("ssh-keygen"), "-y", "-f", str(k)], capture_output=True, text=True,
+                                 timeout=20, stdin=subprocess.DEVNULL, **NOWIN)
+            key = parse_public_key(out.stdout)
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise SyncError(f"Cannot read the public key of {k}: {exc}")
-    if not re.match(r"^(ssh-(ed25519|rsa)|ecdsa-sha2-nistp\d+) [A-Za-z0-9+/=]+( [^\n'\"\\]*)?$", text):
-        raise SyncError(f"{k}.pub is not a valid OpenSSH public key")
-    return text
+        if not key:
+            detail = (out.stderr or "").strip()[-200:]
+            raise SyncError(f"{pub} is not a valid OpenSSH public key and it could not be derived from {k}"
+                            + (f" ({detail})" if detail else "") + ". Regenerate it with: ssh-keygen -y -f "
+                            f"\"{k}\" | Out-File -Encoding ascii \"{pub}\"   (PowerShell) or ssh-keygen -t ed25519")
+    return key
 
 
 def tool(name):
